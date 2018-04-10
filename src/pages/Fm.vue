@@ -8,7 +8,7 @@
 
 <script>
   export default {
-    name: "home",
+    name: "fm",
     data() {
       return {
         phone: '',
@@ -17,22 +17,9 @@
     },
     created() {
 
-
     },
     methods: {
-      loginIn() {
-        let _this = this;
-        this.$http.get('/login/cellphone', {
-          params: {
-            phone: _this.phone,
-            password: _this.password
-          },
-          withCredentials: true
-        }).then(res => {
-          console.log(res.data);
-          this.$router.push('/')
-        })
-      }
+      
     }
   }
 </script>

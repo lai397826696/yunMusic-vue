@@ -2,17 +2,18 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import FastClick from 'fastclick'
-import axios from 'axios';
+// import axios from 'axios';
 import router from './router'
 import App from './App'
+import { AjaxPlugin } from 'vux'
+Vue.use(AjaxPlugin)
 
 FastClick.attach(document.body)
 
 Vue.config.productionTip = false
 
-axios.defaults.baseURL = 'http://localhost:3333';
-axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
-Vue.prototype.$axios = axios;
+Vue.http.defaults.baseURL = 'http://localhost:3333';
+Vue.http.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
 /* eslint-disable no-new */
 new Vue({

@@ -7,44 +7,29 @@
       <div class="tips">根据你的音乐口味生成,每天6:00更新</div>
       <div class="bg"></div>
     </div>
-
-    <group class="songs">
-      <cell title="播放全部" value="多选"></cell>
-      <cell class="songsCell"  v-for="item of songs" :key="item.id" :inline-desc="item.artists[0].name+'-'+item.album.name">
-        <div class="artistsImg" slot="icon">
-          <img v-if="!isplay" :src="`${item.album.blurPicUrl}?param=250y250`" :alt="item.name">
-          <img v-else src="../../static/images/aal.png" alt="play" class="playImg">
-        </div>
-        <div class="icn_more">
-          <img src="../../static/images/cm2_play_icn_more@2x.png" alt="more">
-        </div>
-        <span class="name" slot="title">{{item.name}}
-          <i class="alias">{{item.alias.length>0?`(${item.alias[0]})`:''}}</i>
-        </span>
-      </cell>
-    </group>
+    <playlist :songData="songs"></playlist>
+    <playbar></playbar>
   </div>
 </template>
 
 <script>
-  import { XHeader, Cell, Group } from 'vux';
+  import { XHeader, Cell, Group, Popup, TransferDom } from 'vux';
+  import playlist from '../components/playlist.vue';
+  import playbar from '../components/playbar.vue';
   export default {
     name: "tuijian",
     data() {
       return {
         songs: [],
-        isplay: false,
-        bigImg: {}
+        bigImg: {},
       }
     },
     created() {
       let _this = this
-      let _axios = this.$http;
-      _axios.get('/banner').then(res => {
+      this.$http.get('/banner').then(res => {
         _this.bigImg = res.data.banners.find(item=>{
           return item.typeTitle=="广告"
         })
-        console.log(_this.bigImg);
       })
 
       this.$http.get('/recommend/songs', { withCredentials: true }).then(res => {
@@ -54,10 +39,18 @@
     components: {
       XHeader,
       Cell,
-      Group
+      Group,
+      Popup,
+      playlist,
+      playbar
+    },
+    directives: {
+      TransferDom
     },
     methods: {
-
+      fn(){
+        console.log(111);
+      },
     }
   }
 </script>
@@ -111,8 +104,9 @@
       width: 100%;
     }
     .playImg {
-      margin: 9px auto;
-      width: auto;
+      margin: 15px auto;
+      width: 24px;
+      height: 24px;
     }
   }
   .alias {
@@ -130,19 +124,28 @@
       width: 100%;
     }
   }
+  .checkbox {
+    font-size: 14px;
+  }
+  .allplayIcon {
+    margin-right: 5px;
+    vertical-align: middle;
+    width: 24px;
+    height: 24px;
+  }
   
 </style>
 <style lang="less">
-  .songsCell {
+  .songs {
     .weui-cells {
+      margin-top: 0;
       background-color: #fbfbfb;
     }
     .vux-cell-primary {
       padding-right: 15px;
       overflow: hidden;
-
       .vux-label {
-        height: 26px;
+        // height: 26px;
         line-height: 26px  ;
         font-size: 16px;
         overflow: hidden;
@@ -151,7 +154,7 @@
         }
       .vux-label-desc {
         display: block;
-        height: 22px;
+        // height: 22px;
         line-height: 22px;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -159,7 +162,11 @@
       }
     }
   }
-  
+  .songPopup {
+    .weui-cells {
+      margin-top: 5px;
+    }
+  }
 </style>
 
 

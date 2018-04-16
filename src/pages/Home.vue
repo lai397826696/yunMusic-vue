@@ -42,7 +42,10 @@
     <flexbox align="flex-start" :gutter="0" wrap="wrap">
       <flexbox-item :span="1/3" v-for="list in resources" :key="list.id">
         <div class="gridBox">
-          <span class="playcount">{{integ(list.playCount)}}</span>
+          <span class="playcount">
+              <img src="../../static/images/p0.png" alt="icon" class="playCountIcon">
+              {{integ(list.playCount)}}
+            </span>
           <img class="gridImg" :src="`${list.picUrl}?param=200y200`" :alt="list.copywriter">
           <div class="gridtext">{{list.name}}</div>
         </div>
@@ -85,23 +88,15 @@
         </div>
       </flexbox-item>
     </flexbox> -->
-    <flexbox class="videoBar" :gutter="0">
-      <flexbox-item span="50px">
-        img
-      </flexbox-item>
-      <flexbox-item>
-        img
-      </flexbox-item>
-      <flexbox-item span="100px">
-        <x-circle :percent="100" stroke-color="#04BE02"></x-circle>
-      </flexbox-item>
-    </flexbox>
+    <playbar></playbar>
   </div>
 </template>
 
 <script>
-  import { Tab, TabItem, Swiper, SwiperItem, Flexbox, FlexboxItem, Grid, GridItem, GroupTitle, XCircle } from 'vux'
+  import { Tab, TabItem, Swiper, SwiperItem, Flexbox, FlexboxItem, Grid, GridItem, GroupTitle } from 'vux'
   import { integ } from '../util/util.js'
+  import playbar from '../components/playbar.vue';
+
   export default {
     name: "home",
     components: {
@@ -114,7 +109,7 @@
       Grid,
       GridItem,
       GroupTitle,
-      XCircle
+      playbar
     },
     data() {
       return {
@@ -139,17 +134,18 @@
         _axios.get('/personalized/newsong'),
         _axios.get('/personalized/privatecontent'),
         _axios.get('/dj/recommend', { withCredentials: true }),
-        _axios.get('/program/recommend'),
-        _axios.get('/personalized/djprogram'),
-      ]).then(_axios.spread((res1, res2, res3, res4, res5, res6, res7) => {
+        // _axios.get('/program/recommend'),
+        // _axios.get('/personalized/djprogram'),
+        _axios.get('/personal_fm', { withCredentials: true, params: { timestamp: new Date().getTime() } }),
+      ]).then(_axios.spread((res1, res2, res3, res4, res5, res6) => {
         _this.resource = _this.resource.concat(res1.data.result, res2.data.recommend);
         _this.newMusic = res3.data.result;
         _this.newMusic.length = 6;
         _this.sole = res4.data.result.reverse();
         _this.dj = res5.data.result;
-        console.log(res5.data);
         console.log(res6.data);
-        console.log(res7.data);
+        // console.log(res7.data);
+        // console.log(res8.data);
       }))
     },
     computed: {
@@ -232,7 +228,8 @@
     }
     .gridtext {
       display: -webkit-box;
-      padding: 10px 5px;
+      margin: 4px 0;
+      padding: 6px 5px;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 2;
       overflow: hidden;
@@ -251,15 +248,9 @@
       color: #fff;
     }
   }
-  .videoBar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 1;
-    height: 40px;
-    line-height: 40px;
-    background-color: rgba(255, 255, 255, .8);
+  .playCountIcon {
+    width: 14px;
+    vertical-align: middle;
   }
 </style>
 

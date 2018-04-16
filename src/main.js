@@ -6,6 +6,8 @@ import FastClick from 'fastclick'
 import router from './router'
 import App from './App'
 import { AjaxPlugin } from 'vux'
+import './assets/js/dpr';
+
 Vue.use(AjaxPlugin)
 
 FastClick.attach(document.body)

@@ -6,7 +6,6 @@ body, textarea, input, button, select {
 }
 
 .clear {
-    /**+height:1%;*/
     *zoom: 1;
 }
 .clear:after {

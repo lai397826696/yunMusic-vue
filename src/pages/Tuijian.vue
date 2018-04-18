@@ -7,21 +7,24 @@
       <div class="tips">根据你的音乐口味生成,每天6:00更新</div>
       <div class="bg"></div>
     </div>
-    <playlist :songData="songs"></playlist>
-    <playbar></playbar>
+    <Audios :id="idurl"></Audios>
+    <Playlist :songData="songs"></Playlist>
+    <Playbar></Playbar>
   </div>
 </template>
 
 <script>
   import { XHeader, Cell, Group, Popup, TransferDom } from 'vux';
-  import playlist from '../components/playlist.vue';
-  import playbar from '../components/playbar.vue';
+  import Playlist from '../components/playlist.vue';
+  import Playbar from '../components/playbar.vue';
+  import Audios from '../components/Audio.vue';
   export default {
     name: "tuijian",
     data() {
       return {
         songs: [],
         bigImg: {},
+        idurl: '455358996',
       }
     },
     created() {
@@ -41,8 +44,9 @@
       Cell,
       Group,
       Popup,
-      playlist,
-      playbar
+      Playlist,
+      Playbar,
+      Audios
     },
     directives: {
       TransferDom

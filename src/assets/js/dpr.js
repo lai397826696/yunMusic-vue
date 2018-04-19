@@ -15,11 +15,9 @@ function browserRedirect() {
     var bIsCE = sUserAgent.match(/windows ce/i) == "windows ce";
     var bIsWM = sUserAgent.match(/windows mobile/i) == "windows mobile";
     if (bIsIpad || bIsIphoneOs || bIsMidp || bIsUc7 || bIsUc || bIsAndroid || bIsCE || bIsWM) {
-        console.log("您的浏览设备为：移动端")
         isIPhone=true;
     } else {
         isIPhone=false;
-        console.log("您的浏览设备为：PC端")
     }
 }
 browserRedirect();
@@ -27,8 +25,6 @@ dpr = window.devicePixelRatio || 1;
 rem = docEl.clientWidth / 10 * 2;
 if (!isIPhone) rem = 100;
 console.log("dpr:" + dpr);
-
-
 
 docEl.setAttribute('data-dpr', dpr);
 docEl.setAttribute('style', 'font-size:' + rem + 'px');

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="tuijian">
     <x-header :left-options="{backText: ''}" :right-options="{showMore: true}">每日歌曲推荐</x-header>
     <div class="bannBig">
       <img :src="bigImg.pic" :alt="bigImg.typeTitle">
@@ -7,37 +7,26 @@
       <div class="tips">根据你的音乐口味生成,每天6:00更新</div>
       <div class="bg"></div>
     </div>
-    <Audios :id="idurl"></Audios>
+    <Audios :id="''+songs[0].id"></Audios>
     <Playlist :songData="songs"></Playlist>
-    <Playbar></Playbar>
   </div>
 </template>
 
 <script>
   import { XHeader, Cell, Group, Popup, TransferDom } from 'vux';
   import Playlist from '../components/playlist.vue';
-  import Playbar from '../components/playbar.vue';
   import Audios from '../components/Audio.vue';
+  import { mapState } from 'vuex';
+
   export default {
     name: "tuijian",
     data() {
       return {
-        songs: [],
-        bigImg: {},
         idurl: '455358996',
       }
     },
     created() {
       let _this = this
-      this.$http.get('/banner').then(res => {
-        _this.bigImg = res.data.banners.find(item=>{
-          return item.typeTitle=="广告"
-        })
-      })
-
-      this.$http.get('/recommend/songs', { withCredentials: true }).then(res => {
-        _this.songs = res.data.recommend
-      })
     },
     components: {
       XHeader,
@@ -45,11 +34,21 @@
       Group,
       Popup,
       Playlist,
-      Playbar,
       Audios
     },
     directives: {
       TransferDom
+    },
+    computed: {
+      ...mapState([
+        'banners',
+        'songs'
+      ]),
+      bigImg(){
+        return this.banners.find(item=>{
+          return item.typeTitle=="广告"
+        })
+      }
     },
     methods: {
       fn(){
@@ -60,6 +59,9 @@
 </script>
 
 <style lang="less" scoped>
+  .tuijian {
+    margin-bottom: 55px;
+  }
   .bannBig {
     position: relative;
     img {

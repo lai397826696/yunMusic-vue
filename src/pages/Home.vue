@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="home">
     <tab :line-width="2" class="tab" bar-active-color="">
       <tab-item selected>发现</tab-item>
       <tab-item>我的</tab-item>
@@ -88,14 +88,13 @@
         </div>
       </flexbox-item>
     </flexbox> -->
-    <playbar></playbar>
   </div>
 </template>
 
 <script>
   import { Tab, TabItem, Swiper, SwiperItem, Flexbox, FlexboxItem, Grid, GridItem, GroupTitle } from 'vux'
   import { integ } from '../util/util.js'
-  import playbar from '../components/playbar.vue';
+  import { mapState, mapActions } from 'vuex';
 
   export default {
     name: "home",
@@ -109,46 +108,22 @@
       Grid,
       GridItem,
       GroupTitle,
-      playbar
     },
     data() {
       return {
-        msg: 'Hello World!',
-        index_entry: [],
-        banners: [],
-        resource: [],
-        newMusic: [],
-        sole: [],
-        dj: []
       }
     },
     created() {
-      let _this = this;
-      let _axios = this.$http;
-      _axios.get('/banner').then(res => {
-        _this.banners = res.data.banners
-      })
-      _axios.all([
-        _axios.get('/personalized', { params: { limit: 2 } }),
-        _axios.get('/recommend/resource', { withCredentials: true }),
-        _axios.get('/personalized/newsong'),
-        _axios.get('/personalized/privatecontent'),
-        _axios.get('/dj/recommend', { withCredentials: true }),
-        // _axios.get('/program/recommend'),
-        // _axios.get('/personalized/djprogram'),
-        _axios.get('/personal_fm', { withCredentials: true, params: { timestamp: new Date().getTime() } }),
-      ]).then(_axios.spread((res1, res2, res3, res4, res5, res6) => {
-        _this.resource = _this.resource.concat(res1.data.result, res2.data.recommend);
-        _this.newMusic = res3.data.result;
-        _this.newMusic.length = 6;
-        _this.sole = res4.data.result.reverse();
-        _this.dj = res5.data.result;
-        console.log(res6.data);
-        // console.log(res7.data);
-        // console.log(res8.data);
-      }))
+      this.indexapi();
     },
     computed: {
+      ...mapState([
+        'banners',
+        'resource',
+        'newMusic',
+        'sole',
+        'dj',
+      ]),
       resources() {
         this.resource.forEach(v => {
           if (!v.hasOwnProperty('playCount')) {
@@ -159,6 +134,9 @@
       }
     },
     methods: {
+      ...mapActions([
+        'indexapi'
+      ]),
       integ(num) {
         return integ(num);
       },
@@ -171,6 +149,9 @@
 
 
 <style lang="less" scoped>
+  .home {
+    margin-bottom: 55px;
+  }
   .tab {
     margin: 0 auto;
     background: #fff;
@@ -210,6 +191,7 @@
     vertical-align: middle;
   }
   .groupTitle {
+    height: 26px;
     line-height: 26px;
     font-size: 16px;
     border-left: 3px solid #f93434;

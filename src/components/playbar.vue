@@ -1,17 +1,17 @@
 <template>
-  <div class="videoBar">
+  <div class="videoBar" v-show="vodeShow">
     <flexbox :gutter="10">
       <flexbox-item span="40px">
         <div class="artistsImg">
-          <img v-if="isplay.bool && isplay.id==datas_one.id" src="../../static/images/aal.png" alt="play" class="playImg">
-          <img v-else :src="`${datas_one.album.blurPicUrl}?param=250y250`" :alt="datas_one.name">
+          <img v-if="isplay.bool && isplay.id==data_one.id" src="../../static/images/aal.png" alt="play" class="playImg">
+          <img v-else :src="`${data_one.album.blurPicUrl}?param=250y250`" :alt="data_one.name">
         </div>
       </flexbox-item>
       <flexbox-item>
-        <div class="name">{{datas_one.name}}
-          <i class="alias">{{datas_one.alias.length>0?`(${datas_one.alias[0]})`:''}}</i>
+        <div class="name">{{data_one.name}}
+          <i class="alias">{{data_one.alias.length>0?`(${data_one.alias[0]})`:''}}</i>
         </div>
-        <div class="desc">{{datas_one.artists.length>0?datas_one.artists[0].name+'-'+datas_one.album.name:''}}</div>
+        <div class="desc">{{data_one.artists.length>0?data_one.artists[0].name+'-'+data_one.album.name:''}}</div>
       </flexbox-item>
       <flexbox-item span="70px">
         <div class="circleBox" @click="start">
@@ -24,7 +24,7 @@
       </flexbox-item>
     </flexbox>
     <div v-transfer-dom>
-      <popup class="songPopup" v-model="show" height="45%">
+      <popup class="songPopup" v-model="modelShow" height="45%">
         <group>
           <cell title="歌曲：把酒倒满"></cell>
           <cell title="下一首播放"></cell>
@@ -43,6 +43,7 @@
 
 <script>
   import { Flexbox, FlexboxItem, XCircle, Cell, Group, Popup, TransferDom } from 'vux'
+  import { mapActions, mapGetters } from 'vuex';
 
   export default {
     name: 'playbar',
@@ -50,8 +51,7 @@
       return {
         msg: 'Hello World!',
         percent: 10,
-        datas: [],
-        datas_one: {
+        playOne: {
           album: {},
           alias:[],
           artists: []
@@ -60,16 +60,9 @@
           id: '',
           bool: false
         },
-        show: false
+        modelShow: false,
+        vodeShow: true,
       }
-    },
-    created() {
-      // let _this=this;
-      this.$http.get('/recommend/songs', { withCredentials: true }).then(res => {
-        this.datas = res.data.recommend;
-        this.datas_one=this.datas[0]
-        console.log(this.datas_one);
-      })
     },
     components: {
       Flexbox,
@@ -82,7 +75,18 @@
     directives: {
       TransferDom
     },
+    created() {
+      this.recommendapi();
+    },
+    computed: {
+      data_one(){
+        return this.$store.state.songs.length>0?this.$store.state.songs[0]:this.playOne
+      }
+    },
     methods: {
+      ...mapActions([
+        'recommendapi'
+      ]),
       start() {
         let clear = setInterval(() => {
           if (this.percent >= 100) {
@@ -91,7 +95,18 @@
             this.percent += 0.5;
           }
         }, 500)
+      },
+      routefn(){
+        let path = this.$route.path;
+        if (path=="/" || path=='/tuijian') {
+          this.vodeShow=true
+        } else {
+          this.vodeShow=false
+        }
       }
+    },
+    watch: {
+      '$route': 'routefn'
     }
   }
 </script>
@@ -100,10 +115,10 @@
   .videoBar {
     position: fixed;
     bottom: 0;
-    left: 10px;
-    right: 10px;
+    left: 0;
+    right: 0;
     z-index: 2;
-    padding: 6px 0;
+    padding: 6px 10px;
     // height: 44px;
     overflow: hidden;
     background-color: rgba(255, 255, 255, 0.95);

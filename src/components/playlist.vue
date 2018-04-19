@@ -1,7 +1,7 @@
 <template>
   <div class="songs">
     <group>
-      <cell-box class="checkbox_all">
+      <cell-box class="checkbox_all" @click.native="allPlay">
         <img src="../../static/images/pl-playall.png" alt="play" class="allplayIcon">
         <div class="flex_bd">
           <p class="name">播放全部</p>
@@ -77,7 +77,7 @@
     },
     methods: {
       allPlay() {
-
+        console.log('allplay');
       },
       checkboxfn() {
         console.log(222);

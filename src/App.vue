@@ -1,12 +1,18 @@
 <template>
   <div id="app">
     <router-view></router-view>
+    <Playbar></Playbar>
   </div>
 </template>
 
 <script>
+  import Playbar from './components/playbar.vue';
+  
   export default {
-    name: 'app'
+    name: 'app',
+    components: {
+      Playbar
+    },
   }
 </script>
 

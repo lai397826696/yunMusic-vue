@@ -4,6 +4,7 @@ import Home from '@/pages/Home'
 import Login from '@/pages/Login'
 import Tuijian from '@/pages/Tuijian'
 import Fm from '@/pages/Fm'
+import Detail from '@/pages/Detail'
 
 Vue.use(Router)
 
@@ -28,6 +29,11 @@ export default new Router({
       path: '/fm',
       name: 'fm',
       component: Fm
+    },
+    {
+      path: '/detail',
+      name: 'detail',
+      component: Detail
     }
   ]
 })

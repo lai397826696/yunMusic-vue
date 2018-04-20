@@ -19,22 +19,25 @@
             <i class="jiao"></i>
           </x-circle>
         </div>
-        <span class="musicList">列表</span>
+        <span class="musicList" @click="playlistfn">列表</span>
         <!-- <div class="line"></div> -->
       </flexbox-item>
     </flexbox>
     <div v-transfer-dom>
-      <popup class="songPopup" v-model="modelShow" height="45%">
+      <popup class="playbarPopup" v-model="modelShow" height="45%">
         <group>
-          <cell title="歌曲：把酒倒满"></cell>
-          <cell title="下一首播放"></cell>
-          <cell title="收藏到歌单"></cell>
-          <cell title="下载"></cell>
-          <cell title="评论(1111)"></cell>
-          <cell title="歌手：张张"></cell>
-          <cell title="专辑：一一一"></cell>
-          <cell title="查看视频"></cell>
-          <cell title="不感兴趣"></cell>
+          <cell title="列表循环">
+            <div slot="icon">
+              <img src="../../static/images/cm2_icn_loop@2x.png" alt="">
+            </div>
+          </cell>
+          <cell v-for="item in songs" :key="item.id">
+            <div slot="title">{{item.name}}</div>
+            <div class="after-title" slot="after-title">
+              -<span v-for="(ai, index) of item.artists" :key="ai.id">{{index==0?ai.name:'/'+ ai.name}}</span>
+            </div>
+            <div @click="closePlaylist"><x-icon class="icon" type="ios-close-empty" size="24"></x-icon></div>
+          </cell>
         </group>
       </popup>
     </div>
@@ -43,14 +46,14 @@
 
 <script>
   import { Flexbox, FlexboxItem, XCircle, Cell, Group, Popup, TransferDom } from 'vux'
-  import { mapActions, mapGetters } from 'vuex';
+  import { mapActions, mapState } from 'vuex';
 
   export default {
     name: 'playbar',
     data() {
       return {
         msg: 'Hello World!',
-        percent: 10,
+        percent: 0,
         playOne: {
           album: {},
           alias:[],
@@ -79,6 +82,9 @@
       this.recommendapi();
     },
     computed: {
+      ...mapState([
+        'songs'
+      ]),
       data_one(){
         return this.$store.state.songs.length>0?this.$store.state.songs[0]:this.playOne
       }
@@ -92,9 +98,16 @@
           if (this.percent >= 100) {
             clearInterval(clear);
           } else {
-            this.percent += 0.5;
+            console.log(this.percent);
+            this.percent += 1;
           }
-        }, 500)
+        }, 1000)
+      },
+      playlistfn(){
+        this.modelShow=!this.modelShow;
+      },
+      closePlaylist(){
+        console.log(11);
       },
       routefn(){
         let path = this.$route.path;
@@ -168,6 +181,21 @@
       float: right;
       height: 30px;
       line-height: 30px;
+    }
+    .icon {
+      vertical-align: middle;
+    }
+  }
+</style>
+<style lang="less">
+  .playbarPopup {
+    .vux-label {
+      float: left;
+    }
+    .after-title {
+      display: inline-block;
+      font-size: 14px;
+      color: #999;
     }
   }
 </style>

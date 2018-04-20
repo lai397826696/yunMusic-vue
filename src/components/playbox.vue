@@ -1,14 +1,15 @@
 <template>
   <div class="songs">
-    <group>
-      <cell title="播放全部" @click.native="allPlay">
-        <div slot="icon">
-          <img src="../../static/images/pl-playall.png" alt="play" class="allplayIcon">
+    <group class="allbox">
+      <cell-box class="checkbox_all" @click.native="allPlay">
+        <img src="../../static/images/pl-playall.png" alt="play" class="allplayIcon">
+        <div class="flex_bd">
+          <p class="name">播放全部</p>
         </div>
         <div class="checkbox" @click.stop="checkboxfn">多选</div>
-      </cell>
-
+      </cell-box>
     </group>
+      <playlist :datas="songData"></playlist>
     <div v-transfer-dom>
       <popup class="songPopup" v-model="show" height="45%">
         <group>
@@ -24,37 +25,49 @@
         </group>
       </popup>
     </div>
-
   </div>
 </template>
 
 <script>
-  import { Cell, Group, Popup, TransferDom } from 'vux'
-  import playlist from './playlist.vue';
+  import { Cell, CellBox, Group, Popup, TransferDom } from 'vux'
+  import playlist from '../components/playlist.vue';
 
   export default {
-    name: 'playbox',
+    name: 'list',
     data() {
       return {
         show: false,
+        isplay: {
+          id: '',
+          bool: false
+        }
+      }
+    },
+    props: {
+      songData: {
+        type: Array,
+        default: function () {
+          return [{}]
+        }
       }
     },
     components: {
       Group,
       Cell,
       Popup,
+      CellBox,
+      playlist
     },
     directives: {
       TransferDom
     },
     methods: {
       allPlay() {
-
+        console.log('allplay');
       },
       checkboxfn() {
         console.log(222);
       },
-      
       play(item) {
         console.log(item);
         this.isplay.bool = true;
@@ -68,17 +81,54 @@
 </script>
 
 <style lang="less" scoped>
-  .checkbox {
-    font-size: 14px;
+  
+  .checkbox_all {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    .checkbox {
+      font-size: 14px;
+    }
+    .allplayIcon {
+      margin-right: 10px;
+      vertical-align: middle;
+      width: 24px;
+      height: 24px;
+    }
   }
-  .allplayIcon {
-    margin-right: 5px;
-    vertical-align: middle;
-    width: 24px;
-    height: 24px;
+
+  .flex_bd {
+    flex: 1;
+    padding-right: 10px;
+    overflow: hidden;
   }
 </style>
 <style lang="less">
+  .songs {
+    .allbox {
+      margin-bottom: -1px;
+    }
+    .weui-cells {
+      margin-top: 0;
+      background-color: #fbfbfb;
+    }
+    .vux-cell-primary {
+      padding-right: 15px;
+      overflow: hidden;
+      .vux-label {
+        line-height: 26px;
+        font-size: 16px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .vux-label-desc {
+        line-height: 22px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+  }
   .songPopup {
     .weui-cells {
       margin-top: 5px;

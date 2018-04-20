@@ -8,13 +8,13 @@
       <div class="bg"></div>
     </div>
     <Audios :id="''+songs[0].id"></Audios>
-    <Playlist :songData="songs"></Playlist>
+    <Playbox :songData="songs"></Playbox>
   </div>
 </template>
 
 <script>
   import { XHeader, Cell, Group, Popup, TransferDom } from 'vux';
-  import Playlist from '../components/playlist.vue';
+  import Playbox from '../components/playbox.vue';
   import Audios from '../components/Audio.vue';
   import { mapState } from 'vuex';
 
@@ -33,7 +33,7 @@
       Cell,
       Group,
       Popup,
-      Playlist,
+      Playbox,
       Audios
     },
     directives: {
@@ -96,83 +96,7 @@
       background-image: linear-gradient(to top, #dcdcdc 0%, transparent 50%);
     }
   }
-  .weui-cell {
-    padding-left: 10px;
-    padding-right: 10px;
-  }
-  .artistsImg {
-    margin-right: 10px;
-    width: 50px;
-    height: 50px;
-    overflow: hidden;
-    img {
-      display: block;
-      width: 100%;
-    }
-    .playImg {
-      margin: 15px auto;
-      width: 24px;
-      height: 24px;
-    }
-  }
-  .alias {
-    font-size: 12px;
-    font-style: normal;
-    color: #aaa;
-  }
   
-  .icn_more {
-    width: 20px;
-    height: 20px;
-    background-color: #ff5c5c;
-    img {
-      display: block;
-      width: 100%;
-    }
-  }
-  .checkbox {
-    font-size: 14px;
-  }
-  .allplayIcon {
-    margin-right: 5px;
-    vertical-align: middle;
-    width: 24px;
-    height: 24px;
-  }
-  
-</style>
-<style lang="less">
-  .songs {
-    .weui-cells {
-      margin-top: 0;
-      background-color: #fbfbfb;
-    }
-    .vux-cell-primary {
-      padding-right: 15px;
-      overflow: hidden;
-      .vux-label {
-        // height: 26px;
-        line-height: 26px  ;
-        font-size: 16px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        }
-      .vux-label-desc {
-        display: block;
-        // height: 22px;
-        line-height: 22px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-    }
-  }
-  .songPopup {
-    .weui-cells {
-      margin-top: 5px;
-    }
-  }
 </style>
 
 

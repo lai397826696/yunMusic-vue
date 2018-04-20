@@ -20,6 +20,7 @@ const state = {
   sole: [], //独家放送
   dj: [], //dj
   songs: [], //推荐音乐
+  play_list_data: [],
 }
 
 const mutations = {

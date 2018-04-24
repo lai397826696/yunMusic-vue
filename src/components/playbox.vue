@@ -31,6 +31,7 @@
 <script>
   import { Cell, CellBox, Group, Popup, TransferDom } from 'vux'
   import playlist from '../components/playlist.vue';
+  import {mapMutations} from 'vuex';
 
   export default {
     name: 'list',
@@ -62,7 +63,12 @@
       TransferDom
     },
     methods: {
+      ...mapMutations([
+        'changePlaylistfn'
+      ]),
       allPlay() {
+        this.changePlaylistfn()
+        this.$router.push('/detail')
         console.log('allplay');
       },
       checkboxfn() {

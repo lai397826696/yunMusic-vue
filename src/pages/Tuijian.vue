@@ -7,7 +7,7 @@
       <div class="tips">根据你的音乐口味生成,每天6:00更新</div>
       <div class="bg"></div>
     </div>
-    <Audios :id="''+songs[0].id"></Audios>
+    <!-- <Audios :id="''+songs[0].id"></Audios> -->
     <Playbox :songData="songs"></Playbox>
   </div>
 </template>

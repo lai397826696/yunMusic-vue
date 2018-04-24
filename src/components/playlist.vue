@@ -1,6 +1,6 @@
 <template>
   <group class="songlist">
-    <cell-box v-for="item of datas" :key="item.id" @click.native="play(item)">
+    <cell-box v-for="item of datas" :key="item.id" @click.native="playfn(item)">
       <div class="artistsImg">
         <img v-if="isplay.bool && isplay.id==item.id" src="../../static/images/aal.png" alt="play" class="playImg">
         <img v-else :src="`${item.album.blurPicUrl}?param=250y250`" :alt="item.name">
@@ -22,6 +22,7 @@
 
 <script>
   import { CellBox, Group } from 'vux'
+  import {mapMutations} from 'vuex';
 
   export default {
     name: 'list',
@@ -47,8 +48,11 @@
       CellBox
     },
     methods: {
-      play(item) {
-        console.log(item);
+      ...mapMutations([
+        'barListfn'
+      ]),
+      playfn(item) {
+        this.barListfn({data: item});
         this.isplay.bool = true;
         this.isplay.id = item.id;
       },

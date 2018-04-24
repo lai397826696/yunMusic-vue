@@ -1,16 +1,16 @@
 <template>
   <div class="audioBox">
-    <audio :src="url" controls="controls" ref="ading">
-      <source :src="url" type="audio/ogg" />
-      <source :src="url" type="audio/mpeg" />
+    <audio :src="playidURL" ref="ading">
+      <source :src="playidURL" type="audio/ogg" />
+      <source :src="playidURL" type="audio/mpeg" />
       Your browser does not support the audio element.
     </audio>
-    <button @click="audioPlay('28314062')">播放/暂停</button>
   </div>
 </template>
 
 <script>
 import { Group, Cell } from "vux";
+import { mapGetters, mapState } from 'vuex';
 
 export default {
   components: {
@@ -22,15 +22,19 @@ export default {
       msg: "Hello World!"
     };
   },
-  props: {
-    id: {
-      type: String,
-    }
-  },
+  // props: {
+  //   id: {
+  //     type: String,
+  //     default: ''
+  //   }
+  // },
   computed: {
-    url(){
-      return `http://music.163.com/song/media/outer/url?id=${this.id}.mp3`;
-    }
+    ...mapGetters([
+      'playidURL'
+    ]),
+    ...mapState([
+      'audiodata'
+    ])
   },
   methods: {
     audioPlay(id) {
@@ -39,17 +43,20 @@ export default {
       console.log(this.transTime(ading.duration));
       if(ading.paused) {
         ading.play();
+        console.log('播放');
       } else {
+        console.log('暂停');
         ading.pause();
       }
-      
+      // this.$emit('audioPlay')
       // ading.addEventListener("loadedmetadata", function() {
       //   console.log(ading.duration);
       // });
-      ading.addEventListener("timeupdate", function() {
-        var value = Math.round(Math.floor(this.currentTime) / Math.floor(this.duration) * 100, 0);
-        console.log(this.currentTime);
-      }, false);
+
+      // ading.addEventListener("timeupdate", function() {
+      //   var value = Math.round(Math.floor(this.currentTime) / Math.floor(this.duration) * 100, 0);
+      //   console.log(this.currentTime);
+      // }, false);
     },
     transTime(time) {
       var duration = parseInt(time);

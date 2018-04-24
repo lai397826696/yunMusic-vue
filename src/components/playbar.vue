@@ -8,10 +8,12 @@
         </div>
       </flexbox-item>
       <flexbox-item>
-        <div class="name">{{data_one.name}}
-          <i class="alias">{{data_one.alias.length>0?`(${data_one.alias[0]})`:''}}</i>
+        <div @click="routelink">
+          <div class="name">{{data_one.name}}
+            <i class="alias">{{data_one.alias.length>0?`(${data_one.alias[0]})`:''}}</i>
+          </div>
+          <div class="desc">{{data_one.artists.length>0?data_one.artists[0].name+'-'+data_one.album.name:''}}</div>
         </div>
-        <div class="desc">{{data_one.artists.length>0?data_one.artists[0].name+'-'+data_one.album.name:''}}</div>
       </flexbox-item>
       <flexbox-item span="70px">
         <div class="circleBox" @click="start">
@@ -28,15 +30,18 @@
         <group>
           <cell title="列表循环">
             <div slot="icon">
-              <img src="../../static/images/cm2_icn_loop@2x.png" alt="">
+              <!-- <img src="../../static/images/cm2_icn_loop@2x.png" alt=""> -->
             </div>
           </cell>
-          <cell v-for="item in songs" :key="item.id">
+          <cell v-for="item in play_list_data" :key="item.id">
             <div slot="title">{{item.name}}</div>
             <div class="after-title" slot="after-title">
-              -<span v-for="(ai, index) of item.artists" :key="ai.id">{{index==0?ai.name:'/'+ ai.name}}</span>
+              -
+              <span v-for="(ai, index) of item.artists" :key="ai.id">{{index==0?ai.name:'/'+ ai.name}}</span>
             </div>
-            <div @click="closePlaylist"><x-icon class="icon" type="ios-close-empty" size="24"></x-icon></div>
+            <div @click="closePlaylist">
+              <x-icon class="icon" type="ios-close-empty" size="24"></x-icon>
+            </div>
           </cell>
         </group>
       </popup>
@@ -46,7 +51,7 @@
 
 <script>
   import { Flexbox, FlexboxItem, XCircle, Cell, Group, Popup, TransferDom } from 'vux'
-  import { mapActions, mapState } from 'vuex';
+  import { mapActions, mapState, mapMutations } from 'vuex';
 
   export default {
     name: 'playbar',
@@ -56,7 +61,7 @@
         percent: 0,
         playOne: {
           album: {},
-          alias:[],
+          alias: [],
           artists: []
         },
         isplay: {
@@ -83,38 +88,49 @@
     },
     computed: {
       ...mapState([
-        'songs'
+        'play_list_data'
       ]),
-      data_one(){
-        return this.$store.state.songs.length>0?this.$store.state.songs[0]:this.playOne
+      data_one() {
+        return this.$store.state.play_list_data.length > 0 ? this.$store.state.play_list_data[0] : this.playOne
       }
+    },
+    beforeRouteEnter: (to, from, next) => {
+      console.log(to);
+      console.log(from);
     },
     methods: {
       ...mapActions([
-        'recommendapi'
+        'recommendapi',
+      ]),
+      ...mapMutations([
+        'playingfn'
       ]),
       start() {
-        let clear = setInterval(() => {
-          if (this.percent >= 100) {
-            clearInterval(clear);
-          } else {
-            console.log(this.percent);
-            this.percent += 1;
-          }
-        }, 1000)
+        this.playingfn({playing: true})
+        // let clear = setInterval(() => {
+        //   if (this.percent >= 100) {
+        //     clearInterval(clear);
+        //   } else {
+        //     console.log(this.percent);
+        //     this.percent += 1;
+        //   }
+        // }, 1000)
       },
-      playlistfn(){
-        this.modelShow=!this.modelShow;
+      playlistfn() {
+        this.modelShow = !this.modelShow;
       },
-      closePlaylist(){
+      closePlaylist() {
         console.log(11);
       },
-      routefn(){
+      routelink() {
+        this.$router.push('/detail')
+      },
+      routefn() {
         let path = this.$route.path;
-        if (path=="/" || path=='/tuijian') {
-          this.vodeShow=true
+        if (path == "/" || path == '/tuijian') {
+          this.vodeShow = true
         } else {
-          this.vodeShow=false
+          this.vodeShow = false
         }
       }
     },

@@ -21,7 +21,17 @@ const state = {
   dj: [], //dj
   songs: [], //推荐音乐
   play_list_data: [],
+  barList: 0,
+  audiodata: {},
 }
+
+// http://www.mossiella.com/html/255.html
+//http://www.biquge.info/22_22228/7993124.html  
+[{
+    url: "^http://www\\.biquge\\.info/\\d+\\/\\d+\\.html",
+    bookTitleSelector: "a[rel='category tag']",
+    contentRemove: ".navi, > strong, #commentform",
+  }]
 
 const mutations = {
   indexfn(state, { banners, resource, newMusic, sole, dj }) {
@@ -34,6 +44,21 @@ const mutations = {
   },
   recommendfn(state, { songs }) {
     state.songs = songs
+    state.play_list_data = JSON.parse(JSON.stringify(state.songs));
+  },
+  changePlaylistfn(state) {
+    state.play_list_data = JSON.parse(JSON.stringify(state.songs));
+  },
+  barListfn(state, {data}) {
+    
+  },
+  playidfn(state, { data }) {
+    state.playid = data.id;
+  },
+  playingfn(state, {playing}) {
+    //点击播放
+    console.log(playing);
+    state.audiodata.playing = playing;
   }
 }
 
@@ -67,7 +92,13 @@ const actions = {
 }
 
 const getters = {
-
+  playidURL(state) {
+    if(!!state.audiodata.id) {
+      return `http://music.163.com/song/media/outer/url?id=${state.audiodata.id}.mp3`;
+    } else {
+      return ''
+    }
+  }
 }
 
 export default new Vuex.Store({

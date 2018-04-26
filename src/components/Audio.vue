@@ -1,6 +1,6 @@
 <template>
   <div class="audioBox">
-    <audio :src="playidURL" ref="ading">
+    <audio :src="playidURL" ref="ading" autoplay>
       <source :src="playidURL" type="audio/ogg" />
       <source :src="playidURL" type="audio/mpeg" />
       Your browser does not support the audio element.
@@ -37,10 +37,11 @@ export default {
     ])
   },
   methods: {
-    audioPlay(id) {
+    audioPlay() {
       let _this=this;
       let ading = this.$refs.ading;
       console.log(this.transTime(ading.duration));
+      this.$emit("audioPlay", {el: ading});
       if(ading.paused) {
         ading.play();
         console.log('播放');

@@ -22,7 +22,6 @@
           </x-circle>
         </div>
         <span class="musicList" @click="playlistfn">列表</span>
-        <!-- <div class="line"></div> -->
       </flexbox-item>
     </flexbox>
     <div v-transfer-dom>
@@ -46,12 +45,14 @@
         </group>
       </popup>
     </div>
+    <Audio @audioPlay="audioPlay"></Audio>
   </div>
 </template>
 
 <script>
   import { Flexbox, FlexboxItem, XCircle, Cell, Group, Popup, TransferDom } from 'vux'
   import { mapActions, mapState, mapMutations } from 'vuex';
+  import Audio from './Audio.vue';
 
   export default {
     name: 'playbar',
@@ -79,6 +80,7 @@
       Group,
       Cell,
       Popup,
+      Audio
     },
     directives: {
       TransferDom
@@ -91,12 +93,9 @@
         'play_list_data'
       ]),
       data_one() {
-        return this.$store.state.play_list_data.length > 0 ? this.$store.state.play_list_data[0] : this.playOne
+        console.log(this.play_list_data);
+        return this.play_list_data.length > 0 ? this.play_list_data[0] : this.playOne
       }
-    },
-    beforeRouteEnter: (to, from, next) => {
-      console.log(to);
-      console.log(from);
     },
     methods: {
       ...mapActions([
@@ -106,15 +105,10 @@
         'playingfn'
       ]),
       start() {
-        this.playingfn({playing: true})
-        // let clear = setInterval(() => {
-        //   if (this.percent >= 100) {
-        //     clearInterval(clear);
-        //   } else {
-        //     console.log(this.percent);
-        //     this.percent += 1;
-        //   }
-        // }, 1000)
+        this.playingfn({data: { playing: true, id: this.play_list_data[0].id}})
+      },
+      audioPlay(el){
+        console.log(el);
       },
       playlistfn() {
         this.modelShow = !this.modelShow;

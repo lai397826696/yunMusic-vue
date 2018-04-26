@@ -22,16 +22,11 @@ const state = {
   songs: [], //推荐音乐
   play_list_data: [],
   barList: 0,
-  audiodata: {},
+  audiodata: {
+    id: '',
+    playing: false
+  },
 }
-
-// http://www.mossiella.com/html/255.html
-//http://www.biquge.info/22_22228/7993124.html  
-[{
-    url: "^http://www\\.biquge\\.info/\\d+\\/\\d+\\.html",
-    bookTitleSelector: "a[rel='category tag']",
-    contentRemove: ".navi, > strong, #commentform",
-  }]
 
 const mutations = {
   indexfn(state, { banners, resource, newMusic, sole, dj }) {
@@ -55,10 +50,11 @@ const mutations = {
   playidfn(state, { data }) {
     state.playid = data.id;
   },
-  playingfn(state, {playing}) {
+  playingfn(state, {data}) {
     //点击播放
-    console.log(playing);
-    state.audiodata.playing = playing;
+    state.audiodata.id = data.id;
+    state.audiodata.playing = data.playing;
+    console.log(data);
   }
 }
 
@@ -93,7 +89,9 @@ const actions = {
 
 const getters = {
   playidURL(state) {
-    if(!!state.audiodata.id) {
+    // return `http://music.163.com/song/media/outer/url?id=${state.audiodata.id}.mp3`;
+    if(!!state.audiodata.playing) {
+      console.log(11);
       return `http://music.163.com/song/media/outer/url?id=${state.audiodata.id}.mp3`;
     } else {
       return ''

@@ -2,19 +2,16 @@
   <div id="app">
     <router-view></router-view>
     <Playbar></Playbar>
-    <Audio></Audio>
   </div>
 </template>
 
 <script>
   import Playbar from './components/playbar.vue';
-  import Audio from './components/Audio.vue';
   
   export default {
     name: 'app',
     components: {
-      Playbar,
-      Audio
+      Playbar
     },
   }
 </script>

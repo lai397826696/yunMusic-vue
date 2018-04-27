@@ -125,6 +125,7 @@
         'dj',
       ]),
       resources() {
+        console.log(this.resource);
         this.resource.forEach(v => {
           if (!v.hasOwnProperty('playCount')) {
             v['playCount'] = v.playcount

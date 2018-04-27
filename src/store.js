@@ -25,6 +25,14 @@ const state = {
   audiodata: {},
 }
 
+// http://www.mossiella.com/html/255.html
+//http://www.biquge.info/22_22228/7993124.html  
+[{
+    url: "^http://www\\.biquge\\.info/\\d+\\/\\d+\\.html",
+    bookTitleSelector: "a[rel='category tag']",
+    contentRemove: ".navi, > strong, #commentform",
+  }]
+
 const mutations = {
   indexfn(state, { banners, resource, newMusic, sole, dj }) {
     state.banners = banners;

@@ -20,7 +20,14 @@ const state = {
   sole: [], //独家放送
   dj: [], //dj
   songs: [], //推荐音乐
-  play_list_data: [],
+  play_list_data: [], //播放目录
+  playdataing: {
+    album: {},
+    alias: [],
+    artists: [],
+    id: ''
+  }, //正在播放的歌曲
+  playdataIndex: 0, //正在播放歌曲的序列号
   barList: 0,
   audiodata: {
     id: '',
@@ -88,15 +95,12 @@ const actions = {
 }
 
 const getters = {
-  playidURL(state) {
-    // return `http://music.163.com/song/media/outer/url?id=${state.audiodata.id}.mp3`;
-    if(!!state.audiodata.playing) {
-      console.log(11);
-      return `http://music.163.com/song/media/outer/url?id=${state.audiodata.id}.mp3`;
-    } else {
-      return ''
-    }
-  }
+  playdatasing(state) {
+    return state.play_list_data.length > 0 ? state.play_list_data[state.playdataIndex] : state.playdataing;
+  },
+  playidURL(state, getters) {
+    return !!getters.playdatasing.id ? `http://music.163.com/song/media/outer/url?id=${getters.playdatasing.id}.mp3` : '';
+  },
 }
 
 export default new Vuex.Store({

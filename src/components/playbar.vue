@@ -3,20 +3,22 @@
     <flexbox :gutter="10">
       <flexbox-item span="40px">
         <div class="artistsImg">
-          <img v-if="isplay.bool && isplay.id==data_one.id" src="../../static/images/aal.png" alt="play" class="playImg">
-          <img v-else :src="`${data_one.album.blurPicUrl}?param=250y250`" :alt="data_one.name">
+          <img v-if="isplay.bool && isplay.id==playdatasing.id" src="../../static/images/aal.png" alt="play" class="playImg">
+          <img v-else :src="`${playdatasing.album.blurPicUrl}?param=250y250`" :alt="playdatasing.name">
         </div>
       </flexbox-item>
       <flexbox-item>
         <div @click="routelink">
-          <div class="name">{{data_one.name}}
-            <i class="alias">{{data_one.alias.length>0?`(${data_one.alias[0]})`:''}}</i>
+          <div class="name">{{playdatasing.name}}
+            <i class="alias">{{playdatasing.alias.length>0?`(${playdatasing.alias[0]})`:''}}</i>
           </div>
-          <div class="desc">{{data_one.artists.length>0?data_one.artists[0].name+'-'+data_one.album.name:''}}</div>
+          <div class="desc">
+            <span v-for="(ai, index) of playdatasing.artists" :key="ai.id">{{index==0?ai.name:'/'+ ai.name}}</span>-{{playdatasing.album.name}}
+          </div>
         </div>
       </flexbox-item>
       <flexbox-item span="70px">
-        <div class="circleBox" @click="start">
+        <div class="circleBox" @click="audioPlay">
           <x-circle :percent="percent" :stroke-width="7" :trail-width="7" trail-color="#4d4d4d" stroke-color="#d33a31">
             <i class="jiao"></i>
           </x-circle>
@@ -45,14 +47,21 @@
         </group>
       </popup>
     </div>
-    <Audio @audioPlay="audioPlay"></Audio>
+    <!-- <Audio @audioPlay="audioPlay"></Audio> -->
+    <div class="audioBox">
+      <audio :src="playidURL" ref="ading">
+        <source :src="playidURL" type="audio/ogg" />
+        <source :src="playidURL" type="audio/mpeg" />
+        Your browser does not support the audio element.
+      </audio>
+    </div>
   </div>
 </template>
 
 <script>
   import { Flexbox, FlexboxItem, XCircle, Cell, Group, Popup, TransferDom } from 'vux'
-  import { mapActions, mapState, mapMutations } from 'vuex';
-  import Audio from './Audio.vue';
+  import { mapActions, mapState, mapMutations, mapGetters } from 'vuex';
+  // import Audio from './Audio.vue';
 
   export default {
     name: 'playbar',
@@ -80,7 +89,7 @@
       Group,
       Cell,
       Popup,
-      Audio
+      // Audio
     },
     directives: {
       TransferDom
@@ -90,26 +99,29 @@
     },
     computed: {
       ...mapState([
-        'play_list_data'
+        'play_list_data',
+      ]),
+      ...mapGetters([
+        'playidURL',
+        'playdatasing'
       ]),
       data_one() {
-        console.log(this.play_list_data);
         return this.play_list_data.length > 0 ? this.play_list_data[0] : this.playOne
-      }
+      },
+      // playidURL(){
+      //   return `http://music.163.com/song/media/outer/url?id=${this.play_list_data[0].id}.mp3`;
+      // }
     },
     methods: {
       ...mapActions([
         'recommendapi',
       ]),
-      ...mapMutations([
-        'playingfn'
-      ]),
-      start() {
-        this.playingfn({data: { playing: true, id: this.play_list_data[0].id}})
-      },
-      audioPlay(el){
-        console.log(el);
-      },
+      // ...mapMutations([
+      //   'playingfn'
+      // ]),
+      // start() {
+      //   this.playingfn({data: { playing: true, id: this.play_list_data[0].id}})
+      // },
       playlistfn() {
         this.modelShow = !this.modelShow;
       },
@@ -118,6 +130,39 @@
       },
       routelink() {
         this.$router.push('/detail')
+      },
+      audioPlay() {
+        let _this=this;
+        let ading = this.$refs.ading;
+        if(ading.paused) {
+          ading.play();
+          console.log('播放');
+        } else {
+          console.log('暂停');
+          ading.pause();
+        }
+        // this.$emit('audioPlay')
+        // ading.addEventListener("loadedmetadata", function() {
+        //   console.log(ading.duration);
+        // });
+
+        // ading.addEventListener("timeupdate", function() {
+        //   var value = Math.round(Math.floor(this.currentTime) / Math.floor(this.duration) * 100, 0);
+        //   console.log(this.currentTime);
+        // }, false);
+      },
+      transTime(time) {
+        var duration = parseInt(time);
+        var minute = parseInt(duration / 60);
+        var sec = duration % 60 + "";
+        var isM0 = ":";
+        if (minute == 0) {
+          minute = "00";
+        } else if (minute < 10) {
+          minute = "0" + minute;
+        }
+        if (sec.length == 1) sec = "0" + sec
+        return minute + isM0 + sec;
       },
       routefn() {
         let path = this.$route.path;

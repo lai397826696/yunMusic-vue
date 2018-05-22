@@ -1,8 +1,6 @@
 <template>
   <div>
-    <input type="text" class="username" v-model="phone">
-    <input type="password" class="password" v-model="password">
-    <button @click="loginIn">登录</button>
+    FM
   </div>
 </template>
 

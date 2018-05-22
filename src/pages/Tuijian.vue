@@ -1,7 +1,7 @@
 <template>
-  <div class="tuijian">
+  <div class="tuijian" :class="{tj_bottom: !!audiodata.id}">
     <x-header :left-options="{backText: ''}" :right-options="{showMore: true}">每日歌曲推荐</x-header>
-    <div class="bannBig">
+    <div class="bannBig" v-if="!!bigImg">
       <img :src="bigImg.pic" :alt="bigImg.typeTitle">
       <span class="tag">{{bigImg.typeTitle}}</span>
       <div class="tips">根据你的音乐口味生成,每天6:00更新</div>
@@ -16,7 +16,7 @@
   import { XHeader, Cell, Group, Popup, TransferDom } from 'vux';
   import Playbox from '../components/playbox.vue';
   import Audios from '../components/Audio.vue';
-  import { mapState } from 'vuex';
+  import { mapState, mapActions } from 'vuex';
 
   export default {
     name: "tuijian",
@@ -39,10 +39,14 @@
     directives: {
       TransferDom
     },
+    created(){
+      this.recommendapi();
+    },
     computed: {
       ...mapState([
         'banners',
-        'songs'
+        'songs',
+        'audiodata'
       ]),
       bigImg(){
         return this.banners.find(item=>{
@@ -51,6 +55,9 @@
       }
     },
     methods: {
+      ...mapActions([
+        'recommendapi',
+      ]),
       fn(){
         console.log(111);
       },
@@ -60,6 +67,8 @@
 
 <style lang="less" scoped>
   .tuijian {
+  }
+  .tj_bottom {
     margin-bottom: 55px;
   }
   .bannBig {

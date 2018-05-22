@@ -67,9 +67,8 @@
         'changePlaylistfn'
       ]),
       allPlay() {
-        this.changePlaylistfn()
         this.$router.push('/detail')
-        console.log('allplay');
+        this.changePlaylistfn({key: 'songs'})
       },
       checkboxfn() {
         console.log(222);

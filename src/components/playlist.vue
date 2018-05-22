@@ -1,8 +1,8 @@
 <template>
   <group class="songlist">
-    <cell-box v-for="item of datas" :key="item.id" @click.native="playfn(item)">
+    <cell-box v-for="(item, index) of datas" :key="item.id" @click.native="playfn(item, index)">
       <div class="artistsImg">
-        <img v-if="isplay.bool && isplay.id==item.id" src="../../static/images/aal.png" alt="play" class="playImg">
+        <img v-if="playdatasing.id==item.id" src="../../static/images/aal.png" alt="play" class="playImg">
         <img v-else :src="`${item.album.blurPicUrl}?param=250y250`" :alt="item.name">
       </div>
       <div class="flex_bd">
@@ -10,7 +10,7 @@
           <i class="alias">{{item.alias.length>0?`(${item.alias[0]})`:''}}</i>
         </p>
         <p class="desc">
-          <span v-for="(ai, index) of item.artists" :key="ai.id">{{index==0?ai.name:'/'+ ai.name}}</span>-{{item.album.name}}
+          <span v-for="(ai, index) of item.artists" :key="ai.id+index">{{index==0?ai.name:'/'+ ai.name}}</span>-{{item.album.name}}
         </p>
       </div>
       <div class="icn_more" @click.stop="detailsfn">
@@ -22,7 +22,7 @@
 
 <script>
   import { CellBox, Group } from 'vux'
-  import {mapMutations} from 'vuex';
+  import { mapState, mapMutations, mapGetters} from 'vuex';
 
   export default {
     name: 'list',
@@ -47,14 +47,23 @@
       Group,
       CellBox
     },
+    computed: {
+      ...mapState([
+        'audiodata'
+      ]),
+      ...mapGetters([
+        'playdatasing'
+      ])
+    },
+    created(){
+    },
     methods: {
       ...mapMutations([
-        'barListfn'
+        'playingfn',
+        'song_idfn',
       ]),
-      playfn(item) {
-        this.barListfn({data: item});
-        this.isplay.bool = true;
-        this.isplay.id = item.id;
+      playfn(item, index) {
+        this.playingfn({playing: true, id: item.id})
       },
       detailsfn() {
         this.show = true;

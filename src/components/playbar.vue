@@ -1,5 +1,5 @@
 <template>
-  <div class="videoBar" v-show="vodeShow">
+  <div class="videoBar" v-show="vnodeshow && !!playdatasing.id">
     <flexbox :gutter="10">
       <flexbox-item span="40px">
         <div class="artistsImg">
@@ -13,41 +13,44 @@
             <i class="alias">{{playdatasing.alias.length>0?`(${playdatasing.alias[0]})`:''}}</i>
           </div>
           <div class="desc">
-            <span v-for="(ai, index) of playdatasing.artists" :key="ai.id">{{index==0?ai.name:'/'+ ai.name}}</span>-{{playdatasing.album.name}}
+            <span v-for="(ai, index) of playdatasing.artists" :key="ai.id+index">{{index==0?ai.name:'/'+ ai.name}}</span>-{{playdatasing.album.name}}
           </div>
         </div>
       </flexbox-item>
       <flexbox-item span="70px">
-        <div class="circleBox" @click="audioPlay">
+        <div class="circleBox" @click="playing">
           <x-circle :percent="percent" :stroke-width="7" :trail-width="7" trail-color="#4d4d4d" stroke-color="#d33a31">
-            <i class="jiao"></i>
+            <i class="jiao" v-show="!audiodata.playing"></i>
+            <i class="staricon" v-show="audiodata.playing"></i>
           </x-circle>
         </div>
         <span class="musicList" @click="playlistfn">列表</span>
       </flexbox-item>
     </flexbox>
     <div v-transfer-dom>
-      <popup class="playbarPopup" v-model="modelShow" height="45%">
+      <popup class="playbarPopup" v-model="modelShows" height="45%" @on-hide="popuphide">
         <group>
           <cell title="列表循环">
             <div slot="icon">
               <!-- <img src="../../static/images/cm2_icn_loop@2x.png" alt=""> -->
             </div>
           </cell>
-          <cell v-for="item in play_list_data" :key="item.id">
+          <cell v-for="(item, index) in song_catalogue" :key="item.id" :class="item.id==playdatasing.id?'active':''">
+            <div slot="icon">
+              <img src="../../static/images/aal.png" alt="play" class="playImg">
+            </div>
             <div slot="title">{{item.name}}</div>
             <div class="after-title" slot="after-title">
               -
-              <span v-for="(ai, index) of item.artists" :key="ai.id">{{index==0?ai.name:'/'+ ai.name}}</span>
+              <span v-for="(ai, index) of item.artists" :key="ai.id+index">{{index==0?ai.name:'/'+ ai.name}}</span>
             </div>
-            <div @click="closePlaylist">
+            <div @click="closePlaylist(index, item.id)">
               <x-icon class="icon" type="ios-close-empty" size="24"></x-icon>
             </div>
           </cell>
         </group>
       </popup>
     </div>
-    <!-- <Audio @audioPlay="audioPlay"></Audio> -->
     <div class="audioBox">
       <audio :src="playidURL" ref="ading">
         <source :src="playidURL" type="audio/ogg" />
@@ -61,7 +64,6 @@
 <script>
   import { Flexbox, FlexboxItem, XCircle, Cell, Group, Popup, TransferDom } from 'vux'
   import { mapActions, mapState, mapMutations, mapGetters } from 'vuex';
-  // import Audio from './Audio.vue';
 
   export default {
     name: 'playbar',
@@ -79,7 +81,7 @@
           bool: false
         },
         modelShow: false,
-        vodeShow: true,
+        vnodeshow: true,
       }
     },
     components: {
@@ -94,62 +96,73 @@
     directives: {
       TransferDom
     },
-    created() {
-      this.recommendapi();
-    },
     computed: {
       ...mapState([
-        'play_list_data',
+        'song_catalogue',
+        // 'indexcat',
+        'audiodata',
+        'song_id',
+        '',
       ]),
       ...mapGetters([
         'playidURL',
-        'playdatasing'
+        'playdatasing',
       ]),
-      data_one() {
-        return this.play_list_data.length > 0 ? this.play_list_data[0] : this.playOne
-      },
-      // playidURL(){
-      //   return `http://music.163.com/song/media/outer/url?id=${this.play_list_data[0].id}.mp3`;
-      // }
+      modelShows: {
+        get(){
+          if(this.song_catalogue.length==0) return false;
+          return this.modelShow
+        },
+        set(){
+
+        }
+      }
+    },
+    created(){
     },
     methods: {
       ...mapActions([
         'recommendapi',
       ]),
-      // ...mapMutations([
-      //   'playingfn'
-      // ]),
-      // start() {
-      //   this.playingfn({data: { playing: true, id: this.play_list_data[0].id}})
-      // },
+      ...mapMutations([
+        'audiodatafn',
+        'modify_songCatalogue',
+        'changePlaylistfn',
+      ]),
       playlistfn() {
-        this.modelShow = !this.modelShow;
+        this.modelShow=!this.modelShow
       },
-      closePlaylist() {
-        console.log(11);
+      closePlaylist(index, id) {
+        this.modify_songCatalogue({index: index, id: id})
       },
       routelink() {
         this.$router.push('/detail')
       },
-      audioPlay() {
+      playing() {
         let _this=this;
         let ading = this.$refs.ading;
+        console.log(ading);
         if(ading.paused) {
           ading.play();
-          console.log('播放');
+          this.audiodatafn({playing: true})
         } else {
-          console.log('暂停');
           ading.pause();
+          this.audiodatafn({playing: false})
         }
-        // this.$emit('audioPlay')
+
+
         // ading.addEventListener("loadedmetadata", function() {
         //   console.log(ading.duration);
         // });
-
         // ading.addEventListener("timeupdate", function() {
         //   var value = Math.round(Math.floor(this.currentTime) / Math.floor(this.duration) * 100, 0);
         //   console.log(this.currentTime);
         // }, false);
+
+
+      },
+      popuphide(){
+        this.modelShow=false;
       },
       transTime(time) {
         var duration = parseInt(time);
@@ -166,10 +179,10 @@
       },
       routefn() {
         let path = this.$route.path;
-        if (path == "/" || path == '/tuijian') {
-          this.vodeShow = true
+        if (path == "/detail" || path == '/fm') {
+          this.vnodeshow=false;
         } else {
-          this.vodeShow = false
+          this.vnodeshow=true;
         }
       }
     },
@@ -205,6 +218,13 @@
         border-left-color: #4d4d4d;
         border-right: none;
         // border-radius: 50%;
+      }
+      .staricon {
+        display: inline-block;
+        width: 6px;
+        height: 10px;
+        border-left: 2px solid red;
+        border-right: 2px solid red;
       }
     }
     .line {
@@ -251,6 +271,20 @@
       display: inline-block;
       font-size: 14px;
       color: #999;
+    }
+    .playImg {
+      display: none;
+    }
+    .active {
+      .vux-label, .after-title {
+        color: red;
+      }
+      .playImg {
+        display: block;
+        margin-right: 4px;
+        width: 16px;
+        height: 16px;
+      }
     }
   }
 </style>

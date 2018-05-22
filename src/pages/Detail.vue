@@ -49,13 +49,10 @@
 
     },
     beforeRouteEnter: (to, from, next) => {
-      console.log(to);
-      console.log(from);
       next();
     },
     methods: {
       onChange(value){
-        console.log(value);
       }
     }
   }

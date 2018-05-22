@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios';
-// import { AjaxPlugin as axios } from 'vux'
 Vue.use(Vuex)
 
 axios.defaults.baseURL = 'http://localhost:3333';
@@ -27,12 +26,15 @@ const state = {
     artists: [],
     id: ''
   }, //正在播放的歌曲
-  playdataIndex: 0, //正在播放歌曲的序列号
   barList: 0,
   audiodata: {
     id: '',
     playing: false
   },
+  song_catalogue: [], //播放目录
+  indexcat: 0, //正在播放歌曲的序列号
+  song_id: '', //正在播放歌曲的id
+
 }
 
 const mutations = {
@@ -46,22 +48,39 @@ const mutations = {
   },
   recommendfn(state, { songs }) {
     state.songs = songs
-    state.play_list_data = JSON.parse(JSON.stringify(state.songs));
+    state.song_catalogue = JSON.parse(JSON.stringify(state.songs));
   },
-  changePlaylistfn(state) {
-    state.play_list_data = JSON.parse(JSON.stringify(state.songs));
+  changePlaylistfn(state, {key}) { //播放全部
+    state.song_catalogue = JSON.parse(JSON.stringify(state[key]));
+    state.audiodata.id=state.song_catalogue[0].id
   },
-  barListfn(state, {data}) {
-    
+  playingfn(state, { id, playing }) {
+    //判断播放目录是否完整
+    if(state.song_catalogue.length!=state.songs.length) state.song_catalogue = JSON.parse(JSON.stringify(state.songs));
+    //播放时的曲目
+    state.audiodata.id = id;
+    state.audiodata.playing = playing;
   },
-  playidfn(state, { data }) {
-    state.playid = data.id;
+  song_idfn(state,{ id }) {
+    state.song_id = id;
   },
-  playingfn(state, {data}) {
-    //点击播放
-    state.audiodata.id = data.id;
-    state.audiodata.playing = data.playing;
-    console.log(data);
+  modify_songCatalogue(state, { index, id }) {
+    let length = state.song_catalogue.length;
+    if(length==1) state.audiodata.id=''
+    for (let i = 0; i < length; i++) {
+      if (state.song_catalogue[i].id == id && state.audiodata.id == id) {
+        if (i == length - 1) {
+          state.audiodata.id = state.song_catalogue[0].id
+        } else {
+          state.audiodata.id = state.song_catalogue[i + 1].id
+        }
+        break;
+      }
+    }
+    state.song_catalogue.splice(index, 1);
+  },
+  audiodatafn(state, { playing }) {
+    state.audiodata.playing = playing;
   }
 }
 
@@ -95,8 +114,11 @@ const actions = {
 }
 
 const getters = {
-  playdatasing(state) {
-    return state.play_list_data.length > 0 ? state.play_list_data[state.playdataIndex] : state.playdataing;
+  playdatasing(state) { //控制歌单中歌曲播放的状态
+    if (!!state.audiodata.id && state.song_catalogue.length > 0) {
+      return state.song_catalogue.find(v => v.id == state.audiodata.id);
+    }
+    return state.playdataing;
   },
   playidURL(state, getters) {
     return !!getters.playdatasing.id ? `http://music.163.com/song/media/outer/url?id=${getters.playdatasing.id}.mp3` : '';

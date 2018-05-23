@@ -60,7 +60,6 @@
     methods: {
       ...mapMutations([
         'playingfn',
-        'song_idfn',
       ]),
       playfn(item, index) {
         this.playingfn({playing: true, id: item.id})

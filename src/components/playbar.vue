@@ -3,8 +3,7 @@
     <flexbox :gutter="10">
       <flexbox-item span="40px">
         <div class="artistsImg">
-          <img v-if="isplay.bool && isplay.id==playdatasing.id" src="../../static/images/aal.png" alt="play" class="playImg">
-          <img v-else :src="`${playdatasing.album.blurPicUrl}?param=250y250`" :alt="playdatasing.name">
+          <img :src="`${playdatasing.album.blurPicUrl}?param=250y250`" :alt="playdatasing.name">
         </div>
       </flexbox-item>
       <flexbox-item>
@@ -30,16 +29,16 @@
     <div v-transfer-dom>
       <popup class="playbarPopup" v-model="modelShows" height="45%" @on-hide="popuphide">
         <group>
-          <cell title="列表循环">
-            <div slot="icon">
-              <!-- <img src="../../static/images/cm2_icn_loop@2x.png" alt=""> -->
+          <cell :title="`列表循环（${song_catalogue.length}）`">
+            <div slot="icon" class="playtype">
+              <img src="../../static/images/cm2_icn_loop@2x.png" alt="">
             </div>
           </cell>
           <cell v-for="(item, index) in song_catalogue" :key="item.id" :class="item.id==playdatasing.id?'active':''">
             <div slot="icon">
               <img src="../../static/images/aal.png" alt="play" class="playImg">
             </div>
-            <div slot="title">{{item.name}}</div>
+            <div slot="title" @click="playfn(item)">{{item.name}}</div>
             <div class="after-title" slot="after-title">
               -
               <span v-for="(ai, index) of item.artists" :key="ai.id+index">{{index==0?ai.name:'/'+ ai.name}}</span>
@@ -54,8 +53,7 @@
     <div class="audioBox">
       <audio :src="playidURL" ref="ading">
         <source :src="playidURL" type="audio/ogg" />
-        <source :src="playidURL" type="audio/mpeg" />
-        Your browser does not support the audio element.
+        <source :src="playidURL" type="audio/mpeg" /> Your browser does not support the audio element.
       </audio>
     </div>
   </div>
@@ -76,10 +74,6 @@
           alias: [],
           artists: []
         },
-        isplay: {
-          id: '',
-          bool: false
-        },
         modelShow: false,
         vnodeshow: true,
       }
@@ -99,26 +93,23 @@
     computed: {
       ...mapState([
         'song_catalogue',
-        // 'indexcat',
         'audiodata',
-        'song_id',
-        '',
       ]),
       ...mapGetters([
         'playidURL',
         'playdatasing',
       ]),
       modelShows: {
-        get(){
-          if(this.song_catalogue.length==0) return false;
+        get() {
+          if (this.song_catalogue.length == 0) return false;
           return this.modelShow
         },
-        set(){
+        set() {
 
         }
       }
     },
-    created(){
+    created() {
     },
     methods: {
       ...mapActions([
@@ -128,26 +119,26 @@
         'audiodatafn',
         'modify_songCatalogue',
         'changePlaylistfn',
+        'playingfn'
       ]),
       playlistfn() {
-        this.modelShow=!this.modelShow
+        this.modelShow = !this.modelShow
       },
       closePlaylist(index, id) {
-        this.modify_songCatalogue({index: index, id: id})
+        this.modify_songCatalogue({ index: index, id: id })
       },
       routelink() {
         this.$router.push('/detail')
       },
       playing() {
-        let _this=this;
+        let _this = this;
         let ading = this.$refs.ading;
-        console.log(ading);
-        if(ading.paused) {
+        if (ading.paused) {
+          this.audiodatafn({ playing: false })
           ading.play();
-          this.audiodatafn({playing: true})
         } else {
+          this.audiodatafn({ playing: true })
           ading.pause();
-          this.audiodatafn({playing: false})
         }
 
 
@@ -158,11 +149,9 @@
         //   var value = Math.round(Math.floor(this.currentTime) / Math.floor(this.duration) * 100, 0);
         //   console.log(this.currentTime);
         // }, false);
-
-
       },
-      popuphide(){
-        this.modelShow=false;
+      popuphide() {
+        this.modelShow = false;
       },
       transTime(time) {
         var duration = parseInt(time);
@@ -177,12 +166,15 @@
         if (sec.length == 1) sec = "0" + sec
         return minute + isM0 + sec;
       },
+      playfn(item) {
+        this.playingfn({ playing: true, id: item.id, type: 'popup' })
+      },
       routefn() {
         let path = this.$route.path;
         if (path == "/detail" || path == '/fm') {
-          this.vnodeshow=false;
+          this.vnodeshow = false;
         } else {
-          this.vnodeshow=true;
+          this.vnodeshow = true;
         }
       }
     },
@@ -261,6 +253,16 @@
       vertical-align: middle;
     }
   }
+  .playtype {
+    width: 20px;
+    height: 20px;
+    background-color: #ccc;
+
+    img {
+      display: block;
+      width: 100%;
+    }
+  }
 </style>
 <style lang="less">
   .playbarPopup {
@@ -276,7 +278,8 @@
       display: none;
     }
     .active {
-      .vux-label, .after-title {
+      .vux-label,
+      .after-title {
         color: red;
       }
       .playImg {
@@ -285,6 +288,12 @@
         width: 16px;
         height: 16px;
       }
+    }
+    .vux-no-group-title {
+      margin-top: 0;
+    }
+    svg {
+      display: block;
     }
   }
 </style>

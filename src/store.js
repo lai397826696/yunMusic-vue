@@ -33,8 +33,6 @@ const state = {
   },
   song_catalogue: [], //播放目录
   indexcat: 0, //正在播放歌曲的序列号
-  song_id: '', //正在播放歌曲的id
-
 }
 
 const mutations = {
@@ -54,15 +52,13 @@ const mutations = {
     state.song_catalogue = JSON.parse(JSON.stringify(state[key]));
     state.audiodata.id=state.song_catalogue[0].id
   },
-  playingfn(state, { id, playing }) {
-    //判断播放目录是否完整
-    if(state.song_catalogue.length!=state.songs.length) state.song_catalogue = JSON.parse(JSON.stringify(state.songs));
-    //播放时的曲目
+  playingfn(state, { key, id, playing, type }) { //点击歌曲播放
+    //如果播放目录有删减，把当前歌单配置给播放目录
+    if (type!=="popup") {
+      if(state.song_catalogue.length!=state.songs.length) state.song_catalogue = JSON.parse(JSON.stringify(state.songs));
+    }
     state.audiodata.id = id;
     state.audiodata.playing = playing;
-  },
-  song_idfn(state,{ id }) {
-    state.song_id = id;
   },
   modify_songCatalogue(state, { index, id }) {
     let length = state.song_catalogue.length;
@@ -114,7 +110,7 @@ const actions = {
 }
 
 const getters = {
-  playdatasing(state) { //控制歌单中歌曲播放的状态
+  playdatasing(state) { //正在播放的歌曲
     if (!!state.audiodata.id && state.song_catalogue.length > 0) {
       return state.song_catalogue.find(v => v.id == state.audiodata.id);
     }

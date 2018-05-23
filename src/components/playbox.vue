@@ -86,7 +86,9 @@
 </script>
 
 <style lang="less" scoped>
-  
+  .songs {
+    background-color: #fafafa;
+  }
   .checkbox_all {
     padding-top: 15px;
     padding-bottom: 15px;
@@ -114,7 +116,7 @@
     }
     .weui-cells {
       margin-top: 0;
-      background-color: #fbfbfb;
+      background-color: #fafafa;
     }
     .vux-cell-primary {
       padding-right: 15px;

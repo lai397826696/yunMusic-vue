@@ -1,53 +1,57 @@
 <template>
   <div class="videoBar" v-show="vnodeshow && !!playdatasing.id">
-    <flexbox :gutter="10">
-      <flexbox-item span="40px">
+    <div class="flex">
+      <div class="flex_hd">
         <div class="artistsImg">
           <img :src="`${playdatasing.album.blurPicUrl}?param=250y250`" :alt="playdatasing.name">
         </div>
-      </flexbox-item>
-      <flexbox-item>
-        <div @click="routelink">
+      </div>
+      <div class="flex_bd" @click="routelink">
+        <div class="trans">
           <div class="name">{{playdatasing.name}}
-            <i class="alias">{{playdatasing.alias.length>0?`(${playdatasing.alias[0]})`:''}}</i>
-          </div>
-          <div class="desc">
-            <span v-for="(ai, index) of playdatasing.artists" :key="ai.id+index">{{index==0?ai.name:'/'+ ai.name}}</span>-{{playdatasing.album.name}}
+            <em class="alias">{{playdatasing.alias.length>0?`(${playdatasing.alias[0]})`:''}}</em>
           </div>
         </div>
-      </flexbox-item>
-      <flexbox-item span="70px">
-        <div class="circleBox" @click="playing">
+        <div class="ellipsis desc">
+          <span v-for="(ai, index) of playdatasing.artists" :key="ai.id+index">{{index==0?ai.name:'/'+ ai.name}}</span>-{{playdatasing.album.name}}
+        </div>
+      </div>
+      <div class="flex_ft">
+        <div class="mg_lr5 circleBox" @click="playing">
           <x-circle :percent="percent" :stroke-width="7" :trail-width="7" trail-color="#4d4d4d" stroke-color="#d33a31">
             <i class="jiao" v-show="!audiodata.playing"></i>
             <i class="staricon" v-show="audiodata.playing"></i>
           </x-circle>
         </div>
         <span class="musicList" @click="playlistfn">列表</span>
-      </flexbox-item>
-    </flexbox>
+      </div>
+    </div>
     <div v-transfer-dom>
-      <popup class="playbarPopup" v-model="modelShows" height="45%" @on-hide="popuphide">
-        <group>
-          <cell :title="`列表循环（${song_catalogue.length}）`">
-            <div slot="icon" class="playtype">
-              <img src="../../static/images/cm2_icn_loop@2x.png" alt="">
+      <popup class="playbarPopup" v-model="modelShows" height="54%" @on-hide="popuphide">
+        <div class="flex vux-1px-b headlist">
+          <div class="flex_hd">
+            <img src="../../static/images/cm2_icn_loop@2x.png" alt="" class="playtype">
+          </div>
+          <div class="flex_bd">{{`列表循环（${song_catalogue.length}）`}}</div>
+          <div class="flex_ft">删除</div>
+        </div>
+        <div class="popupbox">
+          <div class="flex vux-1px-b" v-for="(item, index) in song_catalogue" :key="item.id">
+            <div class="flex_hd" v-show="item.id==playdatasing.id">
+              <img src="../../static/images/aal.png" alt="play" class="mg_r10 playImg">
             </div>
-          </cell>
-          <cell v-for="(item, index) in song_catalogue" :key="item.id" :class="item.id==playdatasing.id?'active':''">
-            <div slot="icon">
-              <img src="../../static/images/aal.png" alt="play" class="playImg">
+            <div class="flex_bd">
+              <p class="ellipsis" :class="item.id==playdatasing.id?'active':''" @click="playfn(item)">
+                <span class="name">{{item.name}}</span>
+                -
+                <em v-for="(ai, index) of item.artists" :key="ai.id+index">{{index==0?ai.name:'/'+ ai.name}}</em>
+              </p>
             </div>
-            <div slot="title" @click="playfn(item)">{{item.name}}</div>
-            <div class="after-title" slot="after-title">
-              -
-              <span v-for="(ai, index) of item.artists" :key="ai.id+index">{{index==0?ai.name:'/'+ ai.name}}</span>
-            </div>
-            <div @click="closePlaylist(index, item.id)">
+            <div class="flex_ft" @click="closePlaylist(index, item.id)">
               <x-icon class="icon" type="ios-close-empty" size="24"></x-icon>
             </div>
-          </cell>
-        </group>
+          </div>
+        </div>
       </popup>
     </div>
     <div class="audioBox">
@@ -60,7 +64,7 @@
 </template>
 
 <script>
-  import { Flexbox, FlexboxItem, XCircle, Cell, Group, Popup, TransferDom } from 'vux'
+  import { XCircle, Popup, TransferDom } from 'vux'
   import { mapActions, mapState, mapMutations, mapGetters } from 'vuex';
 
   export default {
@@ -79,13 +83,8 @@
       }
     },
     components: {
-      Flexbox,
-      FlexboxItem,
       XCircle,
-      Group,
-      Cell,
       Popup,
-      // Audio
     },
     directives: {
       TransferDom
@@ -191,10 +190,8 @@
     left: 0;
     right: 0;
     z-index: 2;
-    padding: 6px 10px;
-    // height: 44px;
     overflow: hidden;
-    background-color: rgba(255, 255, 255, 0.95);
+    background-color: #fff;
     .circleBox {
       float: left;
       width: 30px;
@@ -219,31 +216,45 @@
         border-right: 2px solid red;
       }
     }
-    .line {
-      display: inline-block;
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      border: 1px solid #000;
-    }
     .artistsImg {
+      margin-right: 6px;
       overflow: hidden;
+      width: 46px;
+      height: 46px;
       img {
         display: block;
         width: 100%;
       }
-      .playImg {
-        margin: 15px auto;
-        width: 24px;
-        height: 24px;
+    }
+    .trans {
+      position: relative;
+      height: 0.293333rem;
+      line-height: 0.293333rem;
+      overflow: hidden;
+    }
+    .name {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 1;
+      word-break: break-all;
+      // width: 105%;
+      // animation: line 8s linear infinite;
+    }
+    @keyframes line {
+      0% {
+        left: 0;
+      }
+      100% {
+        left: -200%;
       }
     }
-    .name,
     .desc {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      font-size: 0.16rem;
+      color: #666;
     }
+
     .musicList {
       float: right;
       height: 30px;
@@ -253,47 +264,77 @@
       vertical-align: middle;
     }
   }
-  .playtype {
-    width: 20px;
-    height: 20px;
-    background-color: #ccc;
 
-    img {
+  // 弹窗歌单列表
+  .popupbox {
+    position: absolute;
+    top: .586667rem;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 0;
+    background-color: #fcfcfc;
+    transition-property: transform;
+    transition-duration: 300ms;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+    .flex {
+      padding-top: .133333rem;
+      padding-bottom: .133333rem;
+    }
+    .playImg {
       display: block;
-      width: 100%;
+      width: 0.266667rem;
+      height: 0.266667rem;
+    }
+    .name {
+      color: #000;
+    }
+    em {
+      font-size: 0.16rem;
+      color: #666;
+    }
+    .icon {
+      color: #666;
+    }
+    .active {
+      color: red;
+      .name,
+      em {
+        color: red;
+      }
+    }
+  }
+  .headlist {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+    padding-top: .133333rem;
+    padding-bottom: .133333rem;
+    background-color: #fcfcfc;
+    
+    .flex_bd {
+      line-height: .32rem;
+    }
+    .playtype {
+      display: block;
+      margin-right: 5px;
+      width: 20px;
+      height: 20px;
+      background-color: #ccc;
     }
   }
 </style>
 <style lang="less">
   .playbarPopup {
-    .vux-label {
-      float: left;
-    }
-    .after-title {
-      display: inline-block;
-      font-size: 14px;
-      color: #999;
-    }
-    .playImg {
-      display: none;
-    }
-    .active {
-      .vux-label,
-      .after-title {
-        color: red;
-      }
-      .playImg {
-        display: block;
-        margin-right: 4px;
-        width: 16px;
-        height: 16px;
-      }
-    }
-    .vux-no-group-title {
-      margin-top: 0;
-    }
     svg {
       display: block;
     }
+  }
+  .playbarPopup.vux-popup-dialog {
+    border-radius: .106667rem .106667rem 0 0;
+    background: #fcfcfc;
   }
 </style>

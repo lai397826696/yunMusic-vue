@@ -4,6 +4,9 @@ body, textarea, input, button, select {
     color: #333;
     outline: 0;
 }
+em {
+    font-style: normal;
+}
 
 .clear {
     *zoom: 1;
@@ -33,11 +36,11 @@ body, textarea, input, button, select {
 .mg5 {
     margin: .066667rem;
 }
-.mgs_tb5 {
+.mg_tb5 {
     margin-top: .066667rem;
     margin-bottom: .066667rem;
 }
-.mgs_lr5 {
+.mg_lr5 {
     margin-left: .066667rem;
     margin-right: .066667rem;
 }
@@ -128,4 +131,39 @@ body, textarea, input, button, select {
     padding: .4rem 0;
     font-size: .266667rem;
     text-align: center;
+}
+
+/*layout start*/
+.flex {
+    display: flex;
+    align-items: center;
+    padding: .106667rem;
+    font-size: .186667rem;
+}
+.flex .flex {
+    padding: 0;
+}
+.flex.justify-content {
+    justify-content: space-between;
+}
+.flex.align-items {
+    align-items: center;
+}
+
+
+.flex_hd,
+.flex_ft {
+    overflow: hidden;
+}
+.flex_bd {
+    flex: auto;
+    width: 0;
+    overflow: hidden;
+}
+/*layout end*/
+
+.ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }

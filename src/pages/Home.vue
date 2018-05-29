@@ -7,7 +7,7 @@
     </tab>
     <swiper auto loop :interval="2000" :aspect-ratio="420/1080" class="text-scroll" :show-desc-mask="false" dots-position="center">
       <swiper-item v-for="item in banners" :key="item.encodeId">
-        <img :src="item.pic" :alt="item.typeTitle" class="autoImage">
+        <img :src="item.picUrl" :alt="item.typeTitle" class="autoImage">
       </swiper-item>
     </swiper>
     <flexbox class="myself vux-1px-b" :gutter="0">
@@ -125,12 +125,14 @@
         'dj',
       ]),
       resources() {
+        let arr=[];
         this.resource.forEach(v => {
-          if (!v.hasOwnProperty('playCount')) {
-            v['playCount'] = v.playcount
+          if (!!v) {
+            if(!v.playCount) v['playCount'] = v.playcount
+            arr.push(v)
           }
         })
-        return this.resource;
+        return arr;
       }
     },
     methods: {

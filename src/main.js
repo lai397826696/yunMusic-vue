@@ -5,14 +5,17 @@ import router from './router'
 import store from './store';
 import FastClick from 'fastclick'
 import App from './App'
-import { AjaxPlugin } from 'vux'
+import { AjaxPlugin, ConfirmPlugin, AlertPlugin } from 'vux'
 import './assets/js/dpr';
 
-Vue.use(AjaxPlugin)
-
+Vue.config.productionTip = false
 FastClick.attach(document.body)
 
-Vue.config.productionTip = false
+Vue.use(AjaxPlugin)
+Vue.use(ConfirmPlugin)
+Vue.use(AlertPlugin)
+Vue.http.defaults.baseURL = 'http://localhost:3000';
+
 
 /* eslint-disable no-new */
 new Vue({

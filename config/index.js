@@ -11,12 +11,7 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable : {
-      proxy: {
-        '/maps': { //将www.exaple.com印射为/apis
-          target: 'https://api.map.baidu.com', // 接口域名
-          changeOrigin: true, //是否跨域
-        }
-      }
+
     },
 
     // Various Dev Server settings

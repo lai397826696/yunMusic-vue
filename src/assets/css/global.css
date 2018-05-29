@@ -32,6 +32,10 @@ em {
     float: right;
 }
 
+.v-transfer-dom .vux-popup-dialog {
+    background-color: #fff;
+}
+
 /*margin, padding  start*/
 .mg5 {
     margin: .066667rem;

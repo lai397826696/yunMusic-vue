@@ -29,11 +29,13 @@
     <div v-transfer-dom>
       <popup class="playbarPopup" v-model="modelShows" height="54%" @on-hide="popuphide">
         <div class="flex vux-1px-b headlist">
-          <div class="flex_hd">
-            <img src="../../static/images/cm2_icn_loop@2x.png" alt="" class="playtype">
+          <div class="flex_hd" @click="playmodefn">
+            <img src="../../static/images/cm2_icn_loop@2x.png" alt="" class="playtype">{{`${playmode.name}（${song_catalogue.length}）`}}
           </div>
-          <div class="flex_bd">{{`列表循环（${song_catalogue.length}）`}}</div>
-          <div class="flex_ft">删除</div>
+          <div class="flex_bd collection">
+            <span @click="collection">收藏全部</span>
+          </div>
+          <div class="flex_ft" @click="empty">清空</div>
         </div>
         <div class="popupbox">
           <div class="flex vux-1px-b" v-for="(item, index) in song_catalogue" :key="item.id">
@@ -53,6 +55,7 @@
           </div>
         </div>
       </popup>
+      <Actionsheet v-model="actionShow" theme="android" :menus="menu7" @on-click-menu="clickmenu"></Actionsheet>
     </div>
     <div class="audioBox">
       <audio :src="playidURL" ref="ading">
@@ -64,7 +67,7 @@
 </template>
 
 <script>
-  import { XCircle, Popup, TransferDom } from 'vux'
+  import { XCircle, Popup, TransferDom, Actionsheet } from 'vux'
   import { mapActions, mapState, mapMutations, mapGetters } from 'vuex';
 
   export default {
@@ -78,13 +81,20 @@
           alias: [],
           artists: []
         },
-        modelShow: false,
         vnodeshow: true,
+        modelShow: false,
+        actionShow: false,
+        menu7: {
+          menu1: '北京烤鸭',
+          menu2: '陕西油泼面',
+          menu3: '西安肉夹馍'
+        },
       }
     },
     components: {
       XCircle,
       Popup,
+      Actionsheet,
     },
     directives: {
       TransferDom
@@ -93,6 +103,7 @@
       ...mapState([
         'song_catalogue',
         'audiodata',
+        'playmode'
       ]),
       ...mapGetters([
         'playidURL',
@@ -108,23 +119,23 @@
         }
       }
     },
-    created() {
-    },
     methods: {
       ...mapActions([
         'recommendapi',
       ]),
       ...mapMutations([
-        'audiodatafn',
-        'modify_songCatalogue',
-        'changePlaylistfn',
-        'playingfn'
+        'set_audiodata',
+        'remove_songCatalogue',
+        'set_changePlaylist',
+        'set_playing',
+        'set_playmode',
+        'empty_songCatalogue'
       ]),
       playlistfn() {
         this.modelShow = !this.modelShow
       },
       closePlaylist(index, id) {
-        this.modify_songCatalogue({ index: index, id: id })
+        this.remove_songCatalogue({ index: index, id: id })
       },
       routelink() {
         this.$router.push('/detail')
@@ -133,10 +144,10 @@
         let _this = this;
         let ading = this.$refs.ading;
         if (ading.paused) {
-          this.audiodatafn({ playing: false })
+          this.set_audiodata({ playing: false })
           ading.play();
         } else {
-          this.audiodatafn({ playing: true })
+          this.set_audiodata({ playing: true })
           ading.pause();
         }
 
@@ -166,7 +177,33 @@
         return minute + isM0 + sec;
       },
       playfn(item) {
-        this.playingfn({ playing: true, id: item.id, type: 'popup' })
+        this.set_playing({ playing: true, id: item.id, type: 'popup' })
+      },
+      playmodefn() {
+        console.log('切换播放模式');
+        this.set_playmode()
+      },
+      collection() {
+        let uid=JSON.parse(localStorage.getItem('userinfo')).profile.userId
+        this.$http.get(`/user/playlist?uid=${uid}`).then(res=>{
+          console.log(res);
+          if(res.data.code==200){}
+        })
+        this.actionShow=!this.actionShow;
+      },
+      clickmenu(key,item){
+        console.log(key);
+        console.log(item);
+      },
+      empty() {
+        let _this = this;
+        this.$vux.confirm.show({
+          content: '确定要清空播放列表？',
+          onConfirm(val) {
+            console.log(val);
+            _this.empty_songCatalogue();
+          }
+        })
       },
       routefn() {
         let path = this.$route.path;
@@ -268,7 +305,7 @@
   // 弹窗歌单列表
   .popupbox {
     position: absolute;
-    top: .586667rem;
+    top: 0.586667rem;
     bottom: 0;
     left: 0;
     right: 0;
@@ -279,8 +316,8 @@
     overflow-y: scroll;
     -webkit-overflow-scrolling: touch;
     .flex {
-      padding-top: .133333rem;
-      padding-bottom: .133333rem;
+      padding-top: 0.133333rem;
+      padding-bottom: 0.133333rem;
     }
     .playImg {
       display: block;
@@ -311,20 +348,33 @@
     left: 0;
     right: 0;
     z-index: 1;
-    padding-top: .133333rem;
-    padding-bottom: .133333rem;
+    padding-top: 0.133333rem;
+    padding-bottom: 0.133333rem;
     background-color: #fcfcfc;
-    
+
     .flex_bd {
-      line-height: .32rem;
+      line-height: 0.32rem;
     }
     .playtype {
-      display: block;
+      display: inline-block;
+      vertical-align: middle;
       margin-right: 5px;
       width: 20px;
       height: 20px;
       background-color: #ccc;
     }
+    .collection {
+      margin-right: 10px;
+      text-align: right;
+      span {
+        padding-right: 10px;
+        border-right: 1px solid #eaeaea;
+      }
+    }
+  }
+
+  .vux-1px-b:after {
+    left: 10px;
   }
 </style>
 <style lang="less">
@@ -334,7 +384,7 @@
     }
   }
   .playbarPopup.vux-popup-dialog {
-    border-radius: .106667rem .106667rem 0 0;
+    border-radius: 0.106667rem 0.106667rem 0 0;
     background: #fcfcfc;
   }
 </style>

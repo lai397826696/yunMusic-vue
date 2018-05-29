@@ -1,10 +1,13 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios';
+import { AjaxPlugin } from 'vux'
 Vue.use(Vuex)
+Vue.use(AjaxPlugin)
 
-axios.defaults.baseURL = 'http://localhost:3333';
-axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+Vue.http.defaults.baseURL = 'http://localhost:3000';
+axios.defaults.baseURL = 'http://localhost:3000';
+// axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
 const local = (arr = '') => {
 	let star = window.localStorage.getItem("userinfo");
@@ -33,6 +36,11 @@ const state = {
   },
   song_catalogue: [], //播放目录
   indexcat: 0, //正在播放歌曲的序列号
+  playmode: { //播放模式
+    key: 0,
+    name: '列表循环'
+  },
+  playmodeIndex: 0
 }
 
 const mutations = {
@@ -44,15 +52,15 @@ const mutations = {
     state.sole = sole;
     state.dj = dj;
   },
-  recommendfn(state, { songs }) {
+  set_recommend(state, { songs }) {
     state.songs = songs
     state.song_catalogue = JSON.parse(JSON.stringify(state.songs));
   },
-  changePlaylistfn(state, {key}) { //播放全部
+  set_changePlaylist(state, {key}) { //播放全部
     state.song_catalogue = JSON.parse(JSON.stringify(state[key]));
     state.audiodata.id=state.song_catalogue[0].id
   },
-  playingfn(state, { key, id, playing, type }) { //点击歌曲播放
+  set_playing(state, { key, id, playing, type }) { //点击歌曲播放
     //如果播放目录有删减，把当前歌单配置给播放目录
     if (type!=="popup") {
       if(state.song_catalogue.length!=state.songs.length) state.song_catalogue = JSON.parse(JSON.stringify(state.songs));
@@ -60,7 +68,7 @@ const mutations = {
     state.audiodata.id = id;
     state.audiodata.playing = playing;
   },
-  modify_songCatalogue(state, { index, id }) {
+  remove_songCatalogue(state, { index, id }) {
     let length = state.song_catalogue.length;
     if(length==1) state.audiodata.id=''
     for (let i = 0; i < length; i++) {
@@ -75,8 +83,30 @@ const mutations = {
     }
     state.song_catalogue.splice(index, 1);
   },
-  audiodatafn(state, { playing }) {
+  set_audiodata(state, { playing }) {
     state.audiodata.playing = playing;
+  },
+  set_playmode(state) { //设置播放模式
+    let type = [
+      {
+        key: 0,
+        name: '列表循环'
+      },
+      {
+        key: 1,
+        name: '随机播放'
+      },
+      {
+        key: 2,
+        name: '单曲循环'
+      }
+    ]
+    if (state.playmodeIndex == 2) state.playmodeIndex = -1
+    state.playmodeIndex++;
+    state.playmode=type[state.playmodeIndex]
+  },
+  empty_songCatalogue(state) {
+    state.song_catalogue = [];
   }
 }
 
@@ -104,7 +134,7 @@ const actions = {
   },
   recommendapi({ commit }) {
     axios.get('/recommend/songs', { withCredentials: true }).then(res => {
-      commit('recommendfn',{ songs: res.data.recommend })
+      commit('set_recommend',{ songs: res.data.recommend })
     })
   }
 }

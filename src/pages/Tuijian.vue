@@ -2,7 +2,7 @@
   <div class="tuijian" :class="{tj_bottom: !!audiodata.id}">
     <x-header :left-options="{backText: ''}" :right-options="{showMore: true}">每日歌曲推荐</x-header>
     <div class="bannBig" v-if="!!bigImg">
-      <img :src="bigImg.pic" :alt="bigImg.typeTitle">
+      <img :src="bigImg.picUrl" :alt="bigImg.typeTitle">
       <span class="tag">{{bigImg.typeTitle}}</span>
       <div class="tips">根据你的音乐口味生成,每天6:00更新</div>
       <div class="bg"></div>

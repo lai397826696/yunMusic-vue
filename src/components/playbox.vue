@@ -1,47 +1,50 @@
 <template>
   <div class="songs">
-    <group class="allbox">
-      <cell-box class="checkbox_all" @click.native="allPlay">
+    <div class="flex allbox">
+      <div class="flex_hd">
         <img src="../../static/images/pl-playall.png" alt="play" class="allplayIcon">
-        <div class="flex_bd">
-          <p class="name">播放全部</p>
-        </div>
-        <div class="checkbox" @click.stop="checkboxfn">多选</div>
-      </cell-box>
-    </group>
-      <playlist :datas="songData"></playlist>
+      </div>
+      <div class="flex_bd">
+        <p class="name" @click="allPlay">播放全部</p>
+      </div>
+      <div class="flex_ft checkbox" @click="checkboxfn">多选</div>
+    </div>
+    <playlist :datas="songData"></playlist>
     <div v-transfer-dom>
-      <popup class="songPopup" v-model="show" height="45%">
-        <group>
-          <cell title="歌曲：把酒倒满"></cell>
-          <cell title="下一首播放"></cell>
-          <cell title="收藏到歌单"></cell>
-          <cell title="下载"></cell>
-          <cell title="评论(1111)"></cell>
-          <cell title="歌手：张张"></cell>
-          <cell title="专辑：一一一"></cell>
-          <cell title="查看视频"></cell>
-          <cell title="不感兴趣"></cell>
-        </group>
+      <popup class="songPopup" v-model="show" height="100%">
+        <popup-header left-text="返回" right-text="全选" title="" :show-bottom-border="false" @on-click-left="show = false" @on-click-right="show = false"></popup-header>
+        <div class="listDetail">
+          <div class="flex vux-1px-b" v-for="item in song_catalogue" :key="item.id">
+            <div class="flex_hd">
+              <div class="mg_r10">
+                
+              </div>
+            </div>
+            <div class="flex_bd">
+              <p class="ellipsis name">{{item.name}}
+                <em class="alias">{{item.alias.length>0?`(${item.alias[0]})`:''}}</em>
+              </p>
+              <p class="ellipsis desc">
+                <span v-for="(ai, index) of item.artists" :key="ai.id+index">{{index==0?ai.name:'/'+ ai.name}}</span>-{{item.album.name}}
+              </p>
+            </div>
+          </div>
+        </div>
       </popup>
     </div>
   </div>
 </template>
 
 <script>
-  import { Cell, CellBox, Group, Popup, TransferDom } from 'vux'
+  import { Popup, TransferDom, PopupHeader, Checker, CheckerItem } from 'vux'
   import playlist from '../components/playlist.vue';
-  import {mapMutations} from 'vuex';
+  import { mapMutations, mapState } from 'vuex';
 
   export default {
     name: 'list',
     data() {
       return {
-        show: false,
-        isplay: {
-          id: '',
-          bool: false
-        }
+        show: false
       }
     },
     props: {
@@ -53,34 +56,37 @@
       }
     },
     components: {
-      Group,
-      Cell,
       Popup,
-      CellBox,
-      playlist
+      playlist,
+      PopupHeader,
+      Checker,
+      CheckerItem
     },
     directives: {
       TransferDom
     },
+    created() {
+      console.log(this.playdatasing);
+      // console.log(this.song_catalogue);
+    },
+    computed: {
+      ...mapState([
+        'song_catalogue',
+        'playdatasing'
+      ])
+    },
     methods: {
       ...mapMutations([
-        'changePlaylistfn'
+        'set_changePlaylist'
       ]),
       allPlay() {
         this.$router.push('/detail')
-        this.changePlaylistfn({key: 'songs'})
+        this.set_changePlaylist({ key: 'songs' })
       },
       checkboxfn() {
+        this.show = !this.show
         console.log(222);
       },
-      play(item) {
-        console.log(item);
-        this.isplay.bool = true;
-        this.isplay.id = item.id;
-      },
-      detailsfn() {
-        this.show = true;
-      }
     }
   }
 </script>
@@ -88,57 +94,14 @@
 <style lang="less" scoped>
   .songs {
     background-color: #fafafa;
-  }
-  .checkbox_all {
-    padding-top: 15px;
-    padding-bottom: 15px;
-    .checkbox {
-      font-size: 14px;
-    }
     .allplayIcon {
       margin-right: 10px;
       vertical-align: middle;
       width: 24px;
       height: 24px;
     }
-  }
-
-  .flex_bd {
-    flex: 1;
-    padding-right: 10px;
-    overflow: hidden;
-  }
-</style>
-<style lang="less">
-  .songs {
-    .allbox {
-      margin-bottom: -1px;
-    }
-    .weui-cells {
-      margin-top: 0;
-      background-color: #fafafa;
-    }
-    .vux-cell-primary {
-      padding-right: 15px;
-      overflow: hidden;
-      .vux-label {
-        line-height: 26px;
-        font-size: 16px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-      .vux-label-desc {
-        line-height: 22px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-    }
-  }
-  .songPopup {
-    .weui-cells {
-      margin-top: 5px;
+    .checkbox {
+      font-size: 14px;
     }
   }
 </style>

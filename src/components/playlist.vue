@@ -16,9 +16,7 @@
         </p>
       </div>
       <div class="flex_ft">
-        <div class="icn_more" @click.stop="detailsfn(item)">
-          <img src="../../static/images/cm2_play_icn_more@2x.png" alt="more">
-        </div>
+        <i class="iconfont icon-more" @click.stop="detailsfn(item)"></i>
       </div>
     </div>
     <div v-transfer-dom>
@@ -46,7 +44,9 @@
           </div>
           <div class="flex">
             <div class="flex_hd"></div>
-            <div class="flex_bd">歌手：<span v-for="(ai, index) of detail.artists" :key="ai.id+index">{{index==0?ai.name:'/'+ ai.name}}</span></div>
+            <div class="flex_bd">歌手：
+              <span v-for="(ai, index) of detail.artists" :key="ai.id+index">{{index==0?ai.name:'/'+ ai.name}}</span>
+            </div>
           </div>
           <div class="flex">
             <div class="flex_hd"></div>
@@ -114,25 +114,17 @@
         this.set_playing({ playing: true, id: item.id })
       },
       detailsfn(item) {
-        console.log(item);
         this.show = true;
-        if(!!this.detail.id && this.detail.id==item.id) return false;
-        this.detail=item;
-        // this.$http.get('/song/detail',{
-        //   params: {
-        //     ids: item.id
-        //   }
-        // }).then(res=>{
-        //   console.log(res.data);
-        // })
-        this.$http.get('/comment/music',{
+        if (!!this.detail.id && this.detail.id == item.id) return false;
+        this.detail = item;
+        this.$http.get('/comment/music', {
           params: {
             id: item.id,
             limit: 1
           }
-        }).then(res=>{
+        }).then(res => {
           console.log(res);
-          if(res.data.code==200) this.comment=res.data
+          if (res.data.code == 200) this.comment = res.data
         })
       }
     }
@@ -175,14 +167,11 @@
       white-space: nowrap;
       overflow: hidden;
     }
-    .icn_more {
-      width: 20px;
-      height: 20px;
-      background-color: #ff5c5c;
-      img {
-        display: block;
-        width: 100%;
-      }
+
+    .icon-more {
+      padding: 5px 0 5px 5px;
+      font-size: 16px;
+      color: #999;
     }
   }
 

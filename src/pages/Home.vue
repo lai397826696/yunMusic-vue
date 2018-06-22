@@ -13,25 +13,33 @@
     <flexbox class="myself vux-1px-b" :gutter="0">
       <flexbox-item>
         <div class="list" @click="funfm('/fm')">
-          <span class="iconBox"></span>
+          <span class="iconBox">
+            <i class="iconfont icon-FM"></i>
+          </span>
           <p class="text">私人FM</p>
         </div>
       </flexbox-item>
       <flexbox-item>
         <div class="list" @click="funfm('/tuijian')">
-          <span class="iconBox"></span>
+          <span class="iconBox">
+            <i class="iconfont icon-rili2"></i>
+          </span>
           <p class="text">每日推荐</p>
         </div>
       </flexbox-item>
       <flexbox-item>
         <div class="list">
-          <span class="iconBox"></span>
+          <span class="iconBox">
+            <i class="iconfont icon-gedan"></i>
+          </span>
           <p class="text">歌单</p>
         </div>
       </flexbox-item>
       <flexbox-item>
         <div class="list">
-          <span class="iconBox"></span>
+          <span class="iconBox">
+            <i class="iconfont icon-paihangbang"></i>
+          </span>
           <p class="text">排行榜</p>
         </div>
       </flexbox-item>
@@ -176,9 +184,13 @@
         display: block;
         width: 50px;
         height: 50px;
-        line-height: 30px;
+        line-height: 50px;
         border: 1px solid #f93434;
         border-radius: 50%;
+        color: #f93434;
+      }
+      .iconfont {
+        font-size: 30px;
       }
       .text {
         margin-top: 7px;

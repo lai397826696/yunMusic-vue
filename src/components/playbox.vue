@@ -2,23 +2,23 @@
   <div class="songs">
     <div class="flex allbox">
       <div class="flex_hd">
-        <img src="../../static/images/pl-playall.png" alt="play" class="allplayIcon">
+        <i class="iconfont icon-bofang"></i>
       </div>
       <div class="flex_bd">
         <p class="name" @click="allPlay">播放全部</p>
       </div>
-      <div class="flex_ft checkbox" @click="checkboxfn">多选</div>
+      <div class="flex_ft checkbox" @click="checkboxfn">
+        <i class="iconfont icon-more1"></i>多选
+      </div>
     </div>
     <playlist :datas="songData"></playlist>
     <div v-transfer-dom>
       <popup class="songPopup" v-model="show" height="100%">
         <popup-header left-text="返回" right-text="全选" title="" :show-bottom-border="false" @on-click-left="show = false" @on-click-right="show = false"></popup-header>
         <div class="listDetail">
-          <div class="flex vux-1px-b" v-for="item in song_catalogue" :key="item.id">
-            <div class="flex_hd">
-              <div class="mg_r10">
-                
-              </div>
+          <div class="flex vux-1px-b" v-for="item in song_catalogue" :key="item.id" @click="selectfn(item)">
+            <div class="flex_hd mg_r10">
+              <i class="iconfont icon-checkbox-unchecked" :class="{'icon-checkbox-checked': item.check}"></i>
             </div>
             <div class="flex_bd">
               <p class="ellipsis name">{{item.name}}
@@ -87,21 +87,30 @@
         this.show = !this.show
         console.log(222);
       },
+      selectfn(item){
+        console.log(item);
+        item.check=true
+      }
     }
   }
 </script>
 
 <style lang="less" scoped>
+  .iconfont {
+    font-size: 20px;
+  }
   .songs {
     background-color: #fafafa;
-    .allplayIcon {
-      margin-right: 10px;
-      vertical-align: middle;
-      width: 24px;
-      height: 24px;
+    .icon-bofang {
+      margin-right: 5px;
     }
     .checkbox {
       font-size: 14px;
     }
+  }
+  .icon-more1 {
+    margin-right: 5px;
+    vertical-align: middle;
+    font-size: 18px;
   }
 </style>

@@ -23,24 +23,28 @@
             <i class="staricon" v-show="audiodata.playing"></i>
           </x-circle>
         </div>
-        <span class="musicList" @click="playlistfn">列表</span>
+        <span class="musicList" @click="playlistfn">
+          <i class="iconfont icon-liebiao"></i>
+        </span>
       </div>
     </div>
     <div v-transfer-dom>
       <popup class="playbarPopup" v-model="modelShows" height="54%" @on-hide="popuphide">
         <div class="flex vux-1px-b headlist">
           <div class="flex_hd" @click="playmodefn">
-            <img src="../../static/images/cm2_icn_loop@2x.png" alt="" class="playtype">{{`${playmode.name}（${song_catalogue.length}）`}}
+            <i class="iconfont" :class="playmode.class"></i>
+            {{`${playmode.name}（${song_catalogue.length}）`}}
           </div>
           <div class="flex_bd collection">
-            <span @click="collection">收藏全部</span>
+            <span @click="collection"><i class="iconfont icon-shoucang"></i>收藏全部</span>
           </div>
-          <div class="flex_ft" @click="empty">清空</div>
+          <div class="flex_ft" @click="empty"><i class="iconfont icon-icon-shanchu"></i></div>
         </div>
         <div class="popupbox">
           <div class="flex vux-1px-b" v-for="(item, index) in song_catalogue" :key="item.id">
             <div class="flex_hd" v-show="item.id==playdatasing.id">
-              <img src="../../static/images/aal.png" alt="play" class="mg_r10 playImg">
+              <i class="iconfont icon-shengyin"></i>
+              <!-- <img src="../../static/images/aal.png" alt="play" class="mg_r10 playImg"> -->
             </div>
             <div class="flex_bd">
               <p class="ellipsis" :class="item.id==playdatasing.id?'active':''" @click="playfn(item)">
@@ -319,10 +323,13 @@
       padding-top: 0.133333rem;
       padding-bottom: 0.133333rem;
     }
-    .playImg {
-      display: block;
-      width: 0.266667rem;
-      height: 0.266667rem;
+    // .playImg {
+    //   display: block;
+    //   width: 0.266667rem;
+    //   height: 0.266667rem;
+    // }
+    .icon-shengyin {
+      color: red;
     }
     .name {
       color: #000;
@@ -372,7 +379,12 @@
       }
     }
   }
-
+  .iconfont {
+    margin-left: 10px;
+    font-size: 26px;
+    color: #666;
+    vertical-align: middle;
+  }
   .vux-1px-b:after {
     left: 10px;
   }

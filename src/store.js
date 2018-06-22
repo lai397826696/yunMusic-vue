@@ -3,11 +3,8 @@ import Vuex from 'vuex'
 import axios from 'axios';
 import { AjaxPlugin } from 'vux'
 Vue.use(Vuex)
-Vue.use(AjaxPlugin)
 
-Vue.http.defaults.baseURL = 'http://localhost:3000';
 axios.defaults.baseURL = 'http://localhost:3000';
-// axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
 const local = (arr = '') => {
 	let star = window.localStorage.getItem("userinfo");
@@ -22,7 +19,6 @@ const state = {
   sole: [], //独家放送
   dj: [], //dj
   songs: [], //推荐音乐
-  play_list_data: [], //播放目录
   playdataing: {
     album: {},
     alias: [],
@@ -38,6 +34,7 @@ const state = {
   indexcat: 0, //正在播放歌曲的序列号
   playmode: { //播放模式
     key: 0,
+    class: 'icon-liebiaoxunhuan',
     name: '列表循环'
   },
   playmodeIndex: 0
@@ -90,15 +87,18 @@ const mutations = {
     let type = [
       {
         key: 0,
-        name: '列表循环'
+        name: '列表循环',
+        class: 'icon-liebiaoxunhuan'
       },
       {
         key: 1,
-        name: '随机播放'
+        name: '随机播放',
+        class: 'icon-suijibofang'
       },
       {
         key: 2,
-        name: '单曲循环'
+        name: '单曲循环',
+        class: 'icon-danquxunhuan'
       }
     ]
     if (state.playmodeIndex == 2) state.playmodeIndex = -1
@@ -119,9 +119,6 @@ const actions = {
       axios.get('/personalized/newsong'),
       axios.get('/personalized/privatecontent'),
       axios.get('/dj/recommend', { withCredentials: true }),
-      // axios.get('/program/recommend'),
-      // axios.get('/personalized/djprogram'),
-      // axios.get('/personal_fm', { withCredentials: true, params: { timestamp: new Date().getTime() } }),
     ]).then(axios.spread((res1, res2, res3, res4, res5, res6) => {
       commit('indexfn', {
         banners: res1.data.banners,

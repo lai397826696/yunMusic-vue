@@ -66,8 +66,7 @@
 </script>
 
 <style lang="less" scoped>
-  .tuijian {
-  }
+  
   .tj_bottom {
     margin-bottom: 55px;
   }

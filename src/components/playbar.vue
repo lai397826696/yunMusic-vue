@@ -1,26 +1,26 @@
 <template>
-  <div class="videoBar" v-show="vnodeshow && !!playdatasing.id">
+  <div class="videoBar" v-show="vnodeshow && !!audioPlaying.id">
     <div class="flex">
       <div class="flex_hd">
         <div class="artistsImg">
-          <img :src="`${playdatasing.album.blurPicUrl}?param=250y250`" :alt="playdatasing.name">
+          <img :src="`${audioPlaying.album.blurPicUrl}?param=250y250`" :alt="audioPlaying.name">
         </div>
       </div>
       <div class="flex_bd" @click="routelink">
         <div class="trans">
-          <div class="name">{{playdatasing.name}}
-            <em class="alias">{{playdatasing.alias.length>0?`(${playdatasing.alias[0]})`:''}}</em>
+          <div class="name">{{audioPlaying.name}}
+            <em class="alias">{{audioPlaying.alias.length>0?`(${audioPlaying.alias[0]})`:''}}</em>
           </div>
         </div>
         <div class="ellipsis desc">
-          <span v-for="(ai, index) of playdatasing.artists" :key="ai.id+index">{{index==0?ai.name:'/'+ ai.name}}</span>-{{playdatasing.album.name}}
+          <span v-for="(ai, index) of audioPlaying.artists" :key="ai.id+index">{{index==0?ai.name:'/'+ ai.name}}</span>-{{audioPlaying.album.name}}
         </div>
       </div>
       <div class="flex_ft">
-        <div class="mg_lr5 circleBox" @click="playing">
+        <div class="mg_lr5 circleBox" @click="playingfn">
           <x-circle :percent="percent" :stroke-width="7" :trail-width="7" trail-color="#4d4d4d" stroke-color="#d33a31">
-            <i class="jiao" v-show="!audiodata.playing"></i>
-            <i class="staricon" v-show="audiodata.playing"></i>
+            <i class="jiao" v-show="!audioPlaying.playing"></i>
+            <i class="staricon" v-show="audioPlaying.playing"></i>
           </x-circle>
         </div>
         <span class="musicList" @click="playlistfn">
@@ -29,32 +29,31 @@
       </div>
     </div>
     <div v-transfer-dom>
-      <popup class="playbarPopup" v-model="modelShows" height="54%" @on-hide="popuphide">
+      <popup class="playbarPopup" v-model="modelShows" height="52%" @on-hide="popuphide">
         <div class="flex vux-1px-b headlist">
           <div class="flex_hd" @click="playmodefn">
             <i class="iconfont" :class="playmode.class"></i>
             {{`${playmode.name}（${song_catalogue.length}）`}}
           </div>
           <div class="flex_bd collection">
-            <span @click="collection"><i class="iconfont icon-shoucang"></i>收藏全部</span>
+            <span @click="collection"><i class="iconfont icon-shoucang mg_r5"></i>收藏全部</span>
           </div>
           <div class="flex_ft" @click="empty"><i class="iconfont icon-icon-shanchu"></i></div>
         </div>
-        <div class="popupbox">
+        <div class="popupbox" @scroll="scrollpoput" ref="popupss">
           <div class="flex vux-1px-b" v-for="(item, index) in song_catalogue" :key="item.id">
-            <div class="flex_hd" v-show="item.id==playdatasing.id">
+            <div class="flex_hd" v-show="item.id==audioPlaying.id">
               <i class="iconfont icon-shengyin"></i>
-              <!-- <img src="../../static/images/aal.png" alt="play" class="mg_r10 playImg"> -->
             </div>
             <div class="flex_bd">
-              <p class="ellipsis" :class="item.id==playdatasing.id?'active':''" @click="playfn(item)">
+              <p class="ellipsis" :class="{'active':item.id==audioPlaying.id}" @click="playfn(item)">
                 <span class="name">{{item.name}}</span>
                 -
                 <em v-for="(ai, index) of item.artists" :key="ai.id+index">{{index==0?ai.name:'/'+ ai.name}}</em>
               </p>
             </div>
-            <div class="flex_ft" @click="closePlaylist(index, item.id)">
-              <x-icon class="icon" type="ios-close-empty" size="24"></x-icon>
+            <div class="flex_ft" @click="removePlay(index, item.id)">
+              <i class="iconfont icon-guanbi mg_r5"></i>
             </div>
           </div>
         </div>
@@ -64,7 +63,8 @@
     <div class="audioBox">
       <audio :src="playidURL" ref="ading">
         <source :src="playidURL" type="audio/ogg" />
-        <source :src="playidURL" type="audio/mpeg" /> Your browser does not support the audio element.
+        <source :src="playidURL" type="audio/mpeg" />
+        Your browser does not support the audio element.
       </audio>
     </div>
   </div>
@@ -106,12 +106,11 @@
     computed: {
       ...mapState([
         'song_catalogue',
-        'audiodata',
+        'audioPlaying',
         'playmode'
       ]),
       ...mapGetters([
         'playidURL',
-        'playdatasing',
       ]),
       modelShows: {
         get() {
@@ -124,45 +123,37 @@
       }
     },
     methods: {
-      ...mapActions([
-        'recommendapi',
-      ]),
       ...mapMutations([
-        'set_audiodata',
+        'set_audioStatus',
         'remove_songCatalogue',
         'set_changePlaylist',
         'set_playing',
         'set_playmode',
         'empty_songCatalogue'
       ]),
-      playlistfn() {
-        this.modelShow = !this.modelShow
+      scrollpoput(event){
+        console.log(this.$refs.popupss.scrollTop);
       },
-      closePlaylist(index, id) {
+      playlistfn() {
+        this.modelShow = true
+      },
+      removePlay(index, id) {
         this.remove_songCatalogue({ index: index, id: id })
+        console.log(this.audioPlaying.id);
       },
       routelink() {
         this.$router.push('/detail')
       },
-      playing() {
+      playingfn() {
         let _this = this;
         let ading = this.$refs.ading;
         if (ading.paused) {
-          this.set_audiodata({ playing: false })
+          this.set_audioStatus({ playing: true })
           ading.play();
         } else {
-          this.set_audiodata({ playing: true })
+          this.set_audioStatus({ playing: false })
           ading.pause();
         }
-
-
-        // ading.addEventListener("loadedmetadata", function() {
-        //   console.log(ading.duration);
-        // });
-        // ading.addEventListener("timeupdate", function() {
-        //   var value = Math.round(Math.floor(this.currentTime) / Math.floor(this.duration) * 100, 0);
-        //   console.log(this.currentTime);
-        // }, false);
       },
       popuphide() {
         this.modelShow = false;
@@ -181,11 +172,11 @@
         return minute + isM0 + sec;
       },
       playfn(item) {
-        this.set_playing({ playing: true, id: item.id, type: 'popup' })
+        this.set_playing({ data: item, type: 'popup' })
       },
       playmodefn() {
-        console.log('切换播放模式');
         this.set_playmode()
+        console.log('切换播放模式：' + this.playmode.name);
       },
       collection() {
         let uid=JSON.parse(localStorage.getItem('userinfo')).profile.userId
@@ -329,6 +320,7 @@
     //   height: 0.266667rem;
     // }
     .icon-shengyin {
+      margin-right: 5px;
       color: red;
     }
     .name {
@@ -338,7 +330,8 @@
       font-size: 0.16rem;
       color: #666;
     }
-    .icon {
+    .icon-guanbi {
+      font-size: 12px;
       color: #666;
     }
     .active {
@@ -379,7 +372,7 @@
       }
     }
   }
-  .iconfont {
+  .icon-liebiao {
     margin-left: 10px;
     font-size: 26px;
     color: #666;
@@ -389,6 +382,7 @@
     left: 10px;
   }
 </style>
+
 <style lang="less">
   .playbarPopup {
     svg {

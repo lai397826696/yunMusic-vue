@@ -3,30 +3,28 @@
     <x-header class="detail-header" :left-options="{backText: ''}" :right-options="{showMore: true}">
       <div solt="overwrite-title">每日歌曲推荐</div>
     </x-header>
-    <div class="bg-blur" :style="{backgroundImage: `url(${playdatasing.album.blurPicUrl})`}"></div>
+    <div class="bg-blur" :style="{backgroundImage: `url(${audioPlaying.album.blurPicUrl})`}"></div>
     <img src="../../static/images/aag.png" alt="" class="aag" :class="{upDown: play, downUp: !play}">
-    <div class="turntable" :class="{startplay: play, endplay: !play}">
+    <div class="turntable" ref="turntable" :style="styleRoute">
       <img src="../../static/images/play.png" alt="" class="playbg">
-      <img :src="`${playdatasing.album.blurPicUrl}?param=200y200`" alt="" class="playimg">
+      <img :src="`${audioPlaying.album.blurPicUrl}?param=200y200`" alt="" class="playimg">
     </div>
     <div class="foot">
       <flexbox :gutter="0" class="tools">
         <flexbox-item>
-          <i class="iconfont icon-jushoucang"></i>
+          <i class="iconfont icon-jushoucang" :class="{'icon-jushoucanggift text-color-red': collection}" @click="collectionfn"></i>
         </flexbox-item>
         <flexbox-item>
           <i class="iconfont icon-download"></i>
         </flexbox-item>
         <flexbox-item>
-          <i class="iconfont icon-pinglun"></i>
+          <i class="iconfont icon-pinglun" @click="pinglun"></i>
         </flexbox-item>
         <flexbox-item>
           <i class="iconfont icon-more"></i>
         </flexbox-item>
       </flexbox>
-      <div class="range">
-        <range v-model="data1" @on-change="onChange"></range>
-      </div>
+      <Drag></Drag>
       <flexbox :gutter="0" class="original">
         <flexbox-item>
           <i class="iconfont" :class="playmode.class"></i>
@@ -51,38 +49,81 @@
 <script>
   import { XHeader, Flexbox, FlexboxItem, Range } from 'vux'
   import { mapState, mapGetters } from 'vuex';
+  import Drag from '../components/Drag';
 
   export default {
     name: "Detail",
     data() {
       return {
-        data1: 10,
+        data1: 0,
         play: false,
+        styleRoute: {},
+        collection: false
       }
     },
     components: {
       Flexbox,
       FlexboxItem,
       XHeader,
-      Range
+      Range,
+      Drag
     },
     computed: {
       ...mapState([
         'playmode',
-      ]),
-      ...mapGetters([
-        'playdatasing'
+        'audioPlaying'
       ])
     },
     created() {
     },
     methods: {
-      onChange(value) {
+      collectionfn(){
+        this.collection=!this.collection
       },
-      plays(){
-        this.play=!this.play
+      pinglun(){
+
+      },
+      plays() {
+        let turntable = this.$refs.turntable
+        this.play = !this.play
+        this.setStyleRoute(turntable)
+      },
+      setStyleRoute(vnode) {
+        if (this.play) {
+          this.styleRoute = {
+            transition: 'transform 600s',
+            transform: 'rotate(7000deg)'
+          }
+        } else {
+          let routes=this.getRoutes(vnode)
+          this.styleRoute = {
+            transform: `rotate(${routes}deg)`
+          }
+        }
+
+      },
+      getRoutes(el) {
+        //el为原生dom元素
+        let transform = window.getComputedStyle(el).transform
+        let str = transform.substring(transform.indexOf('(') + 1, transform.lastIndexOf(')')).split(",")
+        return this.getmatrix(...str)
+      },
+      getmatrix(a, b, c, d, e, f) { //获取角度
+        var aa = Math.round(180 * Math.asin(a) / Math.PI);
+        var bb = Math.round(180 * Math.acos(b) / Math.PI);
+        var cc = Math.round(180 * Math.asin(c) / Math.PI);
+        var dd = Math.round(180 * Math.acos(d) / Math.PI);
+        var deg = 0;
+        if (aa == bb || -aa == bb) {
+          deg = dd;
+        } else if (-aa + bb == 180) {
+          deg = 180 + cc;
+        } else if (aa + bb == 180) {
+          deg = 360 - cc || 360 - dd;
+        }
+        return deg >= 360 ? 0 : deg;
       }
-    }
+    },
   }
 </script>
 
@@ -92,6 +133,7 @@
     z-index: 0;
     width: 100%;
     height: 100%;
+    overflow: hidden;
     .detail-header {
       position: relative;
       z-index: 10;
@@ -107,34 +149,22 @@
     filter: blur(70px);
     background-size: cover;
     background-position: center top;
-    // background-attachment: fixed;
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 1;
+      background-color: rgba(0,0,0,.4);
+    }
   }
   .turntable {
     position: relative;
     top: 11%;
     z-index: 0;
-    &.startplay {
-      animation: route1 30s linear infinite;
-    }
-    &.endplay {
-      animation: route2 1.5s ease;
-    }
-    @keyframes route1 {
-      0% {
-        transform: rotate(0deg);
-      }
-      100% {
-        transform: rotate(360deg);
-      }
-    }
-    @keyframes route2 {
-      0% {
-        // transform: rotate(0deg);
-      }
-      100% {
-        transform: rotate(10deg);
-      }
-    }
+
     .playbg {
       margin: 0 auto;
       display: block;
@@ -159,10 +189,10 @@
     transform: rotateZ(-24deg);
     transform-origin: 60px 0;
     &.upDown {
-      animation: upDown .5s linear forwards;
+      animation: upDown 0.5s linear forwards;
     }
     &.downUp {
-      animation: downUp 1.5s ease;
+      animation: downUp 1.5s ease-out;
     }
     @keyframes upDown {
       0% {
@@ -207,8 +237,8 @@
     }
 
     .range {
-      margin: 30px auto;
-      width: 90%;
+      margin: 30px 0;
+      width: 95%;
     }
 
     .original {
@@ -226,11 +256,7 @@
   }
 </style>
 <style lang="less">
-  .range .range-handle {
-    // width: 20px;
-    // height: 20px;
-    // top: 10px;
-  }
+  
 </style>
 
 

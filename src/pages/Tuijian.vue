@@ -1,5 +1,5 @@
 <template>
-  <div class="tuijian" :class="{tj_bottom: !!audiodata.id}">
+  <div class="tuijian" :class="{tj_bottom: !!audioPlaying.id}">
     <x-header :left-options="{backText: ''}" :right-options="{showMore: true}">每日歌曲推荐</x-header>
     <div class="bannBig" v-if="!!bigImg">
       <img :src="bigImg.picUrl" :alt="bigImg.typeTitle">
@@ -7,37 +7,26 @@
       <div class="tips">根据你的音乐口味生成,每天6:00更新</div>
       <div class="bg"></div>
     </div>
-    <!-- <Audios :id="''+songs[0].id"></Audios> -->
     <Playbox :songData="songs"></Playbox>
   </div>
 </template>
 
 <script>
-  import { XHeader, Cell, Group, Popup, TransferDom } from 'vux';
+  import { XHeader } from 'vux';
   import Playbox from '../components/playbox.vue';
-  import Audios from '../components/Audio.vue';
   import { mapState, mapActions } from 'vuex';
 
   export default {
     name: "tuijian",
     data() {
       return {
-        idurl: '455358996',
       }
     },
     created() {
-      let _this = this
     },
     components: {
       XHeader,
-      Cell,
-      Group,
-      Popup,
       Playbox,
-      Audios
-    },
-    directives: {
-      TransferDom
     },
     created(){
       this.recommendapi();
@@ -46,7 +35,7 @@
       ...mapState([
         'banners',
         'songs',
-        'audiodata'
+        'audioPlaying'
       ]),
       bigImg(){
         return this.banners.find(item=>{
@@ -58,9 +47,6 @@
       ...mapActions([
         'recommendapi',
       ]),
-      fn(){
-        console.log(111);
-      },
     }
   }
 </script>

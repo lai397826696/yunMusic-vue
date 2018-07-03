@@ -3,8 +3,7 @@
     <popup class="songPopup" @on-hide="onHide" v-model="show" height="45%">
       <div class="listDetail" v-if="type=='sheet'">
         <div class="flex">
-          <div class="flex_hd"></div>
-          <div class="flex_bd">歌曲：{{detail.name}}</div>
+          <div class="flex_bd ellipsis">歌曲：{{detail.name}}</div>
         </div>
         <div class="flex">
           <div class="flex_hd"></div>
@@ -43,8 +42,7 @@
       </div>
       <div class="listDetail" v-if="type=='detail'">
         <div class="flex">
-          <div class="flex_hd"></div>
-          <div class="flex_bd">歌曲：{{detail.name}}</div>
+          <div class="flex_bd ellipsis">歌曲：{{detail.name}}</div>
         </div>
         <div class="flex">
           <div class="flex_hd"></div>
@@ -62,7 +60,7 @@
         </div>
         <div class="flex">
           <div class="flex_hd"></div>
-          <div class="flex_bd">来源：{{detail.album.name}}</div>
+          <div class="flex_bd">来源：{{'开发中...'}}</div>
         </div>
         <div class="flex">
           <div class="flex_hd"></div>
@@ -72,8 +70,7 @@
           <div class="flex_hd"></div>
           <div class="flex_bd">查看视频</div>
         </div>
-        
-        
+
         <div class="flex">
           <div class="flex_hd"></div>
           <div class="flex_bd">相似推荐</div>
@@ -103,18 +100,19 @@
           album: {}
         },
         comment: {},
+        show: false
       }
     },
-    model: {
-      prop: 'show',
-      event: 'change'
-    },
+    // model: {
+    //   prop: 'show',
+    //   event: 'change'
+    // },
     props: {
-      id: Number,
-      show: {
-        type: Boolean,
-        default: false
-      },
+      // id: Number,
+      // show: {
+      //   type: Boolean,
+      //   default: false
+      // },
       type: {
         type: String,
         default: 'sheet'
@@ -132,25 +130,24 @@
       ]),
     },
     methods: {
-      ...mapMutations([
-        'set_playing',
-      ]),
-      onHide(){
+      onHide() {
         this.$emit('change', !this.show)
-        console.log(this.show);
+      },
+      showfn(item) {
+        this.show = true
+        this.detailsfn(item);
       },
       detailsfn(item) {
         if (!!this.detail.id && this.detail.id == item.id) return false;
-        // this.detail = item;
-        // this.$http.get('/comment/music', {
-        //   params: {
-        //     id: item.id,
-        //     limit: 1
-        //   }
-        // }).then(res => {
-        //   console.log(res);
-        //   if (res.data.code == 200) this.comment = res.data
-        // })
+        this.detail = item;
+        this.$http.get('/comment/music', {
+          params: {
+            id: item.id,
+            limit: 1
+          }
+        }).then(res => {
+          if (res.data.code == 200) this.comment = res.data
+        })
       }
     }
   }

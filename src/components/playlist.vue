@@ -19,7 +19,7 @@
         <i class="iconfont icon-more" @click.stop="detailsfn(item)"></i>
       </div>
     </div>
-    <detail-list ref="detailList" v-model="show" type="sheet" :id="parseInt(id)"></detail-list>
+    <detail-list ref="detailList" type="sheet"></detail-list>
   </div>
 
 </template>
@@ -62,11 +62,10 @@
         'set_playing',
       ]),
       playfn(item, index) {
-        this.set_playing({data: item})
+        this.set_playing({data: item, index: index})
       },
       detailsfn(item) {
-        this.show = true;
-        // this.$refs.detailList.show=true
+        this.$refs.detailList.showfn(item)
       },
     }
   }

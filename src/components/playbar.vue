@@ -1,5 +1,5 @@
 <template>
-  <div class="videoBar" v-show="vnodeshow && !!audioPlaying.id">
+  <div class="vux-1px-t videoBar" v-show="vnodeshow && !!audioPlaying.id">
     <div class="flex">
       <div class="flex_hd">
         <div class="artistsImg">
@@ -28,38 +28,7 @@
         </span>
       </div>
     </div>
-    <div v-transfer-dom>
-      <popup class="playbarPopup" v-model="modelShows" height="52%" @on-hide="popuphide">
-        <div class="flex vux-1px-b headlist">
-          <div class="flex_hd" @click="playmodefn">
-            <i class="iconfont" :class="playmode.class"></i>
-            {{`${playmode.name}（${song_catalogue.length}）`}}
-          </div>
-          <div class="flex_bd collection">
-            <span @click="collection"><i class="iconfont icon-shoucang mg_r5"></i>收藏全部</span>
-          </div>
-          <div class="flex_ft" @click="empty"><i class="iconfont icon-icon-shanchu"></i></div>
-        </div>
-        <div class="popupbox" @scroll="scrollpoput" ref="popupss">
-          <div class="flex vux-1px-b" v-for="(item, index) in song_catalogue" :key="item.id">
-            <div class="flex_hd" v-show="item.id==audioPlaying.id">
-              <i class="iconfont icon-shengyin"></i>
-            </div>
-            <div class="flex_bd">
-              <p class="ellipsis" :class="{'active':item.id==audioPlaying.id}" @click="playfn(item)">
-                <span class="name">{{item.name}}</span>
-                -
-                <em v-for="(ai, index) of item.artists" :key="ai.id+index">{{index==0?ai.name:'/'+ ai.name}}</em>
-              </p>
-            </div>
-            <div class="flex_ft" @click="removePlay(index, item.id)">
-              <i class="iconfont icon-guanbi mg_r5"></i>
-            </div>
-          </div>
-        </div>
-      </popup>
-      <Actionsheet v-model="actionShow" theme="android" :menus="menu7" @on-click-menu="clickmenu"></Actionsheet>
-    </div>
+    <catalogue ref="catalogue"></catalogue>
     <div class="audioBox">
       <audio :src="playidURL" ref="ading">
         <source :src="playidURL" type="audio/ogg" />
@@ -73,6 +42,7 @@
 <script>
   import { XCircle, Popup, TransferDom, Actionsheet } from 'vux'
   import { mapActions, mapState, mapMutations, mapGetters } from 'vuex';
+  import catalogue from './Catalogue';
 
   export default {
     name: 'playbar',
@@ -99,6 +69,7 @@
       XCircle,
       Popup,
       Actionsheet,
+      catalogue
     },
     directives: {
       TransferDom
@@ -112,34 +83,14 @@
       ...mapGetters([
         'playidURL',
       ]),
-      modelShows: {
-        get() {
-          if (this.song_catalogue.length == 0) return false;
-          return this.modelShow
-        },
-        set() {
-
-        }
-      }
     },
     methods: {
       ...mapMutations([
-        'set_audioStatus',
-        'remove_songCatalogue',
-        'set_changePlaylist',
-        'set_playing',
-        'set_playmode',
-        'empty_songCatalogue'
+        'set_audioStatus'
       ]),
-      scrollpoput(event){
-        console.log(this.$refs.popupss.scrollTop);
-      },
       playlistfn() {
-        this.modelShow = true
-      },
-      removePlay(index, id) {
-        this.remove_songCatalogue({ index: index, id: id })
-        console.log(this.audioPlaying.id);
+        // this.modelShow = true
+        this.$refs.catalogue.show()
       },
       routelink() {
         this.$router.push('/detail')
@@ -154,51 +105,6 @@
           this.set_audioStatus({ playing: false })
           ading.pause();
         }
-      },
-      popuphide() {
-        this.modelShow = false;
-      },
-      transTime(time) {
-        var duration = parseInt(time);
-        var minute = parseInt(duration / 60);
-        var sec = duration % 60 + "";
-        var isM0 = ":";
-        if (minute == 0) {
-          minute = "00";
-        } else if (minute < 10) {
-          minute = "0" + minute;
-        }
-        if (sec.length == 1) sec = "0" + sec
-        return minute + isM0 + sec;
-      },
-      playfn(item) {
-        this.set_playing({ data: item, type: 'popup' })
-      },
-      playmodefn() {
-        this.set_playmode()
-        console.log('切换播放模式：' + this.playmode.name);
-      },
-      collection() {
-        let uid=JSON.parse(localStorage.getItem('userinfo')).profile.userId
-        this.$http.get(`/user/playlist?uid=${uid}`).then(res=>{
-          console.log(res);
-          if(res.data.code==200){}
-        })
-        this.actionShow=!this.actionShow;
-      },
-      clickmenu(key,item){
-        console.log(key);
-        console.log(item);
-      },
-      empty() {
-        let _this = this;
-        this.$vux.confirm.show({
-          content: '确定要清空播放列表？',
-          onConfirm(val) {
-            console.log(val);
-            _this.empty_songCatalogue();
-          }
-        })
       },
       routefn() {
         let path = this.$route.path;
@@ -297,81 +203,6 @@
     }
   }
 
-  // 弹窗歌单列表
-  .popupbox {
-    position: absolute;
-    top: 0.586667rem;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 0;
-    background-color: #fcfcfc;
-    transition-property: transform;
-    transition-duration: 300ms;
-    overflow-y: scroll;
-    -webkit-overflow-scrolling: touch;
-    .flex {
-      padding-top: 0.133333rem;
-      padding-bottom: 0.133333rem;
-    }
-    // .playImg {
-    //   display: block;
-    //   width: 0.266667rem;
-    //   height: 0.266667rem;
-    // }
-    .icon-shengyin {
-      margin-right: 5px;
-      color: red;
-    }
-    .name {
-      color: #000;
-    }
-    em {
-      font-size: 0.16rem;
-      color: #666;
-    }
-    .icon-guanbi {
-      font-size: 12px;
-      color: #666;
-    }
-    .active {
-      color: red;
-      .name,
-      em {
-        color: red;
-      }
-    }
-  }
-  .headlist {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1;
-    padding-top: 0.133333rem;
-    padding-bottom: 0.133333rem;
-    background-color: #fcfcfc;
-
-    .flex_bd {
-      line-height: 0.32rem;
-    }
-    .playtype {
-      display: inline-block;
-      vertical-align: middle;
-      margin-right: 5px;
-      width: 20px;
-      height: 20px;
-      background-color: #ccc;
-    }
-    .collection {
-      margin-right: 10px;
-      text-align: right;
-      span {
-        padding-right: 10px;
-        border-right: 1px solid #eaeaea;
-      }
-    }
-  }
   .icon-liebiao {
     margin-left: 10px;
     font-size: 26px;
@@ -380,17 +211,5 @@
   }
   .vux-1px-b:after {
     left: 10px;
-  }
-</style>
-
-<style lang="less">
-  .playbarPopup {
-    svg {
-      display: block;
-    }
-  }
-  .playbarPopup.vux-popup-dialog {
-    border-radius: 0.106667rem 0.106667rem 0 0;
-    background: #fcfcfc;
   }
 </style>

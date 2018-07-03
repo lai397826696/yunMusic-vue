@@ -54,7 +54,7 @@
 <style lang="less" scoped>
   
   .tj_bottom {
-    margin-bottom: 55px;
+    margin-bottom: 62px;
   }
   .bannBig {
     position: relative;

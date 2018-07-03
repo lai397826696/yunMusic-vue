@@ -43,7 +43,6 @@
       touchstart(event) {
         let startX = event.changedTouches[0].clientX
         // this.clientX = startX
-        console.log(startX);
       },
       touchend(event) {
       },

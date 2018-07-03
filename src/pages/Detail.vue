@@ -21,35 +21,41 @@
           <i class="iconfont icon-pinglun" @click="pinglun"></i>
         </flexbox-item>
         <flexbox-item>
-          <i class="iconfont icon-more"></i>
+          <i class="iconfont icon-more" @click="detailsfn"></i>
         </flexbox-item>
       </flexbox>
       <Drag></Drag>
       <flexbox :gutter="0" class="original">
         <flexbox-item>
-          <i class="iconfont" :class="playmode.class"></i>
+          <i class="iconfont" :class="playmode.class" @click="setPlaymode"></i>
         </flexbox-item>
         <flexbox-item>
-          <i class="iconfont icon-prev"></i>
+          <i class="iconfont icon-prev" @click="playPrev"></i>
         </flexbox-item>
         <flexbox-item>
           <i class="iconfont icon-bofang1" @click="plays"></i>
         </flexbox-item>
         <flexbox-item>
-          <i class="iconfont icon-next"></i>
+          <i class="iconfont icon-next" @click="playNext"></i>
         </flexbox-item>
         <flexbox-item>
-          <i class="iconfont icon-liebiao"></i>
+          <i class="iconfont icon-liebiao" @click="playlistfn"></i>
         </flexbox-item>
       </flexbox>
     </div>
+
+    <detail-list ref="detailList" v-model="show" type="detail" :id="parseInt(id)"></detail-list>
+    <catalogue ref="catalogue"></catalogue>
+    
   </div>
 </template>
 
 <script>
-  import { XHeader, Flexbox, FlexboxItem, Range } from 'vux'
-  import { mapState, mapGetters } from 'vuex';
+  import { XHeader, Flexbox, FlexboxItem } from 'vux'
+  import { mapState, mapMutations } from 'vuex';
   import Drag from '../components/Drag';
+  import detailList from '../components/detailList';
+  import catalogue from '../components/Catalogue';
 
   export default {
     name: "Detail",
@@ -58,15 +64,18 @@
         data1: 0,
         play: false,
         styleRoute: {},
-        collection: false
+        collection: false,
+        show: false,
+        id: ''
       }
     },
     components: {
       Flexbox,
       FlexboxItem,
       XHeader,
-      Range,
-      Drag
+      Drag,
+      detailList,
+      catalogue
     },
     computed: {
       ...mapState([
@@ -75,18 +84,20 @@
       ])
     },
     created() {
+
     },
     methods: {
+      ...mapMutations([
+        'set_playmode',
+        'prevPlaynext'
+      ]),
       collectionfn(){
         this.collection=!this.collection
       },
       pinglun(){
-
       },
-      plays() {
-        let turntable = this.$refs.turntable
-        this.play = !this.play
-        this.setStyleRoute(turntable)
+      detailsfn() {
+        this.$refs.detailList.showfn(this.audioPlaying)
       },
       setStyleRoute(vnode) {
         if (this.play) {
@@ -100,7 +111,6 @@
             transform: `rotate(${routes}deg)`
           }
         }
-
       },
       getRoutes(el) {
         //el为原生dom元素
@@ -122,6 +132,23 @@
           deg = 360 - cc || 360 - dd;
         }
         return deg >= 360 ? 0 : deg;
+      },
+      playlistfn(){
+        this.$refs.catalogue.show()
+      },
+      setPlaymode(){
+        this.set_playmode()
+      },
+      plays() {
+        this.play = !this.play
+        let turntable = this.$refs.turntable
+        this.setStyleRoute(turntable)
+      },
+      playPrev(){
+        this.prevPlaynext({type: 'prev'})
+      },
+      playNext(){
+        this.prevPlaynext({type: 'next'})
       }
     },
   }
@@ -254,9 +281,14 @@
       }
     }
   }
+  .icon-jushoucanggift {
+    // transition: transform 1s;
+    transform: scale(1.8,1.8);
+  }
+  // .icon-jushoucanggift.red {
+  //   transform: scale(1.2)
+  // }
 </style>
-<style lang="less">
-  
-</style>
+
 
 

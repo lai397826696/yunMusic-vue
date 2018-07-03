@@ -18,7 +18,7 @@ const local = (arr = '') => {
 }
 
 const state = {
-  banners: [],
+  banners: [], //轮播图
   newMusic: [], //最新音乐
   resource: [], //每日推荐
   sole: [], //独家放送
@@ -31,8 +31,8 @@ const state = {
     artists: [],
     playing: false
   },
-  barList: 0,
   song_catalogue: [], //播放目录
+  playIndex: 0, //播放目录里的指针
   playmode: { //播放模式
     key: 0,
     class: 'icon-liebiaoxunhuan',
@@ -52,14 +52,15 @@ const mutations = {
   },
   set_recommend(state, {songs}) {
     state.songs = songs
-    state.song_catalogue = songs;
+    state.song_catalogue = objCopy(songs);
   },
   set_changePlaylist(state, { key }) {
     //播放全部
     state.song_catalogue = objCopy(state[key]);
-    state.audioPlaying.id = state.song_catalogue[0].id
+    state.playIndex = 0
+    state.audioPlaying = state.song_catalogue[0]
   },
-  set_playing(state, {data, type}) { //点击歌曲播放
+  set_playing(state, {data, index, type}) { //点击歌曲播放
     if (type !== "popup") {
       //如果播放目录有删减，把当前歌单配置给播放目录
       if (state.song_catalogue.length != state.songs.length) 
@@ -67,6 +68,7 @@ const mutations = {
     }
     state.audioPlaying = data
     state.audioPlaying.playing = true
+    state.playIndex=index
   },
   set_audioStatus(state, {playing}) {
     state.audioPlaying.playing = playing;
@@ -77,6 +79,7 @@ const mutations = {
     for (let i = 0; i < length; i++) {
       if (state.song_catalogue[i].id == id && state.audioPlaying.id == id) {
         if (i == length - 1) {
+          state.playIndex = 0
           state.audioPlaying = state.song_catalogue[0]
         } else {
           state.audioPlaying = state.song_catalogue[i + 1]
@@ -84,6 +87,9 @@ const mutations = {
         break;
       }
     }
+    if (index < state.playIndex) state.playIndex--
+    if (index == state.playIndex) state.playIndex = index
+    // if (state.playIndex == length - 1) state.playIndex = 0
     state.song_catalogue.splice(index, 1);
   },
 
@@ -103,13 +109,48 @@ const mutations = {
         class: 'icon-danquxunhuan'
       }
     ]
-    if (state.playmodeIndex == 2) 
-      state.playmodeIndex = -1
-    state.playmodeIndex++;
-    state.playmode = type[state.playmodeIndex]
+    // if (state.playmodeIndex == 2) state.playmodeIndex = -1
+    // state.playmodeIndex++;
+    // state.playmode = type[state.playmodeIndex]
+    if (!state.index) state.index = 0
+    if (state.index == 2) state.index = -1
+    state.index++;
+    state.playmode = type[state.index]
   },
   empty_songCatalogue(state) {
     state.song_catalogue = [];
+  },
+  next_songCatalogue(state, { data }) {
+    //选中歌曲在歌单中下一首歌播放
+    let songs=state.song_catalogue
+    for (let i = 0; i < data.length; i++) {
+      for (let j = 0; j < songs.length; j++) {
+        if (songs[j].id == data[i].id) {
+          songs.splice(j, 1)
+          break;
+        }
+      }
+    }
+  },
+  prevPlaynext(state, { type }) {
+    //随机播放key==1
+    if (state.playmode.key == 1) {
+      let sj = 0;
+      do {
+        sj = Math.floor(Math.random() * state.song_catalogue.length);
+        console.log(sj, state.playIndex)
+      } while (sj == state.playIndex)
+      state.playIndex = sj
+    } else  {
+      if (type == "next") {
+        state.playIndex++
+        if (state.playIndex >= state.song_catalogue.length) state.playIndex = 0
+      } else {
+        state.playIndex--
+        if (state.playIndex < 0) state.playIndex = state.song_catalogue.length - 1
+      }
+    }
+    state.audioPlaying=state.song_catalogue[state.playIndex]
   }
 }
 
@@ -131,10 +172,7 @@ const actions = {
         banners: res1.data.banners,
         resource: [].concat(res2.data.result, res3.data.recommend),
         newMusic: res4.data.result,
-        sole: res5
-          .data
-          .result
-          .reverse(),
+        sole: res5.data.result.reverse(),
         dj: res6.data.djRadios
       })
     }))
@@ -147,18 +185,18 @@ const actions = {
 }
 
 const getters = {
-  // playdatasing(state) { //正在播放的歌曲
-  //   if (!!state.audiodata.id && state.song_catalogue.length > 0) {
-  //     return state
-  //       .song_catalogue
-  //       .find(v => v.id == state.audiodata.id);
-  //   }
-  //   return state.playdataing;
-  // },
   playidURL(state, getters) {
     return !!state.audioPlaying.id
       ? `http://music.163.com/song/media/outer/url?id=${state.audioPlaying.id}.mp3`
       : '';
+  },
+  song_catalogues(state, getters) {
+    let songs = []
+    for (let i of state.song_catalogue) {
+      i.check = false
+      songs.push(i)
+    }
+    return songs
   }
 }
 

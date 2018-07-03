@@ -175,3 +175,14 @@ em {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+
+.popup-header-bgred {
+    background-color: #E04339 !important;
+}
+
+.popup-header-bgred .vux-popup-header-left,
+.popup-header-bgred .vux-popup-header-title,
+.popup-header-bgred .vux-popup-header-right {
+    color: #fff;
+}

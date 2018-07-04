@@ -1,3 +1,36 @@
+/* vux css 全局  start*/
+.popup-header-bgred {
+    background-color: #E04339 !important;
+}
+
+.popup-header-bgred .vux-popup-header-left,
+.popup-header-bgred .vux-popup-header-title,
+.popup-header-bgred .vux-popup-header-right {
+    color: #fff !important;
+}
+.popup-header-bgred .vux-popup-header-title {
+    padding: 0 30px;
+    text-align: left;
+}
+/* 头部 */
+#app .vux-header {
+    background-color: #E04339;
+}
+#app .vux-header-left,
+#app .vux-header-right,
+#app .vux-header-left a {
+    color: #fff;
+}
+#app .left-arrow:before {
+    border-color: #fff;
+}
+#app .vux-header-title {
+    margin: 0 55px;
+    text-align: left;
+}
+/* vux css 全局  end*/
+
+/* 自定义 */
 body, textarea, input, button, select {
     font-size: .16rem;
     font-family: 'Microsoft YaHei', 'Avenir', Helvetica, Arial, sans-serif;
@@ -11,7 +44,6 @@ em {
 .text-color-red {
     color: red;
 }
-
 .clear {
     *zoom: 1;
 }
@@ -34,10 +66,6 @@ em {
 }
 .floatR {
     float: right;
-}
-
-.v-transfer-dom .vux-popup-dialog {
-    background-color: #fff;
 }
 
 /*margin, padding  start*/
@@ -174,15 +202,4 @@ em {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-}
-
-
-.popup-header-bgred {
-    background-color: #E04339 !important;
-}
-
-.popup-header-bgred .vux-popup-header-left,
-.popup-header-bgred .vux-popup-header-title,
-.popup-header-bgred .vux-popup-header-right {
-    color: #fff;
 }

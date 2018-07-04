@@ -5,7 +5,7 @@ import router from './router'
 import store from './store';
 import FastClick from 'fastclick'
 import App from './App'
-import { AjaxPlugin, ConfirmPlugin, AlertPlugin } from 'vux'
+import { AjaxPlugin, ConfirmPlugin, AlertPlugin, ToastPlugin } from 'vux'
 import './assets/js/dpr';
 
 Vue.config.productionTip = false
@@ -14,6 +14,7 @@ FastClick.attach(document.body)
 Vue.use(AjaxPlugin)
 Vue.use(ConfirmPlugin)
 Vue.use(AlertPlugin)
+Vue.use(ToastPlugin, { time: 1000 })
 Vue.http.defaults.baseURL = 'http://localhost:3000';
 
 

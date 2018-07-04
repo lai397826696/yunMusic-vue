@@ -1,6 +1,6 @@
 <template>
   <div class="tuijian" :class="{tj_bottom: !!audioPlaying.id}">
-    <x-header :left-options="{backText: ''}" :right-options="{showMore: true}">每日歌曲推荐</x-header>
+    <x-header class="custom-header" :left-options="{backText: ''}">每日歌曲推荐</x-header>
     <div class="bannBig" v-if="!!bigImg">
       <img :src="bigImg.picUrl" :alt="bigImg.typeTitle">
       <span class="tag">{{bigImg.typeTitle}}</span>

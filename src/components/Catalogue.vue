@@ -65,9 +65,14 @@
         'audioPlaying',
         'playmode'
       ]),
-      modelShows(){
-        // if(this.song_catalogue.length==0) return false
-        return this.modelShow
+      modelShows: {
+        get(){
+          if(this.song_catalogue.length==0) return false
+          return this.modelShow
+        },
+        set(val){
+          this.modelShow=val
+        }
       }
     },
     methods: {
@@ -103,7 +108,6 @@
         })
       },
       scrollpoput(event){
-        console.log(this.$refs.popupss.scrollTop);
       },
       playfn(item, index) {
         this.set_playing({ data: item, index: index, type: 'popup' })

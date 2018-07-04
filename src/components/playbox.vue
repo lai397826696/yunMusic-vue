@@ -14,7 +14,7 @@
     <playlist :datas="songData"></playlist>
     <div v-transfer-dom>
       <popup class="songPopup" v-model="show" height="100%">
-        <popup-header class="popup-header-bgred" left-text="返回" :title="`已选择${datas.length}项`" :right-text="rightText" :show-bottom-border="false" @on-click-left="show = false" @on-click-right="clickRight"></popup-header>
+        <popup-header class="popup-header-bgred" left-text="返回" :title="`已选择${datas.length}项`" :right-text="rightText" :show-bottom-border="false" @on-click-left="clickLeft" @on-click-right="clickRight"></popup-header>
         <div class="listDetail">
           <div class="flex vux-1px-b" v-for="(item,index) in song_catalogues" :key="item.id" @click="selectfn(item, index)">
             <div class="flex_hd mg_r10">
@@ -63,7 +63,7 @@
         show: false,
         datas: [],
         dataRecord: [],
-        // song_catalogues: [],
+        song_catalogues: [],
         index: 0,
       }
     },
@@ -85,20 +85,21 @@
     directives: {
       TransferDom
     },
+    mounted(){
+      
+    },
+    beforeUpdate(){
+      if(this.song_catalogues.length==0) {
+        this.song_catalogues.push(...this.song_catalogue)
+      }
+    },
     computed: {
       ...mapState([
         'song_catalogue',
       ]),
       rightText() {
-        return this.datas.length != this.song_catalogue.length ? '全选' : '取消全选'
+        return this.datas.length != this.song_catalogues.length ? '全选' : '取消全选'
       },
-      song_catalogues() {
-        this.index++
-        if (this.index == 2) {
-          this.index=2
-          return this.song_catalogue
-        }
-      }
     },
     methods: {
       ...mapMutations([
@@ -110,13 +111,17 @@
         this.set_changePlaylist({ key: 'songs' })
       },
       checkboxfn() {
-        this.datas = []
+        this.empty();
         this.show = !this.show
       },
+      clickLeft(){
+        this.show = !this.show
+        this.empty();
+      },
       clickRight() {
-        if (this.datas.length != this.song_catalogue.length) {
+        if (this.datas.length != this.song_catalogues.length) {
           this.empty()
-          this.song_catalogue.forEach(v => {
+          this.song_catalogues.forEach(v => {
             this.add(v)
           })
         } else {
@@ -144,6 +149,11 @@
         return this.datas.indexOf(id) >= 0
       },
       nextPlay() {
+        if(this.dataRecord.length>0) {
+          this.$vux.toast.text('已添加到下一首播放')
+        } else {
+          this.$vux.toast.text('请选择要播放的歌曲')
+        }
         this.next_songCatalogue({ data: this.dataRecord })
       },
     },

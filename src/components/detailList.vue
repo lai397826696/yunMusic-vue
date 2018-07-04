@@ -10,7 +10,7 @@
           <div class="flex_bd">下一首播放</div>
         </div>
         <div class="flex">
-          <div class="flex_hd"></div>
+          <div class="flex_hd"><i class="iconfont icon-shoucang"></i></div>
           <div class="flex_bd">收藏到歌单</div>
         </div>
         <div class="flex">
@@ -45,7 +45,7 @@
           <div class="flex_bd ellipsis">歌曲：{{detail.name}}</div>
         </div>
         <div class="flex">
-          <div class="flex_hd"></div>
+          <div class="flex_hd"><i class="iconfont icon-shoucang"></i></div>
           <div class="flex_bd">收藏到歌单</div>
         </div>
         <div class="flex">
@@ -59,7 +59,7 @@
           <div class="flex_bd">专辑：{{detail.album.name}}</div>
         </div>
         <div class="flex">
-          <div class="flex_hd"></div>
+          <div class="flex_hd"><i class="iconfont icon-xiazai8"></i></div>
           <div class="flex_bd">来源：{{'开发中...'}}</div>
         </div>
         <div class="flex">
@@ -200,5 +200,12 @@
 
   .listDetail {
     background-color: #fff;
+  }
+
+  .flex_hd {
+    .iconfont {
+      margin-right: 8px;
+      color: red;
+    }
   }
 </style>

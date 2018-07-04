@@ -63,7 +63,7 @@ const mutations = {
   set_playing(state, {data, index, type}) { //点击歌曲播放
     if (type !== "popup") {
       //如果播放目录有删减，把当前歌单配置给播放目录
-      if (state.song_catalogue.length != state.songs.length) 
+      // if (state.song_catalogue.length != state.songs.length)
         state.song_catalogue = objCopy(state.songs);
     }
     state.audioPlaying = data
@@ -122,15 +122,29 @@ const mutations = {
   },
   next_songCatalogue(state, { data }) {
     //选中歌曲在歌单中下一首歌播放
-    let songs=state.song_catalogue
+    let songs = state.song_catalogue
+    let index = 0
+    // 先循环删除歌单重复的歌曲
     for (let i = 0; i < data.length; i++) {
       for (let j = 0; j < songs.length; j++) {
         if (songs[j].id == data[i].id) {
-          songs.splice(j, 1)
+          state.song_catalogue.splice(j, 1)
+          if (j <= state.playIndex) state.playIndex--
+          // index = j
+          console.log(j,state.playIndex);
           break;
         }
       }
     }
+    state.song_catalogue.splice((state.playIndex+1), 0, ...data)
+    // state.song_catalogue.splice(state.playIndex, 1, data[i])
+    // if (state.playIndex > j) {
+    //   state.playIndex--
+    //   state.song_catalogue.splice(state.playIndex, 1, data[i])
+    // } else {
+    //   state.playIndex++
+    //   state.song_catalogue.splice(state.playIndex, 0, data[i])
+    // }
   },
   prevPlaynext(state, { type }) {
     //随机播放key==1
@@ -190,14 +204,6 @@ const getters = {
       ? `http://music.163.com/song/media/outer/url?id=${state.audioPlaying.id}.mp3`
       : '';
   },
-  song_catalogues(state, getters) {
-    let songs = []
-    for (let i of state.song_catalogue) {
-      i.check = false
-      songs.push(i)
-    }
-    return songs
-  }
 }
 
 export default new Vuex.Store({state, mutations, actions, getters, strict: true})

@@ -1,50 +1,53 @@
 <template>
-  <div class="DetailPage">
-    <x-header class="detail-header" :left-options="{backText: ''}">{{audioPlaying.name}}</x-header>
+  <div class="detail">
+    <x-header class="fixed-top" :left-options="{backText: ''}">{{audioPlaying.name}}</x-header>
     <div class="bg-blur" :style="{backgroundImage: `url(${audioPlaying.album.blurPicUrl})`}"></div>
-    <!-- <div class=""> -->
+    <div class="clear-header">
       <img src="../../static/images/aag.png" alt="" class="aag" :class="{upDown: play, downUp: !play}">
       <div class="turntable" ref="turntable" :style="styleRoute">
         <img src="../../static/images/play.png" alt="" class="playbg">
         <img :src="`${audioPlaying.album.blurPicUrl}?param=200y200`" alt="" class="playimg">
       </div>
-    <!-- </div> -->
-    <div class="foot">
-      <flexbox :gutter="0" class="tools">
-        <flexbox-item>
-          <i class="iconfont icon-jushoucang" :class="{'icon-jushoucanggift text-color-red': collection}" @click="collectionfn"></i>
-        </flexbox-item>
-        <flexbox-item>
-          <i class="iconfont icon-download"></i>
-        </flexbox-item>
-        <flexbox-item>
-          <i class="iconfont icon-pinglun" @click="pinglun"></i>
-        </flexbox-item>
-        <flexbox-item>
-          <i class="iconfont icon-more" @click="detailsfn"></i>
-        </flexbox-item>
-      </flexbox>
-      <Drag></Drag>
-      <flexbox :gutter="0" class="original">
-        <flexbox-item>
-          <i class="iconfont" :class="playmode.class" @click="setPlaymode"></i>
-        </flexbox-item>
-        <flexbox-item>
-          <i class="iconfont icon-prev" @click="playPrev"></i>
-        </flexbox-item>
-        <flexbox-item>
-          <i class="iconfont icon-bofang1" @click="plays"></i>
-        </flexbox-item>
-        <flexbox-item>
-          <i class="iconfont icon-next" @click="playNext"></i>
-        </flexbox-item>
-        <flexbox-item>
-          <i class="iconfont icon-liebiao" @click="playlistfn"></i>
-        </flexbox-item>
-      </flexbox>
+      <div class="foot">
+        <flexbox :gutter="0" class="tools">
+          <flexbox-item>
+            <i class="iconfont icon-jushoucang" :class="{'icon-jushoucanggift text-color-red': collection}" @click="collectionfn"></i>
+          </flexbox-item>
+          <flexbox-item>
+            <i class="iconfont icon-download"></i>
+          </flexbox-item>
+          <flexbox-item>
+            <div class="totalBox">
+              <i class="iconfont icon-pinglun" @click="pinglun"></i>
+              <span class="total">{{totals | numType}}</span>
+            </div>
+          </flexbox-item>
+          <flexbox-item>
+            <i class="iconfont icon-more" @click="detailsfn"></i>
+          </flexbox-item>
+        </flexbox>
+        <Drag></Drag>
+        <flexbox :gutter="0" class="original">
+          <flexbox-item>
+            <i class="iconfont" :class="playmode.class" @click="setPlaymode"></i>
+          </flexbox-item>
+          <flexbox-item>
+            <i class="iconfont icon-prev" @click="playPrev"></i>
+          </flexbox-item>
+          <flexbox-item>
+            <i class="iconfont icon-bofang1" @click="plays"></i>
+          </flexbox-item>
+          <flexbox-item>
+            <i class="iconfont icon-next" @click="playNext"></i>
+          </flexbox-item>
+          <flexbox-item>
+            <i class="iconfont icon-liebiao" @click="playlistfn"></i>
+          </flexbox-item>
+        </flexbox>
+      </div>
+      <popupDetail ref="popupDetail" v-model="show" type="detail" :id="parseInt(id)"></popupDetail>
+      <catalogue ref="catalogue"></catalogue>
     </div>
-    <detail-list ref="detailList" v-model="show" type="detail" :id="parseInt(id)"></detail-list>
-    <catalogue ref="catalogue"></catalogue>
   </div>
 </template>
 
@@ -52,8 +55,10 @@
   import { XHeader, Flexbox, FlexboxItem } from 'vux'
   import { mapState, mapMutations } from 'vuex';
   import Drag from '../components/Drag';
-  import detailList from '../components/detailList';
+  import popupDetail from '../components/popupDetail';
   import catalogue from '../components/Catalogue';
+
+  import { musicComment } from '../util/severAPI';
 
   export default {
     name: "Detail",
@@ -64,7 +69,8 @@
         styleRoute: {},
         collection: false,
         show: false,
-        id: ''
+        id: '',
+        total: 0
       }
     },
     components: {
@@ -72,14 +78,20 @@
       FlexboxItem,
       XHeader,
       Drag,
-      detailList,
+      popupDetail,
       catalogue
     },
     computed: {
       ...mapState([
         'playmode',
         'audioPlaying'
-      ])
+      ]),
+      totals() {
+        musicComment({ id: this.audioPlaying.id }).then(res => {
+          this.total = res.data.total
+        })
+        return this.total
+      }
     },
     created() {
 
@@ -93,9 +105,10 @@
         this.collection = !this.collection
       },
       pinglun() {
+        this.$router.push({ path: `/comment/${this.audioPlaying.id}` })
       },
       detailsfn() {
-        this.$refs.detailList.showfn(this.audioPlaying)
+        this.$refs.popupDetail.showfn(this.audioPlaying)
       },
       setStyleRoute(vnode) {
         if (this.play) {
@@ -147,22 +160,31 @@
       },
       playNext() {
         this.prevPlaynext({ type: 'next' })
+      },
+      aaa(){
+        musicComment({ id: this.audioPlaying.id }).then(res => {
+          this.total = res.data.total
+        })
       }
     },
+    filters: {
+      numType(val) {
+        if (val > 10000) {
+          return '1w+'
+        } else if (val > 999) {
+          return '999+'
+        } else {
+          return val
+        }
+      }
+    }
   }
 </script>
 
 <style lang="less" scoped>
-  .DetailPage {
-    position: absolute;
-    z-index: 0;
+  .detail {
     width: 100%;
     height: 100%;
-    overflow: hidden;
-    .detail-header {
-      position: relative;
-      z-index: 10;
-    }
   }
   .bg-blur {
     position: absolute;
@@ -170,7 +192,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    z-index: -1;
+    z-index: 0;
     filter: blur(70px);
     background-size: cover;
     background-position: center top;
@@ -207,7 +229,7 @@
   }
   .aag {
     position: absolute;
-    top: 3%;
+    top: -4.5%;
     right: 27%;
     z-index: 5;
     width: 28%;
@@ -221,21 +243,21 @@
     }
     @keyframes upDown {
       0% {
-        top: 3%;
+        top: -4.5%;
         transform: rotateZ(-24deg);
       }
       100% {
-        top: 4.5%;
+        top: -3%;
         transform: rotateZ(0);
       }
     }
     @keyframes downUp {
       0% {
-        top: 4.5%;
+        top: -3%;
         transform: rotateZ(0);
       }
       100% {
-        top: 3%;
+        top: -4.5%;
         transform: rotateZ(-24deg);
       }
     }
@@ -255,6 +277,9 @@
       line-height: 30px;
       .iconfont {
         font-size: 24px;
+      }
+      .icon-pinglun {
+        font-size: 20px;
       }
       .icon-download {
         font-size: 26px;
@@ -286,7 +311,27 @@
   // .icon-jushoucanggift.red {
   //   transform: scale(1.2)
   // }
+  .totalBox {
+    position: relative;
+    .total {
+      position: absolute;
+      top: -5px;
+      left: 57%;
+      z-index: 0;
+      line-height: normal;
+      font-size: 12px;
+    }
+  }
 </style>
+
+<style lang="less">
+  .detail .vux-header {
+    background-color: transparent !important;
+    outline: 1px solid #ccc;
+
+  }
+</style>
+
 
 
 

@@ -1,13 +1,15 @@
 <template>
-  <div class="tuijian" :class="{tj_bottom: !!audioPlaying.id}">
-    <x-header class="custom-header" :left-options="{backText: ''}">每日歌曲推荐</x-header>
-    <div class="bannBig" v-if="!!bigImg">
-      <img :src="bigImg.picUrl" :alt="bigImg.typeTitle">
-      <span class="tag">{{bigImg.typeTitle}}</span>
-      <div class="tips">根据你的音乐口味生成,每天6:00更新</div>
-      <div class="bg"></div>
+  <div>
+    <x-header class="fixed-top" :left-options="{backText: ''}">每日歌曲推荐</x-header>
+    <div class="clear-header" :class="{'clear-audio': !!audioPlaying.id}">
+      <div class="bannBig" v-if="!!bigImg">
+        <img :src="bigImg.picUrl" :alt="bigImg.typeTitle">
+        <span class="tag">{{bigImg.typeTitle}}</span>
+        <div class="tips">根据你的音乐口味生成,每天6:00更新</div>
+        <div class="bg"></div>
+      </div>
+      <Playbox :songData="songs"></Playbox>
     </div>
-    <Playbox :songData="songs"></Playbox>
   </div>
 </template>
 
@@ -28,7 +30,7 @@
       XHeader,
       Playbox,
     },
-    created(){
+    created() {
       this.recommendapi();
     },
     computed: {
@@ -37,9 +39,9 @@
         'songs',
         'audioPlaying'
       ]),
-      bigImg(){
-        return this.banners.find(item=>{
-          return item.typeTitle=="广告"
+      bigImg() {
+        return this.banners.find(item => {
+          return item.typeTitle == "广告"
         })
       }
     },
@@ -52,10 +54,6 @@
 </script>
 
 <style lang="less" scoped>
-  
-  .tj_bottom {
-    margin-bottom: 62px;
-  }
   .bannBig {
     position: relative;
     img {
@@ -86,11 +84,10 @@
       bottom: 0;
       top: 0;
       z-index: 0;
-      background-color: rgba(0, 0, 0, .15);
+      background-color: rgba(0, 0, 0, 0.15);
       background-image: linear-gradient(to top, #dcdcdc 0%, transparent 50%);
     }
   }
-  
 </style>
 
 

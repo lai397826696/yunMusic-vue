@@ -1,0 +1,78 @@
+// 颜色
+@BLUE: #3190e8;
+@RED: #e04339;
+@WHITE:#fff;
+@ORANGE:#ff9913;
+@GREEN: #39bfb4;
+// 字体色
+@FRONT_GRAY: #b0b0b0; //灰色
+@FRONT_GRAY2: #a0a0a0; //灰色
+@FRONT_BLACK: #333; //字体黑色1
+@FRONT_BLACK2: #777; //字体黑色2
+@FRONT_BLACK3: #a0a0a0; //字体黑色3
+@FRONT_WHITE: #fff; //白色
+// 字体大小
+@FONT_SIZE_XL: 18px; //18px
+@FONT_SIZE_L: 16px; //16px
+@FONT_SIZE_M: 14px; //正文 14px
+@FONT_SIZE_S: 12px; //12px
+@FONT_SIZE_XS: 10px; //10px
+// 杂项
+@BODY_COLOR: #f2f4f5; //背景色
+@BORDER_GRAY: #ddd;
+@HEADER-HEIGHT: 1.333333rem;
+@clear-header: 46px;
+@clear-popheader: 40px;
+@clear-audio: 62px;
+@max-width: 750px;
+
+//固定位置
+.fixed(@zindex: 1000;) {
+  position: fixed !important;
+  top: 0;
+  z-index: @zindex;
+  margin: auto;
+  width: 100%;
+  max-width: @max-width;
+}
+//定位全屏
+.allcover() {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+//定位上下左右居中
+.center() {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+//定位上下居中
+.ct() {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+//定位左右居中
+.cl()  {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+//宽高
+.wh(@width, @height) {
+  width: @width;
+  height: @height;  
+}
+
+
+//flex 布局和 子元素 对其方式
+.fj(@type: space-between) {
+  display: flex;
+  justify-content: @type;
+}

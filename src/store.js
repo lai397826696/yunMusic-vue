@@ -2,7 +2,8 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios';
 import * as ajax from './util/severAPI';
-import {objCopy} from './util/util';
+import { objCopy } from './util/util';
+import router from './router/index';
 Vue.use(Vuex)
 axios.defaults.baseURL = 'http://localhost:3000';
 
@@ -52,7 +53,6 @@ const mutations = {
   },
   set_recommend(state, {songs}) {
     state.songs = songs
-    state.song_catalogue = objCopy(songs);
   },
   set_changePlaylist(state, { key }) {
     //播放全部
@@ -60,11 +60,10 @@ const mutations = {
     state.playIndex = 0
     state.audioPlaying = state.song_catalogue[0]
   },
-  set_playing(state, {data, index, type}) { //点击歌曲播放
-    if (type !== "popup") {
-      //如果播放目录有删减，把当前歌单配置给播放目录
-      // if (state.song_catalogue.length != state.songs.length)
-        state.song_catalogue = objCopy(state.songs);
+  set_playing(state, { data, index, type }) { //点击歌曲播放
+    if (type != "popup") {
+    //为了区别页面歌单和弹窗歌单的点击事件，type!=popup为页面歌单点击,进行赋值
+      state.song_catalogue = [...state.songs];
     }
     state.audioPlaying = data
     state.audioPlaying.playing = true
@@ -119,32 +118,33 @@ const mutations = {
   },
   empty_songCatalogue(state) {
     state.song_catalogue = [];
+    state.audioPlaying = {
+      id: '',
+      album: {},
+      alias: [],
+      artists: [],
+      playing: false
+    }
   },
   next_songCatalogue(state, { data }) {
     //选中歌曲在歌单中下一首歌播放
-    let songs = state.song_catalogue
-    let index = 0
-    // 先循环删除歌单重复的歌曲
-    for (let i = 0; i < data.length; i++) {
-      for (let j = 0; j < songs.length; j++) {
-        if (songs[j].id == data[i].id) {
-          state.song_catalogue.splice(j, 1)
-          if (j <= state.playIndex) state.playIndex--
-          // index = j
-          console.log(j,state.playIndex);
-          break;
+    if (state.song_catalogue.length == 0) {
+      state.song_catalogue = [...data]
+      state.audioPlaying = state.song_catalogue[0]
+      router.push('/detail')
+    } else {
+      // 先循环删除歌单重复的歌曲,再添加数据
+      for (let i = 0; i < data.length; i++) {
+        for (let j = 0; j < state.song_catalogue.length; j++) {
+          if (state.song_catalogue[j].id == data[i].id) {
+            state.song_catalogue.splice(j, 1)
+            if (j <= state.playIndex) state.playIndex--
+            break;
+          }
         }
       }
+      state.song_catalogue.splice((state.playIndex + 1), 0, ...data)
     }
-    state.song_catalogue.splice((state.playIndex+1), 0, ...data)
-    // state.song_catalogue.splice(state.playIndex, 1, data[i])
-    // if (state.playIndex > j) {
-    //   state.playIndex--
-    //   state.song_catalogue.splice(state.playIndex, 1, data[i])
-    // } else {
-    //   state.playIndex++
-    //   state.song_catalogue.splice(state.playIndex, 0, data[i])
-    // }
   },
   prevPlaynext(state, { type }) {
     //随机播放key==1

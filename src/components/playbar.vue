@@ -108,7 +108,7 @@
       },
       routefn() {
         let path = this.$route.path;
-        if (path == "/detail" || path == '/fm') {
+        if (path == "/detail" || path == '/fm' || path.indexOf('comment')>=0) {
           this.vnodeshow = false;
         } else {
           this.vnodeshow = true;

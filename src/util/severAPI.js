@@ -88,10 +88,19 @@ export const recommend = param => {
 }
 
 //歌曲评论 param=>id, ..limit：评论数，offset：页数
-export const music = param => {
+export const musicComment = param => {
   return get('/comment/music', param)
 }
 //喜欢音乐 param=>id, ..like
 export const like = param => {
   return get('/like', param)
+}
+
+// 评论点赞
+// id: 资源id
+// cid: 评论id
+// t: 是否点赞: 1是 / 0否
+// type: 资源类型 0: 歌曲, 1: mv, 2: 歌单, 3: 专辑, 4: 电台
+export const commentLiked = param => {
+  return get('/comment/like', param, true)
 }

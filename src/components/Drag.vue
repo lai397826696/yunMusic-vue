@@ -31,7 +31,6 @@
     },
     mounted() {
       this.offsetWidth = this.$refs.drop.parentNode.offsetWidth
-      console.log(this.$refs.drop.getBoundingClientRect());
       this.clientX = this.$refs.drop.getBoundingClientRect().left + this.defaultnum
     },
     methods: {

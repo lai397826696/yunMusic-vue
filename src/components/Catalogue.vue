@@ -20,7 +20,7 @@
             <i class="iconfont icon-shengyin"></i>
           </div>
           <div class="flex_bd">
-            <p class="ellipsis" :class="{'active':item.id==audioPlaying.id}" @click="playfn(item, index)">{{index}}
+            <p class="ellipsis" :class="{'active':item.id==audioPlaying.id}" @click="playfn(item, index)">
               <span class="name">{{item.name}}</span>
               -
               <em v-for="(ai, i) of item.artists" :key="ai.id+i">{{i==0?ai.name:'/'+ ai.name}}</em>

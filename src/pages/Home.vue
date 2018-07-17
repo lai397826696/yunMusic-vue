@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="clear-header home" :class="{'clear-audio': !!audioPlaying.id}">
     <tab :line-width="2" class="tab" bar-active-color="">
       <tab-item selected>发现</tab-item>
       <tab-item>我的</tab-item>
@@ -131,6 +131,7 @@
         'newMusic',
         'sole',
         'dj',
+        'audioPlaying'
       ]),
       resources() {
         let arr=[];
@@ -160,7 +161,8 @@
 
 <style lang="less" scoped>
   .home {
-    margin-bottom: 55px;
+    top: 0;
+    // margin-bottom: 55px;
   }
   .tab {
     margin: 0 auto;

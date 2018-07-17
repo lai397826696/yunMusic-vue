@@ -1,0 +1,246 @@
+@import './mixin.less';
+/* vux css 全局  start*/
+.popup-header-bgred {
+	// .fixed(1001) !important;
+	background-color: @RED !important;
+	// & + div {
+	// 	margin-top: 40px;
+	// }
+  .vux-popup-header-left,
+  .vux-popup-header-title,
+  .vux-popup-header-right {
+    color: @WHITE !important;
+  }
+  .vux-popup-header-title {
+    padding: 0 30px;
+    text-align: left;
+  }
+}
+/* 头部 */
+#app {
+	position: relative;
+	z-index: 0;
+  .vux-header {
+    // .fixed();
+		background-color: @RED;
+		
+		// & + div {
+    //   margin-top: 46px;
+		// }
+  }
+  .vux-header-left,
+  .vux-header-right,
+  .vux-header-left a {
+    color: @WHITE;
+  }
+  .left-arrow:before {
+    border-color: @WHITE;
+  }
+  .vux-header-title {
+    margin: 0 55px;
+    text-align: left;
+  }
+}
+/* vux css 全局  end*/
+
+/* 自定义 start */
+body, textarea, input, button, select {
+  font-size: 14px;
+  font-family: 'Microsoft YaHei', 'Avenir', Helvetica, Arial, sans-serif;
+  color: @FRONT_BLACK;
+  outline: 0;
+}
+html, body {
+    position: relative;
+    margin: 0 auto;
+    max-width: 750px;
+    height: 100%;
+    background-color: @BODY_COLOR;
+    overflow: hidden;
+}
+h1, h2, h3, h4, h5, h6 {
+	font-weight: normal;
+	font-size: 14px;
+}
+#app {
+	height: 100%;
+}
+.fixed-top {
+  .fixed();
+}
+
+.clear-header {
+    position: absolute;
+    top: @clear-header;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 0;
+    overflow-y: scroll;
+}
+.clear-audio {
+	bottom: @clear-audio;
+}
+
+em {
+  font-style: normal;
+}
+.text-color-red {
+  color: @RED;
+}
+/* 自定义 end */
+
+/*layout start*/
+.flex {
+  display: flex;
+  align-items: center;
+  padding: 8px 10px;
+
+  .flex {
+    padding: 0;
+  }
+  &.justify-content {
+    justify-content: space-between;
+  }
+  &.items-start {
+    align-items: flex-start;
+  }
+
+  .flex_bd {
+    flex: 1;
+    width: 0;
+    overflow: hidden;
+  }
+}
+/*layout end*/
+
+.music-list {
+  position: relative;
+  .flex {
+		padding-top: 0;
+		padding-bottom: 0;
+  }
+}
+
+.notedata {
+  padding: .4rem 0;
+  font-size: .266667rem;
+  text-align: center;
+}
+
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+[v-cloak] {
+  display: none;
+}
+.bg-white {
+    width: 100%;
+    background-color: #fff;
+}
+.floatL {
+    float: left;
+}
+.floatR {
+    float: right;
+}
+
+/*margin, padding  start*/
+.mg5 {
+    margin: 5px;
+}
+.mg_tb5 {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+.mg_lr5 {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+.mg_l5 {
+    margin-left: 5px;
+}
+.mg_r5 {
+    margin-right: 5px;
+}
+.mg_t5 {
+    margin-top: 5px;
+}
+.mg_b5 {
+    margin-bottom: 5px;
+}
+.mg10 {
+    margin: 10px;
+}
+.mg_tb10 {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.mg_lr10 {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+.mg_l10 {
+    margin-left: 10px;
+}
+.mg_r10 {
+    margin-right: 10px;
+}
+.mg_t10 {
+    margin-top: 10px;
+}
+.mg_b10 {
+    margin-bottom: 10px;
+}
+.pd5 {
+    padding: 5px;
+}
+.pd_lr5 {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+.pd_tb5 {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+.pd_l5 {
+    padding-left: 5px;
+}
+.pd_r5 {
+    padding-right: 5px;
+}
+.pd_t5 {
+    padding-top: 5px;
+}
+.pd_b5 {
+    padding-bottom: 5px;
+}
+.pd10 {
+    padding: 10px;
+}
+.pd_lr10 {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.pd_tb10 {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+.pd_l10 {
+    padding-left: 10px;
+}
+.pd_r10 {
+    padding-right: 10px;
+}
+.pd_t10 {
+    padding-top: 10px;
+}
+.pd_b10 {
+    padding-bottom: 10px;
+}
+/*margin, padding  end*/
+
+

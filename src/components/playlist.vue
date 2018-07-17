@@ -19,7 +19,7 @@
         <i class="iconfont icon-more" @click.stop="detailsfn(item)"></i>
       </div>
     </div>
-    <detail-list ref="detailList" type="sheet"></detail-list>
+    <popupDetail ref="popupDetail" type="sheet"></popupDetail>
   </div>
 
 </template>
@@ -27,7 +27,7 @@
 <script>
   import { Popup, TransferDom } from 'vux'
   import { mapState, mapMutations, mapGetters } from 'vuex';
-  import detailList from './detailList';
+  import popupDetail from './popupDetail';
 
   export default {
     name: 'list',
@@ -47,7 +47,7 @@
     },
     components: {
       Popup,
-      detailList
+      popupDetail
     },
     directives: {
       TransferDom
@@ -65,7 +65,7 @@
         this.set_playing({data: item, index: index})
       },
       detailsfn(item) {
-        this.$refs.detailList.showfn(item)
+        this.$refs.popupDetail.showfn(item)
       },
     }
   }

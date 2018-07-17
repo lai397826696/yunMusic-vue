@@ -1,8 +1,8 @@
 <template>
-  <div class="songs">
-    <div class="flex allbox">
+  <div>
+    <div class="flex vux-1px-b allbox">
       <div class="flex_hd">
-        <i class="iconfont icon-bofang1"></i>
+        <i class="iconfont icon-play1"></i>
       </div>
       <div class="flex_bd">
         <p class="name" @click="allPlay">播放全部</p>
@@ -85,17 +85,18 @@
     directives: {
       TransferDom
     },
-    mounted(){
-      
+    mounted() {
+
     },
-    beforeUpdate(){
-      if(this.song_catalogues.length==0) {
-        this.song_catalogues.push(...this.song_catalogue)
+    beforeUpdate() {
+      if (this.song_catalogues.length == 0) {
+        this.song_catalogues = [...this.songData]
       }
     },
     computed: {
       ...mapState([
         'song_catalogue',
+        'playIndex'
       ]),
       rightText() {
         return this.datas.length != this.song_catalogues.length ? '全选' : '取消全选'
@@ -114,7 +115,7 @@
         this.empty();
         this.show = !this.show
       },
-      clickLeft(){
+      clickLeft() {
         this.show = !this.show
         this.empty();
       },
@@ -149,11 +150,12 @@
         return this.datas.indexOf(id) >= 0
       },
       nextPlay() {
-        if(this.dataRecord.length>0) {
+        if (this.dataRecord.length > 0) {
           this.$vux.toast.text('已添加到下一首播放')
         } else {
           this.$vux.toast.text('请选择要播放的歌曲')
         }
+
         this.next_songCatalogue({ data: this.dataRecord })
       },
     },
@@ -165,7 +167,6 @@
     font-size: 20px;
   }
   .songs {
-    background-color: #f5f5f5;
     .icon-bofang1 {
       font-size: 24px;
       margin-right: 5px;

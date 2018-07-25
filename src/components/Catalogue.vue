@@ -137,14 +137,6 @@
     .flex_bd {
       line-height: 0.32rem;
     }
-    .playtype {
-      display: inline-block;
-      vertical-align: middle;
-      margin-right: 5px;
-      width: 20px;
-      height: 20px;
-      background-color: #ccc;
-    }
     .collection {
       margin-right: 10px;
       text-align: right;

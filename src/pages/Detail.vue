@@ -299,7 +299,6 @@
         font-size: 24px;
       }
       .icon-bofang1 {
-        vertical-align: middle;
         font-size: 52px;
       }
     }

@@ -198,16 +198,12 @@
       height: 30px;
       line-height: 30px;
     }
-    .icon {
-      vertical-align: middle;
-    }
   }
 
   .icon-liebiao {
     margin-left: 10px;
     font-size: 26px;
     color: #666;
-    vertical-align: middle;
   }
   .vux-1px-b:after {
     left: 10px;

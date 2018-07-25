@@ -7,7 +7,7 @@
         </div>
         <div class="flex">
           <div class="flex_hd">
-            <i class="iconfont"></i>
+            <i class="iconfont icon-bofnag2"></i>
           </div>
           <div class="flex_bd">下一首播放</div>
         </div>
@@ -45,7 +45,7 @@
         </div>
         <div class="flex">
           <div class="flex_hd">
-            <i class="iconfont icon-bofang1"></i>
+            <i class="iconfont icon-play1"></i>
           </div>
           <div class="flex_bd">查看视频</div>
         </div>

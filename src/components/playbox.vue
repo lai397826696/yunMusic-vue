@@ -2,7 +2,7 @@
   <div>
     <div class="flex vux-1px-b allbox">
       <div class="flex_hd">
-        <i class="iconfont icon-play1"></i>
+        <i class="iconfont icon-play1 mg_r5"></i>
       </div>
       <div class="flex_bd">
         <p class="name" @click="allPlay">播放全部</p>
@@ -177,7 +177,6 @@
   }
   .icon-more1 {
     margin-right: 5px;
-    vertical-align: middle;
     font-size: 18px;
   }
   .listDetail {

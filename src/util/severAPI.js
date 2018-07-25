@@ -87,15 +87,14 @@ export const recommend = param => {
   return get('/dj/recommend', param)
 }
 
-//歌曲评论 param=>id, ..limit：评论数，offset：页数
+//歌曲评论 param=>id, ..limit：评论数,默认=20，offset：页数
 export const musicComment = param => {
-  return get('/comment/music', param)
+  return get('/comment/music', param, true)
 }
 //喜欢音乐 param=>id, ..like
 export const like = param => {
   return get('/like', param)
 }
-
 // 评论点赞
 // id: 资源id
 // cid: 评论id
@@ -103,4 +102,24 @@ export const like = param => {
 // type: 资源类型 0: 歌曲, 1: mv, 2: 歌单, 3: 专辑, 4: 电台
 export const commentLiked = param => {
   return get('/comment/like', param, true)
+}
+//用户详情，uid：用户id
+export const userDetail = param => {
+  return get('/user/detail', param)
+}
+//用户歌单 uid: 用户id
+export const userPlaylist = param => {
+  return get('/user/playlist', param)
+}
+//歌单详情  id:歌单id， 可选参数  s：歌单最近的s个收藏者
+export const playlistDetail = param => {
+  return get('/playlist/detail', param)
+}
+//私人fm
+export const personal_fm = param => {
+  return get('/personal_fm', param, true)
+}
+//私人fm移至垃圾桶 id:歌曲id
+export const fm_trash = param => {
+  return get('/fm_trash', param)
 }

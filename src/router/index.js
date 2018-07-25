@@ -6,6 +6,7 @@ import Tuijian from '@/pages/Tuijian'
 import Fm from '@/pages/Fm'
 import Detail from '@/pages/Detail'
 import Comments from '@/pages/Comment';
+import UserInfo from '@/pages/UserInfo';
 
 Vue.use(Router)
 
@@ -16,6 +17,12 @@ export default new Router({
       name: 'home',
       component: Home
     },
+    // {
+    //   path: '/home',
+    //   name: 'home',
+    //   alias: '/',
+    //   component: Home
+    // },
     {
       path: '/login',
       name: 'login',
@@ -40,6 +47,11 @@ export default new Router({
       path: '/Comment/:id',
       name: 'comment',
       component: Comments
+    },
+    {
+      path: '/userinfo/:id',
+      name: 'userinfo',
+      component: UserInfo
     }
   ]
 })

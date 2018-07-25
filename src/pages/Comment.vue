@@ -20,7 +20,9 @@
         <h3 class="title">精彩评论</h3>
         <article class="flex items-start mg_tb10" v-for="list in hotComments" :key="list.commentId">
           <div class="flex_hd">
-            <img :src="list.user.avatarUrl" alt="" class="commentImg">
+            <router-link :to="{path: `/userinfo/${list.user.userId}`}">
+              <img :src="list.user.avatarUrl" alt="" class="commentImg">
+            </router-link>
           </div>
           <div class="flex_bd vux-1px-b pd_b5 commBox">
             <header class="flex items-start">
@@ -35,7 +37,7 @@
             </header>
             <p class="mg_tb10 content">{{list.content}}</p>
             <p class="mg_tb10 reply" v-if="list.beReplied.length!=0">
-              <router-link :to="{path: '/'}">{{list.beReplied[0].user.nickname}}</router-link>:{{list.beReplied[0].content}}
+              <router-link :to="{path: `/userinfo/${list.user.userId}`}">{{list.beReplied[0].user.nickname}}</router-link>:{{list.beReplied[0].content}}
             </p>
           </div>
         </article>
@@ -59,7 +61,7 @@
             </header>
             <p class="mg_tb10 content">{{list.content}}</p>
             <p class="mg_tb10 reply" v-if="list.beReplied.length!=0">
-              <router-link :to="{path: '/'}">{{list.beReplied[0].user.nickname}}</router-link>:{{list.beReplied[0].content}}
+              <router-link :to="{path: `/userinfo/${list.user.userId}`}">{{list.beReplied[0].user.nickname}}</router-link>:{{list.beReplied[0].content}}
             </p>
           </div>
         </article>
@@ -93,6 +95,7 @@
         params: {
           id: '',
           offset: 0,
+          // timestamp: new Date().getTime()
         },
         loading: true
       }
@@ -131,7 +134,7 @@
         }
       },
       commentLike(list) {
-        let obj={ id: this.params.id, cid: list.commentId, t: 1, type: 0 }
+        let obj={ id: this.params.id, cid: list.user.userId, t: 1, type: 0 }
         if(!!list.liked) obj.t=0
         commentLiked(obj).then(res => {
           if(res.data.code==200){

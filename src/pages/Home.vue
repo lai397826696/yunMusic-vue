@@ -192,6 +192,7 @@
         color: #f93434;
       }
       .iconfont {
+        line-height: 1.6;
         font-size: 30px;
       }
       .text {

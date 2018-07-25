@@ -18,6 +18,10 @@ Vue.use(ToastPlugin, { time: 1000 })
 Vue.http.defaults.baseURL = 'http://localhost:3000';
 
 router.beforeEach((to, form, next) => {
+  // console.log(to);
+  // if (form.path == "/" && form.matched.length == 0 && to.name!="home") {
+  //   router.replace("/")
+  // }
   console.log(to);
   next()
 })

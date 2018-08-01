@@ -2,20 +2,15 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios';
 import * as ajax from './util/severAPI';
-import { objCopy } from './util/util';
-import router from './router/index';
+import {objCopy} from './util/util';
 Vue.use(Vuex)
 axios.defaults.baseURL = 'http://localhost:3000';
 
 const local = (arr = '') => {
-  let star = window
-    .localStorage
-    .getItem("userinfo");
+  let star = window.localStorage.getItem("userinfo");
   if (!!arr && star != "undefined") 
     return JSON.parse(star)[arr];
-  return !!star
-    ? true
-    : false;
+  return !!star? true: false;
 }
 
 const state = {
@@ -53,23 +48,25 @@ const mutations = {
   },
   set_recommend(state, {songs}) {
     state.songs = songs
+    state.song_catalogue = [...songs];
   },
   set_changePlaylist(state, { key }) {
     //播放全部
-    state.song_catalogue = objCopy(state[key]);
+    state.song_catalogue = [...state[key]];
     state.playIndex = 0
     state.audioPlaying = state.song_catalogue[0]
   },
   set_playing(state, { data, index, type }) { //点击歌曲播放
-    if (type != "popup") {
-    //为了区别页面歌单和弹窗歌单的点击事件，type!=popup为页面歌单点击,进行赋值
-      state.song_catalogue = [...state.songs];
+    if (type !== "popup") {
+      //如果播放目录有删减，把当前歌单配置给播放目录
+      if (state.song_catalogue.length != state.songs.length)
+        state.song_catalogue = objCopy(state.songs);
     }
     state.audioPlaying = data
-    state.audioPlaying.playing = true
-    state.playIndex=index
+    state.audioPlaying.playing=true
+    state.playIndex = index
   },
-  set_audioStatus(state, {playing}) {
+  set_audioStatus(state, { playing }) {
     state.audioPlaying.playing = playing;
   },
   remove_songCatalogue(state, {index, id}) {
@@ -118,32 +115,17 @@ const mutations = {
   },
   empty_songCatalogue(state) {
     state.song_catalogue = [];
-    state.audioPlaying = {
-      id: '',
-      album: {},
-      alias: [],
-      artists: [],
-      playing: false
-    }
   },
   next_songCatalogue(state, { data }) {
     //选中歌曲在歌单中下一首歌播放
-    if (state.song_catalogue.length == 0) {
-      state.song_catalogue = [...data]
-      state.audioPlaying = state.song_catalogue[0]
-      router.push('/detail')
-    } else {
-      // 先循环删除歌单重复的歌曲,再添加数据
-      for (let i = 0; i < data.length; i++) {
-        for (let j = 0; j < state.song_catalogue.length; j++) {
-          if (state.song_catalogue[j].id == data[i].id) {
-            state.song_catalogue.splice(j, 1)
-            if (j <= state.playIndex) state.playIndex--
-            break;
-          }
+    let songs=state.song_catalogue
+    for (let i = 0; i < data.length; i++) {
+      for (let j = 0; j < songs.length; j++) {
+        if (songs[j].id == data[i].id) {
+          songs.splice(j, 1)
+          break;
         }
       }
-      state.song_catalogue.splice((state.playIndex + 1), 0, ...data)
     }
   },
   prevPlaynext(state, { type }) {
@@ -204,6 +186,14 @@ const getters = {
       ? `http://music.163.com/song/media/outer/url?id=${state.audioPlaying.id}.mp3`
       : '';
   },
+  song_catalogues(state, getters) {
+    let songs = []
+    for (let i of state.song_catalogue) {
+      i.check = false
+      songs.push(i)
+    }
+    return songs
+  }
 }
 
 export default new Vuex.Store({state, mutations, actions, getters, strict: true})

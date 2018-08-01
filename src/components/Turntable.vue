@@ -1,5 +1,5 @@
 <template>
-  <div class="turntableBox" @click.stop="togglefn">
+  <div class="turntableBox" @click="togglefn">
     <div class="turntable" v-show="toggle">
       <img src="../../static/images/aag.png" alt="" class="pointer" :class="{upDown: play, downUp: !play}">
       <div class="content" ref="turntable" :style="styleRoute">
@@ -9,19 +9,19 @@
       <div class="toolbar">
         <flexbox :gutter="0" class="tools">
           <flexbox-item>
-            <i class="iconfont icon-jushoucang" :class="{'icon-jushoucanggift text-color-red': collection}" @click="collectionfn"></i>
+            <i class="iconfont icon-jushoucang" :class="{'icon-jushoucanggift text-color-red': collection}" @click.stop="collectionfn"></i>
           </flexbox-item>
           <flexbox-item>
             <i class="iconfont icon-download"></i>
           </flexbox-item>
           <flexbox-item>
             <div class="totalBox">
-              <i class="iconfont icon-pinglun" @click="pinglun"></i>
+              <i class="iconfont icon-pinglun" @click.stop="pinglun"></i>
               <span class="total">{{totals | numType}}</span>
             </div>
           </flexbox-item>
           <flexbox-item>
-            <i class="iconfont icon-more" @click="detailsfn"></i>
+            <i class="iconfont icon-more" @click.stop="detailsfn"></i>
           </flexbox-item>
         </flexbox>
       </div>
@@ -35,13 +35,18 @@
 <script>
   import { Flexbox, FlexboxItem } from 'vux'
   import { mapState } from 'vuex';
+  import { musicComment } from '../util/severAPI';
+
   export default {
     name: "turntable",
     data() {
       return {
         play: false,
         styleRoute: {},
-        toggle: true
+        toggle: true,
+        collection: false,
+        total: 0
+
       };
     },
     components: {
@@ -54,10 +59,38 @@
       ...mapState([
         'audioPlaying'
       ]),
+      totals() {
+        musicComment({ id: this.audioPlaying.id }).then(res => {
+          this.total = res.data.total
+        })
+        return this.total
+      }
     },
     methods: {
       togglefn() {
+        console.log('切换歌词页');
         this.toggle = !this.toggle
+      },
+      collectionfn() {
+        this.collection = !this.collection
+      },
+      pinglun() {
+        this.$router.push({ path: `/comment/${this.audioPlaying.id}` })
+      },
+      detailsfn() {
+        console.log('详情');
+        // this.$refs.popupDetail.showfn(this.audioPlaying)
+      },
+    },
+    filters: {
+      numType(val) {
+        if (val > 10000) {
+          return '1w+'
+        } else if (val > 999) {
+          return '999+'
+        } else {
+          return val
+        }
       }
     }
   };
@@ -65,6 +98,9 @@
 
 <style lang="less" scoped>
   .turntableBox {
+    padding: 1% 0;
+    width: 100%;
+    height: 98%;
     .pointer {
       position: absolute;
       top: -2.5%;
@@ -98,6 +134,7 @@
     }
     .turntable {
       margin: 22% auto 0;
+      // margin: 0 auto 0;
       padding: 4px;
       width: 80%;
       border-radius: 50%;
@@ -147,6 +184,8 @@
       }
     }
     .lyric {
+      width: 100%;
+      height: 100%;
     }
   }
 </style>

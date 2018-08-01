@@ -31,7 +31,7 @@
             <i class="iconfont icon-prev" @click="playPrev"></i>
           </flexbox-item>
           <flexbox-item>
-            <i class="iconfont icon-bofang1" @click="plays"></i>
+            <i class="iconfont" :class="{'icon-zanting1': audioPlaying.playing, 'icon-bofang1': !audioPlaying.playing }" @click="plays"></i>
           </flexbox-item>
           <flexbox-item>
             <i class="iconfont icon-next" @click="playNext"></i>
@@ -260,6 +260,7 @@
       .iconfont {
         font-size: 24px;
       }
+      .icon-zanting1,
       .icon-bofang1 {
         font-size: 52px;
       }
@@ -284,6 +285,8 @@
   .turnFixed {
     position: absolute;
     top: 0;
+    left: 0;
+    right: 0;
     bottom: 19%;
     z-index: 0;
   }

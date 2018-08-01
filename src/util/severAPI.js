@@ -121,5 +121,5 @@ export const personal_fm = param => {
 }
 //私人fm移至垃圾桶 id:歌曲id
 export const fm_trash = param => {
-  return get('/fm_trash', param)
+  return get('/fm_trash', param, true)
 }

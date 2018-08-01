@@ -3,13 +3,9 @@
     <x-header class="fixed-top" :left-options="{backText: ''}">{{audioPlaying.name}}</x-header>
     <div class="bg-blur" :style="{backgroundImage: `url(${audioPlaying.album.blurPicUrl})`}"></div>
     <div class="clear-header">
-      <img src="../../static/images/aag.png" alt="" class="aag" :class="{upDown: play, downUp: !play}">
-      <div class="turntable" ref="turntable" :style="styleRoute">
-        <img src="../../static/images/play.png" alt="" class="playbg">
-        <img :src="`${audioPlaying.album.blurPicUrl}?param=200y200`" alt="" class="playimg">
-      </div>
+      <div class="turnFixed"><turntable></turntable></div>
       <div class="foot">
-        <flexbox :gutter="0" class="tools">
+        <!-- <flexbox :gutter="0" class="tools">
           <flexbox-item>
             <i class="iconfont icon-jushoucang" :class="{'icon-jushoucanggift text-color-red': collection}" @click="collectionfn"></i>
           </flexbox-item>
@@ -25,7 +21,7 @@
           <flexbox-item>
             <i class="iconfont icon-more" @click="detailsfn"></i>
           </flexbox-item>
-        </flexbox>
+        </flexbox> -->
         <Drag></Drag>
         <flexbox :gutter="0" class="original">
           <flexbox-item>
@@ -57,6 +53,7 @@
   import Drag from '../components/Drag';
   import popupDetail from '../components/popupDetail';
   import catalogue from '../components/Catalogue';
+  import turntable from '../components/Turntable';
 
   import { musicComment } from '../util/severAPI';
 
@@ -79,7 +76,8 @@
       XHeader,
       Drag,
       popupDetail,
-      catalogue
+      catalogue,
+      turntable
     },
     computed: {
       ...mapState([
@@ -110,14 +108,16 @@
       detailsfn() {
         this.$refs.popupDetail.showfn(this.audioPlaying)
       },
-      setStyleRoute(vnode) {
+      setStyleRoute(initial = false) {
+        //initial参数解决播放下一首时，正在转动的角度拨正为0deg
+        let turntable = this.$refs.turntable
         if (this.play) {
           this.styleRoute = {
             transition: 'transform 600s',
             transform: 'rotate(7000deg)'
           }
         } else {
-          let routes = this.getRoutes(vnode)
+          let routes = initial ? 0 : this.getRoutes(turntable)
           this.styleRoute = {
             transform: `rotate(${routes}deg)`
           }
@@ -151,19 +151,40 @@
         this.set_playmode()
       },
       plays() {
+        let vm = this
         this.play = !this.play
-        let turntable = this.$refs.turntable
-        this.setStyleRoute(turntable)
+        if (this.play) {
+          this.setStyleRoute()
+        } else {
+          setTimeout(function () {
+            vm.setStyleRoute()
+          }, 400)
+        }
       },
       playPrev() {
+        let vm = this;
         this.prevPlaynext({ type: 'prev' })
+        this.play = false
+        this.setStyleRoute(true)
+        setTimeout(function () {
+          vm.play = true
+          vm.setStyleRoute()
+        }, 200)
       },
       playNext() {
+        let vm = this;
         this.prevPlaynext({ type: 'next' })
+        this.play = false
+        this.setStyleRoute(true)
+        setTimeout(function () {
+          vm.play = true
+          vm.setStyleRoute()
+        }, 200)
       },
-      aaa(){
+      aaa() {
         musicComment({ id: this.audioPlaying.id }).then(res => {
           this.total = res.data.total
+          this.play = false
         })
       }
     },
@@ -207,61 +228,7 @@
       background-color: rgba(0, 0, 0, 0.4);
     }
   }
-  .turntable {
-    position: relative;
-    top: 11%;
-    z-index: 0;
 
-    .playbg {
-      margin: 0 auto;
-      display: block;
-      width: 80%;
-      max-width: 100%;
-    }
-    .playimg {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      z-index: 1;
-      margin: -100px;
-      border-radius: 50%;
-    }
-  }
-  .aag {
-    position: absolute;
-    top: -4.5%;
-    right: 27%;
-    z-index: 5;
-    width: 28%;
-    transform: rotateZ(-24deg);
-    transform-origin: 60px 0;
-    &.upDown {
-      animation: upDown 0.5s linear forwards;
-    }
-    &.downUp {
-      animation: downUp 1.5s ease-out;
-    }
-    @keyframes upDown {
-      0% {
-        top: -4.5%;
-        transform: rotateZ(-24deg);
-      }
-      100% {
-        top: -3%;
-        transform: rotateZ(0);
-      }
-    }
-    @keyframes downUp {
-      0% {
-        top: -3%;
-        transform: rotateZ(0);
-      }
-      100% {
-        top: -4.5%;
-        transform: rotateZ(-24deg);
-      }
-    }
-  }
   .foot {
     position: fixed;
     left: 0;
@@ -286,11 +253,6 @@
       }
     }
 
-    .range {
-      margin: 30px 0;
-      width: 95%;
-    }
-
     .original {
       line-height: 50px;
       text-align: center;
@@ -307,9 +269,6 @@
     // transition: transform 1s;
     transform: scale(1.8, 1.8);
   }
-  // .icon-jushoucanggift.red {
-  //   transform: scale(1.2)
-  // }
   .totalBox {
     position: relative;
     .total {
@@ -321,13 +280,19 @@
       font-size: 12px;
     }
   }
+
+  .turnFixed {
+    position: absolute;
+    top: 0;
+    bottom: 19%;
+    z-index: 0;
+  }
 </style>
 
 <style lang="less">
   .detail .vux-header {
     background-color: transparent !important;
     outline: 1px solid #ccc;
-
   }
 </style>
 

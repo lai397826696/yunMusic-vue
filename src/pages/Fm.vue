@@ -1,15 +1,37 @@
 <template>
   <div class="fm">
     <x-header class="fixed-top" :left-options="{backText: ''}">{{''}}</x-header>
-    <div class="bg-blur" :style="{backgroundImage: `url(${fm_playing.album.blurPicUrl}?param=750y750)`}"></div>
+    <div class="bg-blur" v-show="fm_index==0" :style="{backgroundImage: `url(${fm0.album.blurPicUrl}?param=640y640)`}"></div>
+    <div class="bg-blur" v-show="fm_index==1" :style="{backgroundImage: `url(${fm1.album.blurPicUrl}?param=640y640)`}"></div>
+    <div class="bg-blur" v-show="fm_index==2" :style="{backgroundImage: `url(${fm2.album.blurPicUrl}?param=640y640)`}"></div>
     <div class="clear-header">
-      <div class="turntable">
-        <img :src="`${fm_playing.album.blurPicUrl}?param=750y750`" alt="" class="musicImg">
-        <p class="ellipsis musicName">{{fm_playing.name}}</p>
-        <p class="artists">
-          <span v-for="(ai, index) of fm_playing.artists" :key="ai.id+index">{{index==0?ai.name:'/'+ ai.name}}</span>
-          <i class="iconfont icon-mjiantou-copy"></i>
-        </p>
+      <div class="turntableBox">
+        <div class="box" :style="{transform: `rotateY(-${rotate}deg)`}">
+          <div class="turntable">
+            <img :src="`${fm0.album.blurPicUrl}?param=640y640`" alt="" class="musicImg">
+            <p class="ellipsis musicName">{{fm0.name}}</p>
+            <p class="ellipsis artists">
+              <span v-for="(ai, index) of fm0.artists" :key="ai.id+index">{{index==0?ai.name:'/'+ ai.name}}</span>
+              <i class="iconfont icon-mjiantou-copy"></i>
+            </p>
+          </div>
+          <div class="turntable">
+            <img :src="`${fm1.album.blurPicUrl}?param=640y640`" alt="" class="musicImg">
+            <p class="ellipsis musicName">{{fm1.name}}</p>
+            <p class="ellipsis artists">
+              <span v-for="(ai, index) of fm1.artists" :key="ai.id+index">{{index==0?ai.name:'/'+ ai.name}}</span>
+              <i class="iconfont icon-mjiantou-copy"></i>
+            </p>
+          </div>
+          <div class="turntable">
+            <img :src="`${fm2.album.blurPicUrl}?param=640y640`" alt="" class="musicImg">
+            <p class="ellipsis musicName">{{fm2.name}}</p>
+            <p class="ellipsis artists">
+              <span v-for="(ai, index) of fm2.artists" :key="ai.id+index">{{index==0?ai.name:'/'+ ai.name}}</span>
+              <i class="iconfont icon-mjiantou-copy"></i>
+            </p>
+          </div>
+        </div>
       </div>
       <div class="foot">
         <Drag></Drag>
@@ -50,10 +72,13 @@
     data() {
       return {
         fmdata: [],
-        // fm_playing: { album: {}, },
         fm_index: 0,
         collection: false,
-        totals: 1000
+        totals: 1000,
+        rotate: 0,
+        fm0: { album: {} },
+        fm1: { album: {} },
+        fm2: { album: {} },
       }
     },
     components: {
@@ -63,47 +88,58 @@
       Drag,
     },
     created() {
-      personal_fm().then(res => {
-        this.fmdata = res.data.data;
-        // this.fm_playing = this.fmdata[this.fm_index]
-        console.log(res.data);
-      })
+      let _this = this;
+      this.personal_fms({ timestamp: new Date().getTime() })
+      if (this.fm_index == 0) {
+        setTimeout(function () {
+          _this.personal_fms({ timestamp: new Date().getTime() })
+        }, 500)
+      }
     },
     computed: {
       fm_playing() {
-        if (this.fmdata.length > 0) {
-          return this.fmdata[this.fm_index]
-        }
-        return { album: {} }
+        return this[`fm${this.fm_index}`]
       }
     },
     methods: {
       personal_fms(obj) {
         personal_fm(obj).then(res => {
-          this.fmdata = this.fmdata.concat(res.data.data);
+          //防止后台数据只有2条，默认3条
+          if (res.data.data.length != 3) {
+            res.data.data.push(...this.fmdata)
+            res.data.data.splice(3)
+          }
+          this.fmdata = res.data.data
+          if (!this.fm0.hasOwnProperty("id")) {
+            this.fm0 = res.data.data[0]
+            this.fm1 = res.data.data[1]
+            this.fm2 = res.data.data[2]
+            if (res.data.data.length == 1) this.fm1 = res.data.data[0]
+            if (res.data.data.length == 2) this.fm2 = res.data.data[1]
+          }
         })
       },
-      removelist(){
-        fm_trash({id: this.fm_playing.id}).then(res=>{
-
+      removelist() {
+        fm_trash({ id: this.fm_playing.id }).then(res => {
+          if (res.data.code==200) this.playNext()
         })
       },
       plays() {
-        
+
       },
       playNext() {
-        console.log(this.fm_index);
-        if (this.fm_index == 1) this.personal_fms({ timestamp: new Date().getTime() })
-        if (this.fm_index >= 2) {
-          this.fmdata.splice(0, 3)
-          this.fm_index = 0
-        } else {
-          this.fm_index++
+        this.rotate = this.rotate + 120
+        this.fm_index++
+        if (this.fm_index > 2) this.fm_index = 0
+        if (this.fm_index == 0) {
+          this.fm2 = this.fmdata[2]
+          this.personal_fms({ timestamp: new Date().getTime() })
         }
+        if (this.fm_index == 1) this.fm0 = this.fmdata[0]
+        if (this.fm_index == 2) this.fm1 = this.fmdata[1]
       },
       collectionfn() { },
       pinglun() {
-
       }
     }
   }
@@ -122,7 +158,7 @@
     left: 0;
     right: 0;
     z-index: 0;
-    filter: blur(70px);
+    filter: blur(60px);
     background-size: cover;
     background-position: center top;
     &::after {
@@ -136,27 +172,54 @@
       background-color: rgba(0, 0, 0, 0.4);
     }
   }
-  .turntable {
+  .turntableBox {
+    perspective: 1000px;
     margin: 0 auto;
     width: 90%;
-    overflow: hidden;
-    text-align: center;
 
-    .musicImg {
-      display: block;
+    .box {
+      position: relative;
       width: 100%;
-      border-radius: 5px;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform 0.2s;
+      // z-index: 1;
     }
-    .musicName {
-      margin: 30px 0 10px;
-      color: #fff;
-      font-size: 20px;
-    }
-    .artists {
-      color: @FRONT_GRAY;
-    }
-    .icon-mjiantou-copy {
-      margin-left: -3px;
+    .turntable {
+      position: absolute;
+      margin-left: 5%;
+      top: 0;
+      width: 90%;
+      backface-visibility: hidden;
+      text-align: center;
+      // z-index: 1;
+
+      &:nth-child(1) {
+        transform: rotateY(0) translateZ(120px);
+      }
+      &:nth-child(2) {
+        transform: rotateY(120deg) translateZ(120px);
+      }
+      &:nth-child(3) {
+        transform: rotateY(240deg) translateZ(120px);
+      }
+
+      .musicImg {
+        display: block;
+        width: 100%;
+        border-radius: 5px;
+      }
+      .musicName {
+        margin: 30px 0 10px;
+        color: #fff;
+        font-size: 20px;
+      }
+      .artists {
+        color: @FRONT_GRAY;
+      }
+      .icon-mjiantou-copy {
+        margin-left: -3px;
+      }
     }
   }
 
@@ -169,7 +232,6 @@
     color: #fff;
 
     .original {
-      // line-height: 50px;
       text-align: center;
       cursor: pointer;
       .iconfont {

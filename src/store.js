@@ -60,10 +60,10 @@ const mutations = {
     if (type !== "popup") {
       //如果播放目录有删减，把当前歌单配置给播放目录
       if (state.song_catalogue.length != state.songs.length)
-        state.song_catalogue = objCopy(state.songs);
+        state.song_catalogue = [...state.songs];
     }
     state.audioPlaying = data
-    state.audioPlaying.playing=true
+    Vue.set(state.audioPlaying, "playing", true)
     state.playIndex = index
   },
   set_audioStatus(state, { playing }) {
@@ -134,7 +134,6 @@ const mutations = {
       let sj = 0;
       do {
         sj = Math.floor(Math.random() * state.song_catalogue.length);
-        console.log(sj, state.playIndex)
       } while (sj == state.playIndex)
       state.playIndex = sj
     } else  {

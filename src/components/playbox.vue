@@ -14,14 +14,14 @@
     <playlist :datas="songData"></playlist>
     <div v-transfer-dom>
       <popup class="songPopup" v-model="show" height="100%">
-        <popup-header class="popup-header-bgred" left-text="返回" :title="`已选择${datas.length}项`" :right-text="rightText" :show-bottom-border="false" @on-click-left="clickLeft" @on-click-right="clickRight"></popup-header>
+        <popup-header class="popup-header-bgred" left-text="返回" :title="`已选择${selectDataId.length}项`" :right-text="rightText" :show-bottom-border="false" @on-click-left="clickLeft" @on-click-right="clickRight"></popup-header>
         <div class="listDetail">
           <div class="flex vux-1px-b" v-for="(item,index) in song_catalogues" :key="item.id" @click="selectfn(item, index)">
             <div class="flex_hd mg_r10">
               <i class="iconfont icon-checkbox-unchecked" :class="{'icon-checkbox-checked': isCheck(item.id), 'text-color-red': isCheck(item.id)}"></i>
             </div>
             <div class="flex_bd">
-              <p class="ellipsis name">{{item.name}}
+              <p class="ellipsis name">{{item.id}}-{{item.name}}
                 <em class="alias">{{item.alias.length>0?`(${item.alias[0]})`:''}}</em>
               </p>
               <p class="ellipsis desc">
@@ -61,10 +61,9 @@
     data() {
       return {
         show: false,
-        datas: [],
-        dataRecord: [],
-        song_catalogues: [],
+        song_catalogues: [], //初始化多选页面数据
         index: 0,
+        selectDataId: [], //多选时选中的歌曲id
       }
     },
     props: {
@@ -89,9 +88,7 @@
 
     },
     beforeUpdate() {
-      if (this.song_catalogues.length == 0) {
-        this.song_catalogues = [...this.songData]
-      }
+      if (this.song_catalogues.length == 0) this.song_catalogues = [...this.songData]
     },
     computed: {
       ...mapState([
@@ -99,64 +96,54 @@
         'playIndex'
       ]),
       rightText() {
-        return this.datas.length != this.song_catalogues.length ? '全选' : '取消全选'
+        return this.selectDataId.length != this.song_catalogues.length ? '全选' : '取消全选'
       },
     },
     methods: {
       ...mapMutations([
         'set_changePlaylist',
-        'next_songCatalogue'
+        'next_songCatalogue',
+        'audioPlaying'
       ]),
       allPlay() {
         this.$router.push('/detail')
         this.set_changePlaylist({ key: 'songs' })
       },
       checkboxfn() {
-        this.empty();
+        this.selectDataId=[]
         this.show = !this.show
       },
       clickLeft() {
+        this.selectDataId=[]
         this.show = !this.show
-        this.empty();
       },
       clickRight() {
-        if (this.datas.length != this.song_catalogues.length) {
-          this.empty()
-          this.song_catalogues.forEach(v => {
-            this.add(v)
+        if (this.selectDataId.length != this.song_catalogues.length) {
+          this.song_catalogues.forEach((v, index) => {
+            if(!this.selectDataId.some(key=>key==v.id)) this.selectDataId.push(v.id)
           })
         } else {
-          this.empty()
+          this.selectDataId=[]
         }
       },
       selectfn(item, index) {
-        let i = this.datas.indexOf(item.id)
+        let i = this.selectDataId.indexOf(item.id)
         if (i == -1) {
-          this.add(item)
+          this.selectDataId.push(item.id)
         } else {
-          this.datas.splice(i, 1)
-          this.dataRecord.splice(i, 1)
+          this.selectDataId.splice(i, 1)
         }
       },
-      add(item) {
-        this.datas.push(item.id)
-        this.dataRecord.push(item)
-      },
-      empty() {
-        this.datas = []
-        this.dataRecord = []
-      },
       isCheck(id) {
-        return this.datas.indexOf(id) >= 0
+        return this.selectDataId.indexOf(id) >= 0
       },
       nextPlay() {
-        if (this.dataRecord.length > 0) {
+        if (this.selectDataId.length > 0) {
           this.$vux.toast.text('已添加到下一首播放')
         } else {
           this.$vux.toast.text('请选择要播放的歌曲')
         }
-
-        this.next_songCatalogue({ data: this.dataRecord })
+        this.next_songCatalogue({ data: this.selectDataId })
       },
     },
   }

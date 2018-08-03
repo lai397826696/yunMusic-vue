@@ -105,9 +105,6 @@ const mutations = {
         class: 'icon-danquxunhuan'
       }
     ]
-    // if (state.playmodeIndex == 2) state.playmodeIndex = -1
-    // state.playmodeIndex++;
-    // state.playmode = type[state.playmodeIndex]
     if (!state.index) state.index = 0
     if (state.index == 2) state.index = -1
     state.index++;
@@ -119,14 +116,13 @@ const mutations = {
   next_songCatalogue(state, { data }) {
     //选中歌曲在歌单中下一首歌播放
     let songs=state.song_catalogue
-    for (let i = 0; i < data.length; i++) {
-      for (let j = 0; j < songs.length; j++) {
-        if (songs[j].id == data[i].id) {
-          songs.splice(j, 1)
-          break;
-        }
+    console.log(data);
+    for (i = 0; i < data.length; i++){
+      for (j = 0; j < songs.length; j++){
+        
       }
     }
+
   },
   prevPlaynext(state, { type }) {
     //随机播放key==1
@@ -184,14 +180,6 @@ const getters = {
     return !!state.audioPlaying.id
       ? `http://music.163.com/song/media/outer/url?id=${state.audioPlaying.id}.mp3`
       : '';
-  },
-  song_catalogues(state, getters) {
-    let songs = []
-    for (let i of state.song_catalogue) {
-      i.check = false
-      songs.push(i)
-    }
-    return songs
   }
 }
 

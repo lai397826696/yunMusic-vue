@@ -21,7 +21,7 @@
               <i class="iconfont icon-checkbox-unchecked" :class="{'icon-checkbox-checked': isCheck(item.id), 'text-color-red': isCheck(item.id)}"></i>
             </div>
             <div class="flex_bd">
-              <p class="ellipsis name">{{item.id}}-{{item.name}}
+              <p class="ellipsis name">{{item.name}}
                 <em class="alias">{{item.alias.length>0?`(${item.alias[0]})`:''}}</em>
               </p>
               <p class="ellipsis desc">

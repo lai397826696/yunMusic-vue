@@ -8,7 +8,7 @@
         </div>
       </div>
       <div class="flex_bd">
-        <p class="ellipsis name">{{item.name}}
+        <p class="ellipsis name">{{item.name}}{{item.id}}
           <em class="alias">{{item.alias.length>0?`(${item.alias[0]})`:''}}</em>
         </p>
         <p class="ellipsis desc">
@@ -56,6 +56,9 @@
       ...mapState([
         'audioPlaying'
       ])
+    },
+    created() {
+      console.log(this.datas);
     },
     methods: {
       ...mapMutations([

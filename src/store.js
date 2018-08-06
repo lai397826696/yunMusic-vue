@@ -87,6 +87,10 @@ const mutations = {
     if (index == state.playIndex) state.playIndex = index
     // if (state.playIndex == length - 1) state.playIndex = 0
     state.song_catalogue.splice(index, 1);
+    if (state.song_catalogue.length == 0) {
+      state.audioPlaying.id = ""
+      state.audioPlaying.playing=false
+    }
   },
 
   set_playmode(state) { //设置播放模式
@@ -113,16 +117,22 @@ const mutations = {
   empty_songCatalogue(state) {
     state.song_catalogue = [];
   },
-  next_songCatalogue(state, { data }) {
-    //选中歌曲在歌单中下一首歌播放
-    let songs=state.song_catalogue
-    console.log(data);
-    for (i = 0; i < data.length; i++){
-      for (j = 0; j < songs.length; j++){
-        
+  next_songCatalogue(state, { data }) { //选中歌曲在歌单中下一首歌播放
+    let addData = []
+    data.forEach(key => {
+      let i = state.song_catalogue.findIndex(v => v.id == key)
+      if (i >= 0 && key!=state.audioPlaying.id) {
+        addData.push(state.song_catalogue[i])
+        state.song_catalogue.splice(i, 1)
       }
+    })
+    if (!state.audioPlaying.id) {
+      state.song_catalogue=addData
+      state.audioPlaying = state.song_catalogue[0]
+      router
     }
-
+    let playindex = state.song_catalogue.findIndex(v => v.id == state.audioPlaying.id)
+    state.song_catalogue.splice(playindex+1, 0, ...addData)
   },
   prevPlaynext(state, { type }) {
     //随机播放key==1

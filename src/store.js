@@ -2,7 +2,8 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios';
 import * as ajax from './util/severAPI';
-import {objCopy} from './util/util';
+import { objCopy } from './util/util';  
+import router from './router/index';
 Vue.use(Vuex)
 axios.defaults.baseURL = 'http://localhost:3000';
 
@@ -48,7 +49,7 @@ const mutations = {
   },
   set_recommend(state, {songs}) {
     state.songs = songs
-    state.song_catalogue = [...songs];
+    state.song_catalogue = objCopy(songs);
   },
   set_changePlaylist(state, { key }) {
     //播放全部
@@ -60,7 +61,7 @@ const mutations = {
     if (type !== "popup") {
       //如果播放目录有删减，把当前歌单配置给播放目录
       if (state.song_catalogue.length != state.songs.length)
-        state.song_catalogue = [...state.songs];
+        state.song_catalogue = objCopy(state.songs);
     }
     state.audioPlaying = data
     Vue.set(state.audioPlaying, "playing", true)
@@ -71,22 +72,15 @@ const mutations = {
   },
   remove_songCatalogue(state, {index, id}) {
     let length = state.song_catalogue.length;
-    if (length == 1) state.audioPlaying.id = ''
-    for (let i = 0; i < length; i++) {
-      if (state.song_catalogue[i].id == id && state.audioPlaying.id == id) {
-        if (i == length - 1) {
-          state.playIndex = 0
-          state.audioPlaying = state.song_catalogue[0]
-        } else {
-          state.audioPlaying = state.song_catalogue[i + 1]
-        }
-        break;
+    if (state.audioPlaying.id == id) {
+      let i = state.song_catalogue.findIndex(v => v.id == id)
+      if (i == length - 1) {
+        state.audioPlaying=state.song_catalogue[0]
+      } else {
+        state.audioPlaying = state.song_catalogue[i+1]
       }
     }
-    if (index < state.playIndex) state.playIndex--
-    if (index == state.playIndex) state.playIndex = index
-    // if (state.playIndex == length - 1) state.playIndex = 0
-    state.song_catalogue.splice(index, 1);
+    state.song_catalogue.splice(index, 1)
     if (state.song_catalogue.length == 0) {
       state.audioPlaying.id = ""
       state.audioPlaying.playing=false
@@ -119,6 +113,15 @@ const mutations = {
   },
   next_songCatalogue(state, { data }) { //选中歌曲在歌单中下一首歌播放
     let addData = []
+    if (!state.audioPlaying.id) {
+      data.forEach(key => {
+        let item=state.songs.find(v=>v.id==key)
+        state.song_catalogue.push(item)
+      })
+      state.audioPlaying = state.song_catalogue[0]
+      router.push("/detail")
+      return false
+    }
     data.forEach(key => {
       let i = state.song_catalogue.findIndex(v => v.id == key)
       if (i >= 0 && key!=state.audioPlaying.id) {
@@ -129,10 +132,9 @@ const mutations = {
     if (!state.audioPlaying.id) {
       state.song_catalogue=addData
       state.audioPlaying = state.song_catalogue[0]
-      router
     }
-    let playindex = state.song_catalogue.findIndex(v => v.id == state.audioPlaying.id)
-    state.song_catalogue.splice(playindex+1, 0, ...addData)
+    let pindex = state.song_catalogue.findIndex(v => v.id == state.audioPlaying.id)
+    state.song_catalogue.splice((pindex + 1), 0, ...addData)
   },
   prevPlaynext(state, { type }) {
     //随机播放key==1

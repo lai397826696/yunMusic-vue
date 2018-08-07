@@ -143,9 +143,7 @@
       TransferDom
     },
     computed: {
-      ...mapState([
-        'audioPlaying'
-      ]),
+
     },
     methods: {
       onHide() {

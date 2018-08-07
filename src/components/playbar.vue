@@ -149,15 +149,6 @@
         })
 
 
-
-
-
-        if (ading.paused) { //播放是否暂停
-          this.set_audioStatus({ playing: false });
-        } else {
-          this.set_audioStatus({ playing: true });
-        }
-
         ading.addEventListener("timeupdate", function () {
           var value = (Math.floor(this.currentTime) / Math.floor(this.duration) * 100).toFixed(2);
           vm.currentTime = Math.round(value)
@@ -165,14 +156,17 @@
 
         ading.addEventListener("pause", function () {
           console.log('暂停');
+          vm.set_audioStatus({ playing: false });
         })
 
         ading.addEventListener("play", function () {
           console.log('播放');
+          vm.set_audioStatus({ playing: true });
         })
 
         ading.addEventListener("ended", function () {
           console.log('播放结束');
+          // vm.set_audioStatus({ playing: false });
           if (vm.playmode.key == 2) {
             this.loop = true
             this.load()

@@ -84,9 +84,6 @@
     directives: {
       TransferDom
     },
-    mounted() {
-
-    },
     beforeUpdate() {
       if (this.song_catalogues.length == 0) this.song_catalogues = [...this.songData]
     },
@@ -103,7 +100,6 @@
       ...mapMutations([
         'set_changePlaylist',
         'next_songCatalogue',
-        'audioPlaying'
       ]),
       allPlay() {
         this.$router.push('/detail')

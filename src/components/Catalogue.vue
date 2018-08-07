@@ -26,7 +26,7 @@
               <em v-for="(ai, i) of item.artists" :key="ai.id+i">{{i==0?ai.name:'/'+ ai.name}}</em>
             </p>
           </div>
-          <div class="flex_ft" @click="removePlay(index, item.id)">
+          <div class="flex_ft" @click.stop="removePlay(index, item.id)">
             <i class="iconfont icon-guanbi mg_lr5"></i>
           </div>
         </div>

@@ -24,8 +24,6 @@
       return {
       }
     },
-    created() {
-    },
     components: {
       XHeader,
       Playbox,

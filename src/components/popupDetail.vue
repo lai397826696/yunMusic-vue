@@ -1,6 +1,6 @@
 <template>
   <div v-transfer-dom>
-    <popup class="playbarPopup songPopup" @on-hide="onHide" v-model="show" height="45%">
+    <popup class="playbarPopup songPopup" @on-hide="onHide" v-model="propshow" height="45%">
       <div class="listDetail" v-if="type=='sheet'">
         <div class="flex">
           <div class="flex_bd ellipsis">歌曲：{{detail.name}}</div>
@@ -127,13 +127,18 @@
           album: {}
         },
         comment: {},
-        show: false
+        // show: false
+        // propshow: this.show
       }
     },
     props: {
       type: {
         type: String,
         default: 'sheet'
+      },
+      show: {
+        type: Boolean,
+        default: false
       }
     },
     components: {
@@ -143,11 +148,22 @@
       TransferDom
     },
     computed: {
-
+      ...mapState([
+        'audioPlaying'
+      ]),
+      propshow: {
+        get(){
+          return this.show
+        },
+        set(val){
+          console.log(val);
+          return false
+        }
+      }
     },
     methods: {
       onHide() {
-        this.$emit('change', !this.show)
+        this.$emit('change', false)
       },
       showfn(item) {
         this.show = true

@@ -49,7 +49,6 @@ const mutations = {
   },
   set_recommend(state, {songs}) {
     state.songs = songs
-    state.song_catalogue = objCopy(songs);
   },
   set_changePlaylist(state, { key }) {
     //播放全部
@@ -60,7 +59,7 @@ const mutations = {
   set_playing(state, { data, index, type }) { //点击歌曲播放
     if (type !== "popup") {
       //如果播放目录有删减，把当前歌单配置给播放目录
-      if (state.song_catalogue.length != state.songs.length)
+      // if (state.song_catalogue.length != state.songs.length)
         state.song_catalogue = objCopy(state.songs);
     }
     state.audioPlaying = data
@@ -68,7 +67,8 @@ const mutations = {
     state.playIndex = index
   },
   set_audioStatus(state, { playing }) {
-    state.audioPlaying.playing = playing;
+    // state.audioPlaying.playing = playing;
+    Vue.set(state.audioPlaying, "playing", playing)
   },
   remove_songCatalogue(state, {index, id}) {
     let length = state.song_catalogue.length;
@@ -86,7 +86,6 @@ const mutations = {
       state.audioPlaying.playing=false
     }
   },
-
   set_playmode(state) { //设置播放模式
     let type = [
       {
@@ -112,30 +111,33 @@ const mutations = {
     state.song_catalogue = [];
   },
   next_songCatalogue(state, { data }) { //选中歌曲在歌单中下一首歌播放
-    let addData = []
-    if (!state.audioPlaying.id) {
-      data.forEach(key => {
-        let item=state.songs.find(v=>v.id==key)
+    //判断是否有正在播放的歌曲
+    if (!state.audioPlaying.id && state.song_catalogue.length == 0) {
+      data.forEach(list => {
+        let item = state.songs.find(v => v.id == list.id)
         state.song_catalogue.push(item)
       })
       state.audioPlaying = state.song_catalogue[0]
       router.push("/detail")
-      return false
+    } else {
+      let addData = []
+      data.forEach(list => {
+        let i = state.song_catalogue.findIndex(v => v.id == list.id)
+        if (i >= 0) {
+          if (list.id != state.audioPlaying.id) {
+            addData.push(state.song_catalogue[i])
+            state.song_catalogue.splice(i, 1)
+          }
+        } else {
+          let item = state.songs.find(v => v.id == list.id)
+          addData.push(item)
+        }
+      })
+      let pindex = state.song_catalogue.findIndex(v => v.id == state.audioPlaying.id)
+      state.song_catalogue.splice((pindex + 1), 0, ...addData)
     }
-    data.forEach(key => {
-      let i = state.song_catalogue.findIndex(v => v.id == key)
-      if (i >= 0 && key!=state.audioPlaying.id) {
-        addData.push(state.song_catalogue[i])
-        state.song_catalogue.splice(i, 1)
-      }
-    })
-    if (!state.audioPlaying.id) {
-      state.song_catalogue=addData
-      state.audioPlaying = state.song_catalogue[0]
-    }
-    let pindex = state.song_catalogue.findIndex(v => v.id == state.audioPlaying.id)
-    state.song_catalogue.splice((pindex + 1), 0, ...addData)
   },
+
   prevPlaynext(state, { type }) {
     //随机播放key==1
     if (state.playmode.key == 1) {

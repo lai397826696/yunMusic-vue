@@ -41,7 +41,6 @@
           </flexbox-item>
         </flexbox>
       </div>
-      <popupDetail ref="popupDetail" v-model="show" type="detail" :id="parseInt(id)"></popupDetail>
       <catalogue ref="catalogue"></catalogue>
     </div>
   </div>

@@ -14,7 +14,7 @@
     <playlist :datas="songData"></playlist>
     <div v-transfer-dom>
       <popup class="songPopup" v-model="show" height="100%">
-        <popup-header class="popup-header-bgred" left-text="返回" :title="`已选择${selectDataId.length}项`" :right-text="rightText" :show-bottom-border="false" @on-click-left="clickLeft" @on-click-right="clickRight"></popup-header>
+        <popup-header class="popup-header-bgred" left-text="返回" :title="`已选择${selectData.length}项`" :right-text="rightText" :show-bottom-border="false" @on-click-left="clickLeft" @on-click-right="clickRight"></popup-header>
         <div class="listDetail">
           <div class="flex vux-1px-b" v-for="(item,index) in song_catalogues" :key="item.id" @click="selectfn(item, index)">
             <div class="flex_hd mg_r10">
@@ -63,7 +63,7 @@
         show: false,
         song_catalogues: [], //初始化多选页面数据
         index: 0,
-        selectDataId: [], //多选时选中的歌曲id
+        selectData: [], //多选时选中的歌曲id
       }
     },
     props: {
@@ -93,7 +93,7 @@
         'playIndex'
       ]),
       rightText() {
-        return this.selectDataId.length != this.song_catalogues.length ? '全选' : '取消全选'
+        return this.selectData.length != this.song_catalogues.length ? '全选' : '取消全选'
       },
     },
     methods: {
@@ -106,40 +106,41 @@
         this.set_changePlaylist({ key: 'songs' })
       },
       checkboxfn() {
-        this.selectDataId=[]
+        this.selectData=[]
         this.show = !this.show
       },
       clickLeft() {
-        this.selectDataId=[]
+        this.selectData=[]
         this.show = !this.show
       },
       clickRight() {
-        if (this.selectDataId.length != this.song_catalogues.length) {
+        if (this.selectData.length != this.song_catalogues.length) {
           this.song_catalogues.forEach((v, index) => {
-            if(!this.selectDataId.some(key=>key==v.id)) this.selectDataId.push(v.id)
+            if(!this.selectData.some(key=>key.id==v.id)) this.selectData.push(v)
           })
         } else {
-          this.selectDataId=[]
+          this.selectData=[]
         }
       },
       selectfn(item, index) {
-        let i = this.selectDataId.indexOf(item.id)
+        // let i = this.selectData.indexOf(item.id)
+        let i = this.selectData.findIndex(v=>v.id==item.id)
         if (i == -1) {
-          this.selectDataId.push(item.id)
+          this.selectData.push(item)
         } else {
-          this.selectDataId.splice(i, 1)
+          this.selectData.splice(i, 1)
         }
       },
       isCheck(id) {
-        return this.selectDataId.indexOf(id) >= 0
+        return this.selectData.findIndex(v=>v.id==id) >= 0
       },
       nextPlay() {
-        if (this.selectDataId.length > 0) {
+        if (this.selectData.length > 0) {
           this.$vux.toast.text('已添加到下一首播放')
         } else {
           this.$vux.toast.text('请选择要播放的歌曲')
         }
-        this.next_songCatalogue({ data: this.selectDataId })
+        this.next_songCatalogue({ data: this.selectData })
       },
     },
   }

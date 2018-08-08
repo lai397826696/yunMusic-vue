@@ -29,6 +29,7 @@
     <div class="lyric" v-show="!toggle">
       显示歌词
     </div>
+    <popupDetail ref="popupDetail" :show="show" type="detail" @change="changes"></popupDetail>
   </div>
 </template>
 
@@ -36,6 +37,7 @@
   import { Flexbox, FlexboxItem } from 'vux'
   import { mapState } from 'vuex';
   import { musicComment } from '../util/severAPI';
+  import popupDetail from '../components/popupDetail';
 
   export default {
     name: "turntable",
@@ -45,13 +47,15 @@
         styleRoute: {},
         toggle: true,
         collection: false,
-        total: 0
-
+        total: 0,
+        show: false,
+        id: ''
       };
     },
     components: {
       Flexbox,
-      FlexboxItem
+      FlexboxItem,
+      popupDetail
     },
     directives: {
     },
@@ -78,13 +82,20 @@
         this.$router.push({ path: `/comment/${this.audioPlaying.id}` })
       },
       detailsfn() {
-        console.log('详情');
-        // this.$refs.popupDetail.showfn(this.audioPlaying)
+        // console.log('详情');
+        this.$refs.popupDetail.showfn(this.audioPlaying)
+        // this.show=true
+
       },
+      changes(val){
+        this.show=val
+      }
     },
     filters: {
       numType(val) {
-        if (val > 10000) {
+        if(val>100000){
+          return '10w+'
+        } else if (val > 10000) {
           return '1w+'
         } else if (val > 999) {
           return '999+'
@@ -171,7 +182,6 @@
         margin: 0 auto;
         width: 80%;
         text-align: center;
-        line-height: 30px;
         .iconfont {
           font-size: 24px;
         }
@@ -180,6 +190,19 @@
         }
         .icon-download {
           font-size: 26px;
+        }
+
+        .totalBox {
+          position: relative;
+          display: inline-block;
+          vertical-align: middle;
+
+          .total {
+            position: absolute;
+            top: -11px;
+            left: 18px;
+            z-index: 1;
+          }
         }
       }
     }

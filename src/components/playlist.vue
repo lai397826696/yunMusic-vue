@@ -19,7 +19,7 @@
         <i class="iconfont icon-more" @click.stop="detailsfn(item)"></i>
       </div>
     </div>
-    <popupDetail ref="popupDetail" type="sheet"></popupDetail>
+    <popupDetail ref="popupDetail" v-model="show"></popupDetail>
   </div>
 
 </template>
@@ -65,7 +65,8 @@
         this.set_playing({data: item, index: index})
       },
       detailsfn(item) {
-        this.$refs.popupDetail.showfn(item)
+        this.show=true
+        this.$refs.popupDetail.onShow(item)
       },
     }
   }

@@ -123,3 +123,10 @@ export const personal_fm = param => {
 export const fm_trash = param => {
   return get('/fm_trash', param, true)
 }
+
+//精品歌单
+// 可选参数 : cat: tag, 比如 " 华语 "、" 古风 " 、" 欧美 "、" 流行 ", 默认为 "全部",可从歌单分类接口获取(/playlist/catlist)
+// limit: 取出歌单数量 , 默认为 20
+export const highquality = param => {
+  return get('/top/playlist/highquality', param)
+}

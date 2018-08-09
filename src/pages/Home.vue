@@ -28,7 +28,7 @@
         </div>
       </flexbox-item>
       <flexbox-item>
-        <div class="list">
+        <div class="list" @click="funfm('/songsheet')">
           <span class="iconBox">
             <i class="iconfont icon-gedan"></i>
           </span>

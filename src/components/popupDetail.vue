@@ -1,6 +1,6 @@
 <template>
   <div v-transfer-dom>
-    <popup class="playbarPopup songPopup" @on-hide="onHide" v-model="propshow" height="45%">
+    <popup class="playbarPopup songPopup" @on-hide="onHide" v-model="show" height="45%">
       <div class="listDetail" v-if="type=='sheet'">
         <div class="flex">
           <div class="flex_bd ellipsis">歌曲：{{detail.name}}</div>
@@ -127,16 +127,16 @@
           album: {}
         },
         comment: {},
-        // show: false
-        // propshow: this.show
+        show: this.value
       }
     },
+
     props: {
       type: {
         type: String,
         default: 'sheet'
       },
-      show: {
+      value: {
         type: Boolean,
         default: false
       }
@@ -151,26 +151,24 @@
       ...mapState([
         'audioPlaying'
       ]),
-      propshow: {
+      shows: {
         get(){
-          return this.show
+          return this.value
         },
         set(val){
-          console.log(val);
-          return false
+          if(!val) this.$emit("input", val)
         }
       }
     },
     methods: {
       onHide() {
-        this.$emit('change', false)
+        this.$emit("onhide")
       },
-      showfn(item) {
-        this.show = true
+      onShow(item) {
+        this.$emit("onshow")
         this.detailsfn(item);
       },
       detailsfn(item) {
-        if (!!this.detail.id && this.detail.id == item.id) return false;
         this.detail = item;
         this.$http.get('/comment/music', {
           params: {
@@ -180,6 +178,14 @@
         }).then(res => {
           if (res.data.code == 200) this.comment = res.data
         })
+      }
+    },
+    watch: {
+      value(newval, oldval){
+        this.show=newval
+      },
+      show(newval){
+        this.$emit("input", newval)
       }
     }
   }

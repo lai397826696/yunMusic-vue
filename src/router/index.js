@@ -8,6 +8,7 @@ import Detail from '@/pages/Detail'
 import Comments from '@/pages/Comment';
 import UserInfo from '@/pages/UserInfo';
 import songSheet from '@/pages/songSheet';
+import Rankings from '@/pages/rankings';
 
 Vue.use(Router)
 
@@ -58,6 +59,11 @@ export default new Router({
       path: '/songsheet',
       name: 'songsheet',
       component: songSheet
+    },
+    {
+      path: '/rankings',
+      name: 'rankings',
+      component: Rankings
     }
   ]
 })

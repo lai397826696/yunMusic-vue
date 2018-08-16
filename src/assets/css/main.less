@@ -62,12 +62,18 @@ h1, h2, h3, h4, h5, h6 {
 	font-weight: normal;
 	font-size: 14px;
 }
+ul, ol {
+    list-style: none;
+}
+
 #app {
 	height: 100%;
 }
 .iconfont {
     line-height: normal;
-    vertical-align: middle;
+    &.middle {
+        vertical-align: middle;
+    }
 }
 .fixed-top {
   .fixed();

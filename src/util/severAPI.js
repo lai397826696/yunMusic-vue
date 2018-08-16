@@ -5,10 +5,6 @@ axios.defaults.baseURL = 'http://localhost:3000';
 //   'X-Requested-With': 'XMLHttpRequest'
 // };
 
-const cookie = {
-  withCredentials: true
-}
-
 const get = (url, param, bool = false) => {
   let config = {
     method: "get",
@@ -36,19 +32,6 @@ const post = (url, data, bool = false) => {
     axios(config).then(Response => {
       resolve(Response)
     }).catch(error => {
-      reject(error)
-    })
-  })
-}
-
-// axios.all([
-//   axios.get('/banner'),
-//   axios.get('/personalized', { params: { limit: 2 } }),
-// ]).then(axios.spread((res1, res2, res3, res4, res5, res6) => {
-// }))
-export const all = (arr=[]) => {
-  return new Promise((resolve, reject) => {
-    axios.all(arr).then().catch(error => {
       reject(error)
     })
   })
@@ -129,4 +112,30 @@ export const fm_trash = param => {
 // limit: 取出歌单数量 , 默认为 20
 export const highquality = param => {
   return get('/top/playlist/highquality', param)
+}
+
+//歌单 ( 网友精选碟 )
+// order: 可选值为 'new' 和 'hot', 分别对应最新和最热 , 默认为 'hot'
+// cat:cat: tag, 比如 " 华语 "、" 古风 " 、" 欧美 "、" 流行 ", 默认为 "全部",可从歌单分类接口获取(/playlist/catlist)
+export const playlist = param => {
+  return get('/top/playlist', param)
+}
+// 歌单分类
+export const catlist = param => {
+  return get('/playlist/catlist', param)
+}
+// 热门歌单分类
+export const hotcatlist = param => {
+  return get('/playlist/hot', param)
+}
+// 排行榜 idx: 对象 key, 对应以下排行榜
+// "0": 云音乐新歌榜, "1": 云音乐热歌榜, "2": 网易原创歌曲榜, "3": 云音乐飙升榜, "4": 云音乐电音榜, "5": UK排行榜周榜, "6": 美国Billboard周榜, "7": KTV嗨榜, "8": iTunes榜, "9": Hit FM Top榜, "10": 日本Oricon周榜, "11": 韩国Melon排行榜周榜, "12": 韩国Mnet排行榜周榜,"13": 韩国Melon原声周榜,"14": 中国TOP排行榜(港台榜),"15": 中国TOP排行榜(内地榜), "16": 香港电台中文歌曲龙虎榜, "17": 华语金曲榜, "18": 中国嘻哈榜, "19": 法国 NRJ EuroHot 30周榜, "20": 台湾Hito排行榜, "21": Beatport全球电子舞曲榜, "22": 云音乐ACG音乐榜, "23": 云音乐嘻哈榜
+export const toplist = param => {
+  return get('/top/list', param)
+}
+
+// 歌手榜
+// 说明 : 调用此接口 , 可获取 PC 版排行榜中的歌手榜
+export const artist = param => {
+  return get('/toplist/artist', param)
 }

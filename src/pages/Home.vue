@@ -36,7 +36,7 @@
         </div>
       </flexbox-item>
       <flexbox-item>
-        <div class="list">
+        <div class="list" @click="funfm('/rankings')">
           <span class="iconBox">
             <i class="iconfont icon-paihangbang"></i>
           </span>

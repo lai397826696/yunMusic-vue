@@ -88,15 +88,8 @@
           this.newsong = res2.data.playlist
           this.hotsong = res3.data.playlist
           this.original = res4.data.playlist
-          this.songrankings=[this.soar,this.newsong,this.hotsong,this.original]
+          this.songrankings=[this.soar,this.newsong,this.original,this.hotsong]
         }))
-      },
-      songsData(res1,res2,res3,res4){
-        res1.tracks.length=3
-        res2.tracks.length=3
-        res3.tracks.length=3
-        res4.tracks.length=3
-        this.songrankings=[res1,res2,res3,res4]
       }
     }
   }

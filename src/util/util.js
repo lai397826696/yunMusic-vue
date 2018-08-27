@@ -12,12 +12,23 @@ export const integ = (num, dig = 10000) => {
 export const objCopy = obj => {
   return JSON.parse(JSON.stringify(obj))
 }
-export const num_format = (num, type=1) => {
+export const num_format = (num, type=0) => {
   if (!Number(num)) 
     return '不是number类型'
   switch (type) {
-    case 1: //评论数格式
-      if (num >= 100000) {
+    case 0: //歌单听众
+      if (num > 100000000) {
+        return Math.floor(num / 100000000) + "亿"
+      } else if (num > 10000) {
+        return Math.floor(num / 10000) + "万"
+      } else {
+        return num
+      }
+      break;
+    case 1: //评论格式
+      if (num >= 1000000) {
+        return '100w+'
+      } else if (num >= 100000) {
         return '10w+'
       } else if (num >= 10000) {
         return '1w+'
@@ -26,11 +37,8 @@ export const num_format = (num, type=1) => {
       } else {
         return num
       }
-      break;
-    case 2: //评论点赞格式
-    
       break;  
-    case 3: //歌曲听众格式
+    case 2: //评论点赞格式
       
       break;  
   }

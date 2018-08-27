@@ -252,4 +252,34 @@ em {
 }
 /*margin, padding  end*/
 
-
+// .box-shadow(@types; @num){
+//     position: relative;
+//   }
+// .box-shadow(@types; @num) when (@types=top) {
+//     &::before {
+//         content: "";
+//         position: absolute;
+//         left: 0;
+//         right: 0;
+//         top: 0;
+//         bottom: @num;
+//         z-index: 0;
+//         background: linear-gradient(to bottom,rgba(10, 10, 10, 0.6),rgba(0, 0, 0, 0));
+//     }
+// }
+// .box-shadow(@types; @num) when (@types=bottom) {
+//     &::after {
+//         content: "";
+//         position: absolute;
+//         left: 0;
+//         right: 0;
+//         top: @num;
+//         bottom: 0;
+//         z-index: 0;
+//         background: linear-gradient(to top,rgba(10, 10, 10, 0.6),rgba(0, 0, 0, 0));
+//     }
+// }
+// .box-shadow(@types; @num) when (@types=all) {
+//     .box-shadow(top, @num);
+//     .box-shadow(bottom, @num);
+// }

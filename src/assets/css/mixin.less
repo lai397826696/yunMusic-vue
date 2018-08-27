@@ -42,37 +42,48 @@
   right: 0;
 }
 
-//定位上下左右居中
-.center() {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-//定位上下居中
-.ct() {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-//定位左右居中
-.cl()  {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
 //宽高
 .wh(@width, @height) {
   width: @width;
   height: @height;  
 }
 
-
 //flex 布局和 子元素 对其方式
 .fj(@type: space-between) {
   display: flex;
   justify-content: @type;
+}
+
+@shadowNum: 60%;
+.shadow(@_: all; @num: @shadowNum) {
+  position: relative;
+}
+
+.shadow(top; @num: @shadowNum) {
+  &::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      z-index: 0;
+      top: 0;
+      bottom: @num;
+      background: linear-gradient(to bottom,rgba(10, 10, 10, 0.6),rgba(0, 0, 0, 0));
+  }
+}
+.shadow(bottom; @num: @shadowNum) {
+  &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      z-index: 0;
+      top: @num;
+      bottom: 0;
+      background: linear-gradient(to top,rgba(10, 10, 10, 0.6),rgba(0, 0, 0, 0));
+  }
+}
+.shadow(all; @num: @shadowNum) {
+  .shadow(top);
+  .shadow(bottom);
 }

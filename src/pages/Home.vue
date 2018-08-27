@@ -52,7 +52,7 @@
         <div class="gridBox">
           <span class="playcount">
               <img src="../../static/images/p0.png" alt="icon" class="playCountIcon">
-              {{integ(list.playCount)}}
+              {{list.playCount | num_format}}
             </span>
           <img class="gridImg" :src="`${list.picUrl}?param=200y200`" :alt="list.copywriter">
           <div class="gridtext">{{list.name}}</div>
@@ -101,7 +101,6 @@
 
 <script>
   import { Tab, TabItem, Swiper, SwiperItem, Flexbox, FlexboxItem, Grid, GridItem, GroupTitle } from 'vux'
-  import { integ } from '../util/util.js'
   import { mapState, mapActions } from 'vuex';
 
   export default {
@@ -148,9 +147,6 @@
       ...mapActions([
         'indexapi'
       ]),
-      integ(num) {
-        return integ(num);
-      },
       funfm(str){
         this.$router.push(str)
       }

@@ -6,7 +6,8 @@ import store from './store';
 import FastClick from 'fastclick'
 import App from './App'
 import { AjaxPlugin, ConfirmPlugin, AlertPlugin, ToastPlugin } from 'vux'
-import './assets/js/dpr';
+import './assets/js/dpr'
+import * as util from './util/util'
 
 Vue.config.productionTip = false
 FastClick.attach(document.body)
@@ -17,11 +18,12 @@ Vue.use(AlertPlugin)
 Vue.use(ToastPlugin, { time: 1000 })
 Vue.http.defaults.baseURL = 'http://localhost:3000';
 
+let filterArr=["num_format"]
+Object.keys(util).forEach(key => {
+  if (filterArr.indexOf(key) >= 0) Vue.filter(key, util[key])
+})
+
 router.beforeEach((to, form, next) => {
-  // console.log(to);
-  // if (form.path == "/" && form.matched.length == 0 && to.name!="home") {
-  //   router.replace("/")
-  // }
   console.log(to);
   next()
 })

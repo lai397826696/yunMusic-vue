@@ -25,14 +25,14 @@
       </div>
       <div class="flex type">
         <div class="flex_bd">
-          <label class="key" @click="selectKeyfn">{{selectKey}}
+          <label class="key" @click="keynamePopup">{{keyname}}
             <i class="iconfont icon-jiantouyou"></i>
           </label>
         </div>
         <div class="flex_ft">
-          <span>欧美</span>
-          <span>电子</span>
-          <span>摇滚</span>
+          <span @click="selectfn('欧美')">欧美</span>
+          <span @click="selectfn('电子')">电子</span>
+          <span @click="selectfn('摇滚')">摇滚</span>
         </div>
       </div>
       <article class="dataCon">
@@ -51,16 +51,18 @@
     <div v-transfer-dom>
       <popup class="songPopup" v-model="show" height="100%">
         <popup-header class="popup-header-bgred" left-text="返回" title="选择分类" :right-text="rightText" :show-bottom-border="false" @on-click-left="clickLeft" @on-click-right="clickRight"></popup-header>
-          <div class="whole" @click="selectfn('全部歌单')"><p class="text" :class="{'active': keyname=='全部歌单'}">全部歌单</p></div>
-          <div class="content">
-            <ul class="typelist" v-for="(item,index) in datafor" :key="index">
-              <li class="list firstlist">
-                <i class="icon" :class="[`icon_${isclass(item.type)}`]"></i>
-                <span class="text">{{item.type}}</span>
-              </li>
-              <li @click="selectfn(v.name)" class="list" v-for="(v, i) in item.data" :key="i" :class="{'hot': v.hot, 'select': v.name==keyname}">{{v.name}}</li>
-            </ul>
-          </div>
+        <div class="whole" @click="selectfn('全部歌单')">
+          <p class="text" :class="{'active': keyname=='全部歌单'}">全部歌单</p>
+        </div>
+        <div class="content">
+          <ul class="typelist" v-for="(item,index) in datafor" :key="index">
+            <li class="list firstlist">
+              <i class="icon" :class="[`icon_${isclass(item.type)}`]"></i>
+              <span class="text">{{item.type}}</span>
+            </li>
+            <li @click="selectfn(v.name)" class="list" v-for="(v, i) in item.data" :key="i" :class="{'hot': v.hot, 'select': v.name==keyname}">{{v.name}}</li>
+          </ul>
+        </div>
       </popup>
     </div>
 
@@ -106,43 +108,40 @@
         if (this.hotquality.length > 0) return this.hotquality[0]
         return {}
       },
-      selectKey(){
-        return this.keyname=='全部歌单'?'全部歌单':this.keyname
-      },
-      datafor(){
-        if(this.typeData.length>0){
-          let obj=[];
-          Object.keys(this.type).forEach(key=>{
-            obj.push({type: this.type[key], data: []})
+      datafor() {
+        if (this.typeData.length > 0) {
+          let obj = [];
+          Object.keys(this.type).forEach(key => {
+            obj.push({ type: this.type[key], data: [] })
           })
-          this.typeData.forEach((data, i, arr)=>{
+          this.typeData.forEach((data, i, arr) => {
             this.$set(arr[i], 'isselect', false)
-            let index=obj.findIndex(v=>v.type==this.type[data.category])
+            let index = obj.findIndex(v => v.type == this.type[data.category])
             obj[index].data.push(data)
           })
-          obj.forEach(v=>{
-            let len=v.data.length
-            if(len<=6) {
-              for (let i = 0; i < (6-len); i++) {
+          obj.forEach(v => {
+            let len = v.data.length
+            if (len <= 6) {
+              for (let i = 0; i < (6 - len); i++) {
                 v.data.push({})
               }
             } else {
-              len=len-6
-              if(len%4==1){
+              let lg = (len - 6) % 4
+              if (lg == 1) {
                 v.data.push({})
                 v.data.push({})
                 v.data.push({})
-              } else if(len%4==2) {
+              } else if (lg == 2) {
                 v.data.push({})
                 v.data.push({})
-              } else if(len%4==3) {
+              } else if (lg == 3) {
                 v.data.push({})
               }
             }
           })
           return obj;
         }
-        return [{data:[{name: ''}]}]
+        return [{ data: [{ name: '' }] }]
       },
     },
     methods: {
@@ -151,18 +150,19 @@
           this.hotquality = res.data.playlists
         })
       },
-      playlist() {
-        playlist().then(res => {
+      playlist(obj = {}) {
+
+        playlist(obj).then(res => {
           this.quality = res.data.playlists
         })
       },
-      catlist(){
-        catlist().then(res=>{
-          this.type=res.data.categories
-          this.typeData=res.data.sub
+      catlist() {
+        catlist().then(res => {
+          this.type = res.data.categories
+          this.typeData = res.data.sub
         })
       },
-      selectKeyfn() {
+      keynamePopup() {
         this.show = true
       },
       clickLeft() {
@@ -171,12 +171,13 @@
       clickRight() {
 
       },
-      selectfn(name){
-        this.keyname=name
+      selectfn(name) {
+        this.keyname = name
         this.show = false
+        this.playlist({ cat: name })
       },
-      isclass(key){
-        let obj={
+      isclass(key) {
+        let obj = {
           "语种": 'yuzhong',
           "风格": 'fengge',
           "场景": 'changjing',
@@ -270,33 +271,25 @@
         overflow: hidden;
         color: #fff;
 
-        &::after,
-        &::before {
-          content: "";
-          position: absolute;
-          left: 0;
-          right: 0;
-          z-index: 0;
-          // background-color: rgba(0,0,0,.3);
-        }
-        &::before {
-          top: 0;
-          bottom: 60%;
-          background: linear-gradient(
-            to bottom,
-            rgba(10, 10, 10, 0.6),
-            rgba(0, 0, 0, 0)
-          );
-        }
-        &::after {
-          top: 60%;
-          bottom: 0;
-          background: linear-gradient(
-            to top,
-            rgba(10, 10, 10, 0.6),
-            rgba(0, 0, 0, 0)
-          );
-        }
+        // &::after,
+        // &::before {
+        //   content: "";
+        //   position: absolute;
+        //   left: 0;
+        //   right: 0;
+        //   z-index: 0;
+        // }
+        // &::before {
+        //   top: 0;
+        //   bottom: 60%;
+        //   background: linear-gradient(to bottom,rgba(10, 10, 10, 0.6),rgba(0, 0, 0, 0));
+        // }
+        // &::after {
+        //   top: 60%;
+        //   bottom: 0;
+        //   background: linear-gradient(to top,rgba(10, 10, 10, 0.6),rgba(0, 0, 0, 0));
+        // }
+        .shadow(all);
       }
       img {
         display: block;
@@ -424,7 +417,8 @@
       }
     }
     .hot {
-      background: url("/static/images/cm2_lists_icn_hot_new@2x.png") no-repeat left top;
+      background: url("/static/images/cm2_lists_icn_hot_new@2x.png") no-repeat
+        left top;
       background-size: 30px;
     }
     .select {
@@ -439,11 +433,11 @@
         bottom: 0;
         z-index: 0;
         border: 1px solid @RED;
-        background: url("/static/images/cm2_discover_slted@2x.png") no-repeat right bottom;
+        background: url("/static/images/cm2_discover_slted@2x.png") no-repeat
+          right bottom;
         background-size: 20px;
       }
     }
-    
   }
 </style>
 

@@ -139,3 +139,8 @@ export const toplist = param => {
 export const artist = param => {
   return get('/toplist/artist', param)
 }
+
+//歌词 id
+export const lyric = param => {
+  return get('/lyric', param)
+}

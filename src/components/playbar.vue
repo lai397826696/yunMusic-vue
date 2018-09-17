@@ -1,5 +1,5 @@
 <template>
-  <div class="vux-1px-t videoBar" v-show="vnodeshow && !!audioPlaying.id">
+  <div class="vux-1px-t videoBar" v-show="playbarShow && !!audioPlaying.id">
     <div class="flex">
       <div class="flex_hd">
         <div class="artistsImg">
@@ -86,7 +86,8 @@
       ...mapState([
         "song_catalogue",
         "audioPlaying",
-        "playmode"
+        "playmode",
+        "playbarShow"
       ]),
       ...mapGetters([
         "playidURL"
@@ -208,18 +209,7 @@
         }
         if (sec.length == 1) sec = "0" + sec
         return minute + isM0 + sec;
-      },
-      routefn(oldval, newval) {
-        let path = this.$route.path;
-        if (path == "/detail" || path == "/fm") {
-          this.vnodeshow = false;
-        } else {
-          this.vnodeshow = true;
-        }
       }
-    },
-    watch: {
-      $route: "routefn"
     }
   };
 </script>

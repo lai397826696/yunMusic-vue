@@ -15,6 +15,7 @@ const local = (arr = '') => {
 }
 
 const state = {
+  playbarShow: false,
   banners: [], //轮播图
   newMusic: [], //最新音乐
   resource: [], //每日推荐
@@ -39,6 +40,9 @@ const state = {
 }
 
 const mutations = {
+  playbarShowfn(state, {data}) { 
+    state.playbarShow=data
+  },
   indexfn(state, {banners, resource, newMusic, sole, dj}) {
     state.banners = banners;
     newMusic.length = 6;

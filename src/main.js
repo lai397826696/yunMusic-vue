@@ -23,8 +23,14 @@ Object.keys(util).forEach(key => {
   if (filterArr.indexOf(key) >= 0) Vue.filter(key, util[key])
 })
 
+const arr=["detail","fm", "comment"]
 router.beforeEach((to, form, next) => {
   console.log(to);
+  if (arr.indexOf(to.name.toLocaleLowerCase())>=0) {
+    store.commit("playbarShowfn", { data: false })
+  } else {
+    store.commit("playbarShowfn", { data: true })
+  }
   next()
 })
 

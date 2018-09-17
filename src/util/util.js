@@ -12,9 +12,9 @@ export const integ = (num, dig = 10000) => {
 export const objCopy = obj => {
   return JSON.parse(JSON.stringify(obj))
 }
-export const num_format = (num, type=0) => {
+export const num_format = (num, type = 0) => {
   if (!Number(num)) 
-    return '不是number类型'
+    return 'undefined'
   switch (type) {
     case 0: //歌单听众
       if (num > 100000000) {

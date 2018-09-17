@@ -51,12 +51,11 @@
       <flexbox-item :span="1/3" v-for="list in resources" :key="list.id">
         <div class="gridBox">
           <span class="playcount">
-              <img src="../../static/images/p0.png" alt="icon" class="playCountIcon">
-              {{list.playCount | num_format}}
-            </span>
+            <img src="../../static/images/p0.png" alt="icon" class="playCountIcon"> {{list.playCount | num_format}}
+          </span>
           <img class="gridImg" :src="`${list.picUrl}?param=200y200`" :alt="list.copywriter">
-          <div class="gridtext">{{list.name}}</div>
         </div>
+        <div class="gridtext">{{list.name}}</div>
       </flexbox-item>
     </flexbox>
     <group-title class="groupTitle">独家放送</group-title>
@@ -64,8 +63,8 @@
       <flexbox-item :span="(index+1)==sole.length?12:1/2" v-for="(list, index) of sole" :key="list.id">
         <div class="gridBox">
           <img class="gridImg" :src="(index+1)==sole.length?`${list.picUrl}?param=540y200`:`${list.sPicUrl}?param=320y180`" :alt="list.copywriter">
-          <div class="gridtext">{{list.name}}</div>
         </div>
+        <div class="gridtext">{{list.name}}</div>
       </flexbox-item>
     </flexbox>
     <group-title class="groupTitle">最新音乐
@@ -75,27 +74,13 @@
       <flexbox-item :span="1/3" v-for="list in newMusic" :key="list.id">
         <div class="gridBox">
           <img class="gridImg" :src="`${list.song.album.picUrl}?param=200y200`" :alt="list.copywriter">
-          <div class="gridtext">
-            <p class="ellipsis">{{list.name}}</p>
-            <p>{{list.song.artists[0].name}}</p>
-          </div>
+        </div>
+        <div class="gridtext">
+          <p class="ellipsis">{{list.name}}</p>
+          <p>{{list.song.artists[0].name}}</p>
         </div>
       </flexbox-item>
     </flexbox>
-    <!-- <group-title class="groupTitle">主播电台
-      <x-icon type="ios-arrow-right" size="18" class="icon-red"></x-icon>
-    </group-title>
-    <flexbox align="flex-start" :gutter="0" wrap="wrap">
-      <flexbox-item :span="1/3" v-for="list in dj" :key="list.id">
-        <div class="gridBox">
-          <img class="gridImg" :src="`${list.song.album.picUrl}?param=200y200`" :alt="list.copywriter">
-          <div class="gridtext">
-            <p class="ellipsis">{{list.name}}</p>
-            <p>{{list.song.artists[0].name}}</p>
-          </div>
-        </div>
-      </flexbox-item>
-    </flexbox> -->
   </div>
 </template>
 
@@ -133,10 +118,10 @@
         'audioPlaying'
       ]),
       resources() {
-        let arr=[];
+        let arr = [];
         this.resource.forEach(v => {
           if (!!v) {
-            if(!v.playCount) v['playCount'] = v.playcount
+            if (!v.playCount) v['playCount'] = v.playcount
             arr.push(v)
           }
         })
@@ -147,7 +132,7 @@
       ...mapActions([
         'indexapi'
       ]),
-      funfm(str){
+      funfm(str) {
         this.$router.push(str)
       }
     }
@@ -156,9 +141,9 @@
 
 
 <style lang="less" scoped>
+  @import url("../assets/css/mixin.less");
   .home {
     top: 0;
-    // margin-bottom: 55px;
   }
   .tab {
     margin: 0 auto;
@@ -217,23 +202,11 @@
     position: relative;
     font-size: 12px;
     line-height: 20px;
+    .shadow(all);
+
     .gridImg {
       display: block;
       width: 100%;
-    }
-    .gridtext {
-      display: -webkit-box;
-      margin: 4px 0;
-      padding: 6px 5px;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 2;
-      overflow: hidden;
-
-      .ellipsis {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
     }
     .playcount {
       position: absolute;
@@ -242,6 +215,14 @@
       z-index: 1;
       color: #fff;
     }
+  }
+  .gridtext {
+    display: -webkit-box;
+    margin: 4px 0;
+    padding: 6px 5px;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
   }
   .playCountIcon {
     width: 14px;

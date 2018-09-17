@@ -2,9 +2,9 @@
   <div class="turntableBox" @click="togglefn">
     <div class="turntable" v-show="toggle">
       <img src="../../static/images/aag.png" alt="" class="pointer" :class="{upDown: play &&zhouRoute.is, downUp: !play&& zhouRoute.is}" :style="{'transform': `rotate(-${zhouRoute.route}deg)`}">
-      <div class="content" ref="turntable" :style="styleRoute">
+      <div class="content" @touchstart="touchstart" @touchmove.prevent="touchmove" @touchend="touchend" :style="{left: movedata.left+'px'}">
         <img src="../assets/play.png" alt="" class="playbg">
-        <img :src="`${audioPlaying.album.blurPicUrl}?param=300y300`" alt="" class="playimg">
+        <img :src="`${audioPlaying.album.blurPicUrl}?param=300y300`" alt="" class="playimg" ref="turntable" :style="styleRoute">
       </div>
       <div class="toolbar">
         <flexbox :gutter="0" class="tools">
@@ -17,7 +17,7 @@
           <flexbox-item>
             <div class="totalBox">
               <i class="iconfont icon-pinglun" @click.stop="pinglun"></i>
-              <span class="total">{{totals | numType}}</span>
+              <span class="total">{{totals | num_format(1)}}</span>
             </div>
           </flexbox-item>
           <flexbox-item>
@@ -35,8 +35,8 @@
 
 <script>
   import { Flexbox, FlexboxItem } from 'vux'
-  import { mapState } from 'vuex';
-  import { musicComment } from '../util/severAPI';
+  import { mapState,mapMutations } from 'vuex';
+  import { musicComment, lyric } from '../util/severAPI';
   import popupDetail from '../components/popupDetail';
 
   export default {
@@ -52,15 +52,19 @@
         collection: false,
         total: 0,
         show: false,
-        id: ''
+        id: '',
+        movedata: {
+          x: 0,
+          left: 0,
+          domleft: 0,
+          status: null
+        }
       };
     },
     components: {
       Flexbox,
       FlexboxItem,
       popupDetail
-    },
-    directives: {
     },
     computed: {
       ...mapState([
@@ -78,6 +82,9 @@
       }
     },
     methods: {
+      ...mapMutations([
+        'prevPlaynext'
+      ]),
       togglefn() {
         this.toggle = !this.toggle
       },
@@ -127,18 +134,27 @@
         }
         return deg >= 360 ? 0 : deg;
       },
-    },
-    filters: {
-      numType(val) {
-        if (val > 100000) {
-          return '10w+'
-        } else if (val > 10000) {
-          return '1w+'
-        } else if (val > 999) {
-          return '999+'
+      touchstart(event){
+        this.movedata.x=event.changedTouches[0].clientX
+        this.movedata.domleft=event.target.getBoundingClientRect().left
+        this.movedata.status="false"
+      },
+      touchmove(event){
+        let move=event.changedTouches[0]
+        let domrect=event.target.getBoundingClientRect()
+        this.movedata.left=move.clientX-this.movedata.x
+
+        let position = move.clientX < this.movedata.x ? "next" : "prev"
+        //达到边界值
+        if(-domrect.left>=domrect.width/2 || domrect.left>=(domrect.width/2+this.movedata.domleft*2)) {
+          this.movedata.status=position
         } else {
-          return val
+          this.movedata.status="false"
         }
+      },
+      touchend(){
+        this.movedata.left=0
+        if(this.movedata.status != 'false') this.prevPlaynext({type: this.movedata.status})
       }
     }
   };
@@ -181,17 +197,19 @@
       }
     }
     .turntable {
-      margin: 22% auto 0;
-      // margin: 0 auto 0;
-      padding: 4px;
-      width: 80%;
-      border-radius: 50%;
-      background-color: rgba(255, 255, 255, 0.15);
-      box-sizing: border-box;
+      margin-top: 22%;
+      width: 100%;
     }
     .content {
       position: relative;
       z-index: 0;
+      margin: 0 auto;
+      padding: 4px;
+      width: 80%;
+      box-sizing: border-box;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.15);
+      
       .playbg {
         margin: 0 auto;
         display: block;

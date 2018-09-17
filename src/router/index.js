@@ -9,6 +9,7 @@ import Comments from '@/pages/Comment';
 import UserInfo from '@/pages/UserInfo';
 import songSheet from '@/pages/songSheet';
 import Rankings from '@/pages/rankings';
+import sheetDetail from '@/pages/sheetDetail';
 
 Vue.use(Router)
 
@@ -64,6 +65,11 @@ export default new Router({
       path: '/rankings',
       name: 'rankings',
       component: Rankings
+    },
+    {
+      path: '/sheetDetail',
+      name: 'sheetDetail',
+      component: sheetDetail
     }
   ]
 })

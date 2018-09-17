@@ -134,13 +134,12 @@
         }
       },
       commentLike(list) {
-        let obj={ id: this.params.id, cid: list.user.userId, t: 1, type: 0 }
+        let obj={ id: this.params.id, cid: list.commentId, t: 1, type: 0 }
         if(!!list.liked) obj.t=0
+        console.log(obj);
         commentLiked(obj).then(res => {
-          if(res.data.code==200){
-            console.log(res);
-            list.liked=!list.liked;
-          }
+          console.log(res);
+          list.liked=!list.liked;
         })
       }
     },

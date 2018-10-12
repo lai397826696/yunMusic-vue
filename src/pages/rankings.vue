@@ -9,7 +9,7 @@
           <span class="updata">{{item.ToplistType=="O" || item.ToplistType=="H"?'刚刚更新':'每天更新'}}</span>
         </div>
         <div class="flex_bd">
-          <p v-if="ind<3" class="text" v-for="(list, ind) in item.tracks" :key="list.id">
+          <p v-if="ind<3" class="ellipsis text" v-for="(list, ind) in item.tracks" :key="list.id">
             {{ind+1}}.{{list.name}} - <span v-for="(v,i) in list.ar" :key="v.id">{{i==0?'':'/'}}{{v.name}}</span>
           </p>
         </div>

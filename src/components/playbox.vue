@@ -177,6 +177,7 @@
     text-align: center;
     .flex {
       padding: 0;
+      padding-top: 4px;
     }
     span {
       display: block;

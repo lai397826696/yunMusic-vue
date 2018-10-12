@@ -158,7 +158,7 @@
     left: 0;
     right: 0;
     z-index: 0;
-    filter: blur(60px);
+    filter: blur(70px);
     background-size: cover;
     background-position: center top;
     &::after {
@@ -169,7 +169,7 @@
       top: 0;
       bottom: 0;
       z-index: 1;
-      background-color: rgba(0, 0, 0, 0.4);
+      background-color: rgba(0, 0, 0, 0.6);
     }
   }
   .turntableBox {

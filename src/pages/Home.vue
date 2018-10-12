@@ -47,8 +47,9 @@
     <group-title class="groupTitle">每日推荐
       <x-icon type="ios-arrow-right" size="18" class="icon-red"></x-icon>
     </group-title>
-    <flexbox align="flex-start" :gutter="0" wrap="wrap">
-      <flexbox-item :span="1/3" v-for="list in resources" :key="list.id">
+
+    <div class="flex items-start flex_index">
+      <div class="flex_bd" v-for="list in resources" :key="list.id">
         <div class="gridBox">
           <span class="playcount">
             <img src="../../static/images/p0.png" alt="icon" class="playCountIcon"> {{list.playCount | num_format}}
@@ -56,22 +57,23 @@
           <img class="gridImg" :src="`${list.picUrl}?param=200y200`" :alt="list.copywriter">
         </div>
         <div class="gridtext">{{list.name}}</div>
-      </flexbox-item>
-    </flexbox>
+      </div>
+    </div>
     <group-title class="groupTitle">独家放送</group-title>
-    <flexbox align="flex-start" :gutter="0" wrap="wrap">
-      <flexbox-item :span="(index+1)==sole.length?12:1/2" v-for="(list, index) of sole" :key="list.id">
+    <div class="flex items-start flex_index2">
+      <div class="flex_bd" :class="(index+1)==sole.length?'flex_bd1':''" v-for="(list, index) of sole" :key="list.id">
         <div class="gridBox">
           <img class="gridImg" :src="(index+1)==sole.length?`${list.picUrl}?param=540y200`:`${list.sPicUrl}?param=320y180`" :alt="list.copywriter">
         </div>
         <div class="gridtext">{{list.name}}</div>
-      </flexbox-item>
-    </flexbox>
+      </div>
+    </div>
     <group-title class="groupTitle">最新音乐
       <x-icon type="ios-arrow-right" size="18" class="icon-red"></x-icon>
     </group-title>
-    <flexbox align="flex-start" :gutter="0" wrap="wrap">
-      <flexbox-item :span="1/3" v-for="list in newMusic" :key="list.id">
+
+    <div class="flex item-start flex_index">
+      <div class="flex_bd" v-for="list in newMusic" :key="list.id">
         <div class="gridBox">
           <img class="gridImg" :src="`${list.song.album.picUrl}?param=200y200`" :alt="list.copywriter">
         </div>
@@ -79,8 +81,8 @@
           <p class="ellipsis">{{list.name}}</p>
           <p>{{list.song.artists[0].name}}</p>
         </div>
-      </flexbox-item>
-    </flexbox>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -202,6 +204,8 @@
     position: relative;
     font-size: 12px;
     line-height: 20px;
+    border-radius: 3px;
+    overflow: hidden;
     .shadow(all);
 
     .gridImg {
@@ -223,10 +227,31 @@
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     overflow: hidden;
+    word-break: break-all;
   }
   .playCountIcon {
     width: 14px;
     vertical-align: middle;
+  }
+  .flex_index,
+  .flex_index2 {
+    padding: 0 3px;
+    flex-wrap: wrap;
+    .flex_bd {
+      flex: 0 0 33.33%;
+      margin-bottom: 5px;
+      min-width: 20px;
+      padding: 0 3px;
+      box-sizing: border-box;
+    }
+  }
+  .flex_index2 {
+    .flex_bd {
+      flex: 0 0 50%;
+    }
+    .flex_bd1 {
+      flex: 1;
+    }
   }
 </style>
 

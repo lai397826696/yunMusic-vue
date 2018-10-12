@@ -94,7 +94,7 @@
       top: 0;
       bottom: 0;
       z-index: 1;
-      background-color: rgba(0, 0, 0, 0.4);
+      background-color: rgba(0, 0, 0, 0.6);
     }
   }
   .info {
@@ -103,9 +103,6 @@
       width: 100px;
       height: 100px;
       border-radius: 50%;
-    }
-    .name {
-
     }
   }
 </style>

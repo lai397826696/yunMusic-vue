@@ -36,7 +36,11 @@ const state = {
     class: 'icon-liebiaoxunhuan',
     name: '列表循环'
   },
-  playmodeIndex: 0
+  playmodeIndex: 0,
+  lyricData: {
+    text: {},
+    time: 0
+  }
 }
 
 const mutations = {
@@ -141,7 +145,6 @@ const mutations = {
       state.song_catalogue.splice((pindex + 1), 0, ...addData)
     }
   },
-
   prevPlaynext(state, { type }) {
     //随机播放key==1
     if (state.playmode.key == 1) {
@@ -160,6 +163,9 @@ const mutations = {
       }
     }
     state.audioPlaying=state.song_catalogue[state.playIndex]
+  },
+  set_lyrics(state, { data }) {
+    state.lyricData.text=data
   }
 }
 
@@ -169,7 +175,7 @@ const actions = {
       axios.get('/banner'),
       axios.get('/personalized', {
         params: {
-          limit: 2
+          limit: 10
         }
       }),
       axios.get('/recommend/resource', {withCredentials: true}),
@@ -177,9 +183,11 @@ const actions = {
       axios.get('/personalized/privatecontent'),
       axios.get('/dj/recommend', {withCredentials: true})
     ]).then(axios.spread((res1, res2, res3, res4, res5, res6) => {
+      res2.data.result.length=6
       commit('indexfn', {
         banners: res1.data.banners,
-        resource: [].concat(res2.data.result, res3.data.recommend),
+        // resource: [].concat(res2.data.result, res3.data.recommend),
+        resource: res2.data.result,
         newMusic: res4.data.result,
         sole: res5.data.result.reverse(),
         dj: res6.data.djRadios
@@ -190,6 +198,11 @@ const actions = {
     ajax.songs().then(res => {
       commit('set_recommend', {songs: res.data.recommend})
     })
+  },
+  lyricsfn({ commit }) {
+    ajax.lyric({ id: state.audioPlaying.id }).then(res => {
+      commit("set_lyrics", { data: parseLyric(res.data.lrc.lyric)})
+    })
   }
 }
 
@@ -198,7 +211,30 @@ const getters = {
     return !!state.audioPlaying.id
       ? `http://music.163.com/song/media/outer/url?id=${state.audioPlaying.id}.mp3`
       : '';
+  },
+  lyricsId(state, getters) {
+    return state.audioPlaying.id
   }
+}
+
+function parseLyric(lrc) {
+  var lyrics = lrc.split("\n");
+  var lrcObj = {};
+  for (var i = 0; i < lyrics.length; i++) {
+    var lyric = decodeURIComponent(lyrics[i]);
+    var timeReg = /\[\d*:\d*((\.|\:)\d*)*\]/g;
+    var timeRegExpArr = lyric.match(timeReg);
+    if (!timeRegExpArr) continue;
+    var clause = lyric.replace(timeReg, '');
+    for (var k = 0, h = timeRegExpArr.length; k < h; k++) {
+      var t = timeRegExpArr[k];
+      var min = Number(String(t.match(/\[\d*/i)).slice(1)),
+        sec = Number(String(t.match(/\:\d*/i)).slice(1));
+      var time = min * 60 + sec;
+      lrcObj[time] = clause;
+    }
+  }
+  return lrcObj;
 }
 
 export default new Vuex.Store({state, mutations, actions, getters, strict: true})

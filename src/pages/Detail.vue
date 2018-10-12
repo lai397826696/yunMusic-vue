@@ -3,10 +3,9 @@
     <x-header class="fixed-top" :left-options="{backText: ''}">{{audioPlaying.name}}</x-header>
     <div class="bg-blur" :style="{backgroundImage: `url(${audioPlaying.album.blurPicUrl})`}"></div>
     <div class="clear-header">
-      <!-- <div class="turnFixed"><turntable></turntable></div> -->
-      <div class="turnFixed">
-        <div class="turntableBox" @click="togglefn">
-          <div class="turntable" v-show="toggle">
+      <div class="turnFixed" @click="togglefn">
+        <div class="turntableBox" v-show="toggle">
+          <div class="turntable">
             <img src="../../static/images/aag.png" alt="" class="pointer" :class="{upDown: play &&zhouRoute.is, downUp: !play&& zhouRoute.is}" :style="{'transform': `rotate(-${zhouRoute.route}deg)`}">
             <div class="content" @touchstart="touchstart" @touchmove.prevent="touchmove" @touchend="touchend" :style="{left: movedata.left+'px'}">
               <img src="../assets/play.png" alt="" class="playbg">
@@ -32,10 +31,12 @@
               </flexbox>
             </div>
           </div>
-          <div class="lyric" v-show="!toggle">
-            显示歌词
+        </div>
+        <div class="lyric" ref="lyric" v-show="!toggle">
+          <div class="lyricRoute">
+            <p v-if="!!item" class="text" v-for="(item, index) in lyricData.text" :key="index">{{item}}</p>  
           </div>
-          <popupDetail ref="popupDetail" v-model="show" type="detail"></popupDetail>
+          
         </div>
       </div>
       <div class="foot">
@@ -60,6 +61,7 @@
       </div>
       <catalogue ref="catalogue"></catalogue>
     </div>
+    <popupDetail ref="popupDetail" v-model="show" type="detail"></popupDetail>
   </div>
 </template>
 
@@ -70,29 +72,7 @@
   import popupDetail from '../components/popupDetail';
   import catalogue from '../components/Catalogue';
   import turntable from '../components/Turntable';
-
   import { musicComment, lyric } from '../util/severAPI';
-
-
-  function parseLyric(lrc) {
-    var lyrics = lrc.split("\n");
-    var lrcObj = {};
-    for(var i=0;i<lyrics.length;i++){
-        var lyric = decodeURIComponent(lyrics[i]);
-        var timeReg = /\[\d*:\d*((\.|\:)\d*)*\]/g;
-        var timeRegExpArr = lyric.match(timeReg);
-        if(!timeRegExpArr)continue;
-        var clause = lyric.replace(timeReg,'');
-        for(var k = 0,h = timeRegExpArr.length;k < h;k++) {
-            var t = timeRegExpArr[k];
-            var min = Number(String(t.match(/\[\d*/i)).slice(1)),
-                sec = Number(String(t.match(/\:\d*/i)).slice(1));
-            var time = min * 60 + sec;
-            lrcObj[time] = clause;
-        }
-    }
-    return lrcObj;
-}
 
   export default {
     name: "detail",
@@ -104,7 +84,6 @@
         show: false,
         id: '',
         total: 0,
-
         styleRoute: {},
         zhouRoute: {
           route: 27,
@@ -117,7 +96,7 @@
           domleft: 0,
           status: null
         },
-        lyric: ''
+        scrolltop: '0'
       }
     },
     components: {
@@ -130,12 +109,14 @@
       turntable
     },
     created() {
-      this.lyricfn()
+    },
+    mounted() {
     },
     computed: {
       ...mapState([
         'playmode',
-        'audioPlaying'
+        'audioPlaying',
+        'lyricData'
       ]),
       totals() {
         musicComment({ id: this.audioPlaying.id }).then(res => {
@@ -167,10 +148,10 @@
       plays() {
         let vm = this
         this.play = !this.play
-        this.zhouRoute.is=true
+        this.zhouRoute.is = true
         if (this.play) {
           this.setStyleRoute()
-          this.zhouRoute.route=2
+          this.zhouRoute.route = 2
         } else {
           setTimeout(function () {
             vm.setStyleRoute()
@@ -197,10 +178,12 @@
           vm.setStyleRoute()
         }, 200)
       },
-      
-
       togglefn() {
         this.toggle = !this.toggle
+        if (!this.toggle) {
+          this.$nextTick(function () {
+          })
+        }
       },
       collectionfn() {
         this.collection = !this.collection
@@ -248,38 +231,40 @@
         }
         return deg >= 360 ? 0 : deg;
       },
-      touchstart(event){
-        this.movedata.x=event.changedTouches[0].clientX
-        this.movedata.domleft=event.target.getBoundingClientRect().left
-        this.movedata.status="false"
+      touchstart(event) {
+        this.movedata.x = event.changedTouches[0].clientX
+        this.movedata.domleft = event.target.getBoundingClientRect().left
+        this.movedata.status = "false"
       },
-      touchmove(event){
-        let move=event.changedTouches[0]
-        let domrect=event.target.getBoundingClientRect()
-        this.movedata.left=move.clientX-this.movedata.x
+      touchmove(event) {
+        let move = event.changedTouches[0]
+        let domrect = event.target.getBoundingClientRect()
+        this.movedata.left = move.clientX - this.movedata.x
 
         let position = move.clientX < this.movedata.x ? "next" : "prev"
         //达到边界值
-        if(-domrect.left>=domrect.width/2 || domrect.left>=(domrect.width/2+this.movedata.domleft*2)) {
-          this.movedata.status=position
+        if (-domrect.left >= domrect.width / 2 || domrect.left >= (domrect.width / 2 + this.movedata.domleft * 2)) {
+          this.movedata.status = position
         } else {
-          this.movedata.status="false"
+          this.movedata.status = "false"
         }
       },
-      touchend(){
-        this.movedata.left=0
-        if(this.movedata.status != 'false') this.prevPlaynext({type: this.movedata.status})
+      touchend() {
+        this.movedata.left = 0
+        if (this.movedata.status != 'false') this.prevPlaynext({ type: this.movedata.status })
       },
-      lyricfn(){
-        lyric({id: this.audioPlaying.id}).then(res=>{
-          this.lyric=res.data.lrc.lyric
-        })
-      }
-    }
+      lyricRoutefn() {
+        let _this=this;
+        setInterval(function () {
+          _this.$refs.lyric.scrollTop+=34
+        }, 2000)
+      },
+    },
   }
 </script>
 
 <style lang="less" scoped>
+  @import "../assets/css/mixin.less";
   .detail {
     width: 100%;
     height: 100%;
@@ -302,7 +287,7 @@
       top: 0;
       bottom: 0;
       z-index: 1;
-      background-color: rgba(0, 0, 0, 0.4);
+      background-color: rgba(0, 0, 0, 0.6);
     }
   }
 
@@ -366,9 +351,11 @@
     right: 0;
     bottom: 19%;
     z-index: 0;
+    overflow: hidden;
   }
 
   .turntableBox {
+    position: relative;
     padding: 1% 0;
     width: 100%;
     height: 98%;
@@ -416,7 +403,7 @@
       box-sizing: border-box;
       border-radius: 50%;
       background-color: rgba(255, 255, 255, 0.15);
-      
+
       .playbg {
         margin: 0 auto;
         display: block;
@@ -468,9 +455,22 @@
         }
       }
     }
-    .lyric {
+  }
+  .lyric {
+    position: relative;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll;
+    color: @FRONT_GRAY;
+    .lyricRoute {
+      padding: 60% 0;
       width: 100%;
-      height: 100%;
+    }
+    .text {
+      margin: 0 auto 12px;
+      width: 80%;
+      text-align: center;
     }
   }
 </style>

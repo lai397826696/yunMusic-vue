@@ -6,6 +6,7 @@
 </template>
 
 <script>
+  import { mapGetters, mapActions } from 'vuex';
   import Playbar from './components/playbar.vue';
   
   export default {
@@ -17,6 +18,22 @@
     components: {
       Playbar
     },
+    computed: {
+      ...mapGetters([
+        'lyricsId'
+      ])
+    },
+    methods: {
+      ...mapActions([
+        'lyricsfn'
+      ])
+    },
+    watch: {
+      'lyricsId': function (newval, oldval) {
+        console.log('监测歌词改变');
+        this.lyricsfn()
+      }
+    }
 
   }
 </script>

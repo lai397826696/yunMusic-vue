@@ -6,7 +6,7 @@
       <div class="turnFixed" @click="togglefn">
         <div class="turntableBox" v-show="toggle">
           <div class="turntable">
-            <img src="../../static/images/aag.png" alt="" class="pointer" :class="{upDown: play &&zhouRoute.is, downUp: !play&& zhouRoute.is}" :style="{'transform': `rotate(-${zhouRoute.route}deg)`}">
+            <img src="../../static/images/aag.png" alt="" class="pointer" :class="{upDown: audioPlaying.playing &&zhouRoute.is, downUp: !audioPlaying.playing&& zhouRoute.is}" :style="{'transform': `rotate(-${zhouRoute.route}deg)`}">
             <div class="content" @touchstart="touchstart" @touchmove.prevent="touchmove" @touchend="touchend" :style="{left: movedata.left+'px'}">
               <img src="../assets/play.png" alt="" class="playbg">
               <img :src="`${audioPlaying.album.blurPicUrl}?param=300y300`" alt="" class="playimg" ref="turntable" :style="styleRoute">
@@ -147,9 +147,9 @@
       },
       plays() {
         let vm = this
-        this.play = !this.play
+        this.set_audioStatus({ playing: this.audioPlaying.playing });
         this.zhouRoute.is = true
-        if (this.play) {
+        if (this.audioPlaying.playing) {
           this.setStyleRoute()
           this.zhouRoute.route = 2
         } else {
@@ -161,20 +161,23 @@
       playPrev() {
         let vm = this;
         this.prevPlaynext({ type: 'prev' })
-        this.play = false
+        this.set_audioStatus({ playing: false });
         this.setStyleRoute(true)
         setTimeout(function () {
-          vm.play = true
+          // vm.play = true
+        // this.set_audioStatus({ playing: true });
           vm.setStyleRoute()
         }, 200)
       },
       playNext() {
         let vm = this;
         this.prevPlaynext({ type: 'next' })
-        this.play = false
+        // this.play = false
+        this.set_audioStatus({ playing: false });
         this.setStyleRoute(true)
         setTimeout(function () {
-          vm.play = true
+          // vm.play = true
+        // this.set_audioStatus({ playing: true });
           vm.setStyleRoute()
         }, 200)
       },
@@ -197,7 +200,7 @@
       setStyleRoute(initial = false) {
         //initial参数解决播放下一首时，正在转动的角度拨正为0deg
         let turntable = this.$refs.turntable
-        if (this.play) {
+        if (this.audioPlaying.playing) {
           this.styleRoute = {
             transition: 'transform 600s',
             transform: 'rotate(7000deg)'

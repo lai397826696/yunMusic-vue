@@ -35,6 +35,15 @@
         <source :src="playidURL" type="audio/ogg" />
         Your browser does not support the audio element.
       </audio>
+
+      <!-- <video id='my-video' class='video-js' preload='auto' data-setup='{}'>
+        <source :src='MY_VIDEO.mp4' type='video/mp4'>
+        <source :src='MY_VIDEO.webm' type='video/webm'>
+        <p class='vjs-no-js'>
+    To view this video please enable JavaScript, and consider upgrading to a web browser that
+          <a href='https://videojs.com/html5-video-support/' target='_blank'>supports HTML5 video</a>
+        </p>
+      </video> -->
     </div>
     <!-- <Audio></Audio> -->
   </div>
@@ -45,6 +54,9 @@
   import { mapActions, mapState, mapMutations, mapGetters } from "vuex";
   import catalogue from "./Catalogue";
   import Audio from './Audio';
+import { clearTimeout } from 'timers';
+
+  // import video from 'video.js';
 
   export default {
     name: "playbar",
@@ -107,7 +119,7 @@
       init(ading) {
         let vm = this
         //设置音量
-        ading.volume = .7;
+        ading.volume = .3;
         // 当浏览器能够开始播放指定的音频/视频时，发生 canplay 事件。
         // 当音频/视频处于加载过程中时，会依次发生以下事件：
         // loadstart
@@ -127,17 +139,19 @@
           console.log('3-当浏览器已加载音频/视频的元数据时');
 
           //测试，快速听歌 start
-          let time = this.duration - 20
-          this.currentTime = time
+          // let time = this.duration - 20
+          // this.currentTime = time
           //测试，快速听歌 end
           vm.duration = this.duration
         })
         ading.addEventListener("loadeddata", function () {
           console.log('4-当浏览器已加载音频/视频的当前帧时');
         })
-        ading.addEventListener("progress", function () {
-          console.log('5-告知媒体相关部分的下载进度时周期性地触发');
-        })
+        ading.addEventListener("progress", function (event) {
+          // console.log('5-告知媒体相关部分的下载进度时周期性地触发');
+          //加载缓冲的地方
+          // console.log(this.buffered, this.seekable);
+        }, false)
         ading.addEventListener("canplay", function () {
           console.log('6-当浏览器可以播放音频/视频时');
         })
@@ -149,10 +163,29 @@
           console.log('7-在尝试获取媒体数据，但数据不可用时触发');
         })
 
+        ading.addEventListener("waiting",function(){
+          console.log("-----------")
+          console.log(this)
+        },false);
 
-        ading.addEventListener("timeupdate", function () {
+
+        ading.addEventListener("timeupdate", function (event) {
+          // console.log(this.currentTime)
           var value = (Math.floor(this.currentTime) / Math.floor(this.duration) * 100).toFixed(2);
           vm.currentTime = Math.round(value)
+
+          // var spu = 0;
+          // for (var i = 0; i < ading.buffered.length; i++) {
+          //   spu += ading.buffered.end(i) - ading.buffered.start(i);
+          // }
+          // console.log(spu / ading.duration * 100);
+
+          const timeRanges = ading.buffered
+          // 获取已缓存的时间
+          timeRanges.end(timeRanges.length - 1)
+          console.log(timeRanges, timeRanges.end(timeRanges.length - 1));
+          console.log(timeRanges.end(timeRanges.length - 1)/ading.duration*100)
+          // parseInt(timeRanges.end(timeRanges.length - 1) * 100 / audio.duration * 100) / 100
         });
 
         ading.addEventListener("pause", function () {

@@ -1,13 +1,13 @@
 <template>
   <div class="clear-header home" :class="{'clear-audio': !!audioPlaying.id}">
-    <tab :line-width="2" class="tab" bar-active-color="">
+    <!-- <tab :line-width="2" class="tab" bar-active-color="">
       <tab-item selected>发现</tab-item>
       <tab-item>我的</tab-item>
       <tab-item>电台</tab-item>
-    </tab>
+    </tab> -->
     <swiper auto loop :interval="2000" :aspect-ratio="420/1080" class="text-scroll" :show-desc-mask="false" dots-position="center">
-      <swiper-item v-for="item in banners" :key="item.encodeId">
-        <img :src="item.picUrl" :alt="item.typeTitle" class="autoImage">
+      <swiper-item v-for="item in banners" :key="item.targetId+Math.random()">
+        <img :src="item.imageUrl" :alt="item.typeTitle" class="autoImage">
       </swiper-item>
     </swiper>
     <flexbox class="myself vux-1px-b" :gutter="0">

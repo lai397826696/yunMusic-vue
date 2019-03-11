@@ -25,7 +25,8 @@
       </div>
       <div class="flex type">
         <div class="flex_bd">
-          <label class="key" @click="keynamePopup">{{keyname}}
+          <label class="key" @click="keynamePopup">
+            <strong>{{keyname}}</strong>
             <i class="iconfont icon-jiantouyou"></i>
           </label>
         </div>
@@ -42,7 +43,7 @@
             <p class="ellipsis creator">
               <i class="mg_r5 iconfont icon-yonghu"></i>{{item.creator.nickname}}</p>
             <span class="playcount">
-              <i class="mg_r5 iconfont icon-erji"></i>{{item.playCount}}</span>
+              <i class="mg_r5 iconfont icon-erji"></i>{{item.playCount | num_format}}</span>
           </div>
           <figcaption>{{item.name}}</figcaption>
         </router-link>
@@ -249,7 +250,7 @@
     }
     .copywriter {
       font-size: 14px;
-      color: @FRONT_GRAY;
+      color: #dfdfdf;
       line-height: 1.35;
     }
   }
@@ -270,25 +271,6 @@
         border-radius: 5px;
         overflow: hidden;
         color: #fff;
-
-        // &::after,
-        // &::before {
-        //   content: "";
-        //   position: absolute;
-        //   left: 0;
-        //   right: 0;
-        //   z-index: 0;
-        // }
-        // &::before {
-        //   top: 0;
-        //   bottom: 60%;
-        //   background: linear-gradient(to bottom,rgba(10, 10, 10, 0.6),rgba(0, 0, 0, 0));
-        // }
-        // &::after {
-        //   top: 60%;
-        //   bottom: 0;
-        //   background: linear-gradient(to top,rgba(10, 10, 10, 0.6),rgba(0, 0, 0, 0));
-        // }
         .shadow(all);
       }
       img {
@@ -316,13 +298,13 @@
     }
   }
   .type {
-    margin: 15px 0;
+    margin: 7px 0 10px;
     .key {
       float: left;
-      padding: 4px 10px 4px 15px;
+      // padding: 4px 10px 4px 15px;
       line-height: 22px;
-      border: 1px solid #ccc;
       border-radius: 20px;
+      font-size: 16px;
     }
     .flex_ft {
       font-size: 0;

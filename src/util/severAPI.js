@@ -1,5 +1,5 @@
 import axios from 'axios';
-axios.defaults.baseURL = 'http://localhost:3000';
+axios.defaults.baseURL = 'localhost:3000';
 // 设置默认请求头
 // axios.defaults.headers = {
 //   'X-Requested-With': 'XMLHttpRequest'

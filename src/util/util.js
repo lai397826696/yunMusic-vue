@@ -14,12 +14,12 @@ export const objCopy = obj => {
 }
 export const num_format = (num, type = 0) => {
   if (!Number(num)) 
-    return 'undefined'
+    return 'NaN'
   switch (type) {
     case 0: //歌单听众
       if (num > 100000000) {
         return Math.floor(num / 100000000) + "亿"
-      } else if (num > 10000) {
+      } else if (num > 100000) {
         return Math.floor(num / 10000) + "万"
       } else {
         return num

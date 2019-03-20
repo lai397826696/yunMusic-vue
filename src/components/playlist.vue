@@ -16,16 +16,15 @@
         </p>
       </div>
       <div class="flex_ft">
-        <i class="iconfont icon-more" @click.stop="detailsfn(item)"></i>
+        <i class="iconfont icon-more" @click.stop="detailsfn(item.id)"></i>
       </div>
     </div>
-    <popupDetail ref="popupDetail" v-model="show"></popupDetail>
+    <popupDetail ref="popupDetail" v-model="show" :id="id"></popupDetail>
   </div>
 
 </template>
 
 <script>
-  import { Popup, TransferDom } from 'vux'
   import { mapState, mapMutations, mapGetters } from 'vuex';
   import popupDetail from './popupDetail';
 
@@ -34,7 +33,7 @@
     data() {
       return {
         show: false,
-        id: '',
+        id: null,
       }
     },
     props: {
@@ -46,11 +45,7 @@
       }
     },
     components: {
-      Popup,
       popupDetail
-    },
-    directives: {
-      TransferDom
     },
     computed: {
       ...mapState([
@@ -64,10 +59,10 @@
       playfn(item, index) {
         this.set_playing({data: item, index: index})
       },
-      detailsfn(item) {
+      detailsfn(id) {
         this.show=true
-        this.$refs.popupDetail.onShow(item)
-      },
+        this.id=id
+      }
     }
   }
 </script>

@@ -116,7 +116,6 @@
 </template>
 
 <script>
-  import { Popup, TransferDom } from 'vux'
   import { mapState, mapMutations, mapGetters } from 'vuex';
 
   export default {
@@ -138,13 +137,11 @@
       value: {
         type: Boolean,
         default: false
+      },
+      id: {
+        type: Number,
+        default: null
       }
-    },
-    components: {
-      Popup
-    },
-    directives: {
-      TransferDom
     },
     computed: {
       ...mapState([
@@ -162,31 +159,30 @@
     methods: {
       onHide() {
         console.log("关闭");
-        this.$emit("onhide")
       },
       onShow() {
         console.log("打开");
-        this.$emit("onshow")
         this.detailsfn();
       },
       detailsfn() {
         // this.detail = item;
+        let id = !!this.id ? this.id : this.audioPlaying.id;
         this.$http.get('/comment/music', {
           params: {
-            id: this.audioPlaying.id,
+            id: id,
             limit: 1
           }
-        }).then(res => {
-          console.log(res.data);
-          if (res.data.code == 200) this.comment = res.data
+        }).then(({data}) => {
+          console.log(data);
+          if (data.code == 200) this.comment = data
         })
       }
     },
     watch: {
-      value(newval, oldval){
-        this.show=newval
+      value(newval, oldval) {
+        this.show = newval
       },
-      show(newval, oldval){
+      show(newval, oldval) {
         this.$emit("input", newval)
       }
     }

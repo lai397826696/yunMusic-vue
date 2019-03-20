@@ -19,10 +19,8 @@
 </template>
 
 <script>
-  import { XHeader } from 'vux';
   import { mapState, mapActions } from 'vuex';
-  import axios from 'axios';
-  import { toplist, artist } from '../util/severAPI.js';
+  import axios, { toplist, artist } from '../util/severAPI.js';
 
   export default {
     name: "rankings",
@@ -35,9 +33,6 @@
         singer: [],
         songrankings: []
       }
-    },
-    components: {
-      XHeader,
     },
     created() {
       this.toplist()

@@ -1,11 +1,10 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import axios from 'axios';
-import * as ajax from './util/severAPI';
+import axios, { banner, personalized, resource, newsong, privatecontent, recommend, songs, lyric } from './util/severAPI';
+// import * as ajax from './util/severAPI';
 import { objCopy } from './util/util';  
 import router from './router/index';
 Vue.use(Vuex)
-axios.defaults.baseURL = 'http://localhost:3000';
 
 const local = (arr = '') => {
   let star = window.localStorage.getItem("userinfo");
@@ -70,6 +69,7 @@ const mutations = {
       // if (state.song_catalogue.length != state.songs.length)
         state.song_catalogue = objCopy(state.songs);
     }
+    console.log(data);
     state.audioPlaying = data
     Vue.set(state.audioPlaying, "playing", true)
     state.playIndex = index
@@ -172,16 +172,12 @@ const mutations = {
 const actions = {
   indexapi({commit}) {
     axios.all([
-      axios.get('/banner'),
-      axios.get('/personalized', {
-        params: {
-          limit: 10
-        }
-      }),
-      axios.get('/recommend/resource', {withCredentials: true}),
-      axios.get('/personalized/newsong'),
-      axios.get('/personalized/privatecontent'),
-      axios.get('/dj/recommend', {withCredentials: true})
+      banner(),
+      personalized({ limit: 10 }),
+      resource(),
+      newsong(),
+      privatecontent(),
+      recommend()
     ]).then(axios.spread((res1, res2, res3, res4, res5, res6) => {
       res2.data.result.length=6
       commit('indexfn', {
@@ -195,12 +191,12 @@ const actions = {
     }))
   },
   recommendapi({commit}) {
-    ajax.songs().then(res => {
+    songs().then(res => {
       commit('set_recommend', {songs: res.data.recommend})
     })
   },
   lyricsfn({ commit }) {
-    ajax.lyric({ id: state.audioPlaying.id }).then(res => {
+    lyric({ id: state.audioPlaying.id }).then(res => {
       commit("set_lyrics", { data: parseLyric(res.data.lrc.lyric)})
     })
   }

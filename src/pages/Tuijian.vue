@@ -14,7 +14,6 @@
 </template>
 
 <script>
-  import { XHeader } from 'vux';
   import Playbox from '../components/playbox.vue';
   import { mapState, mapActions } from 'vuex';
 
@@ -25,7 +24,6 @@
       }
     },
     components: {
-      XHeader,
       Playbox,
     },
     created() {

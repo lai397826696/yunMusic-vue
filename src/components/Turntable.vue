@@ -34,7 +34,6 @@
 </template>
 
 <script>
-  import { Flexbox, FlexboxItem } from 'vux'
   import { mapState,mapMutations } from 'vuex';
   import { musicComment, lyric } from '../util/severAPI';
   import popupDetail from '../components/popupDetail';
@@ -62,8 +61,6 @@
       };
     },
     components: {
-      Flexbox,
-      FlexboxItem,
       popupDetail
     },
     computed: {

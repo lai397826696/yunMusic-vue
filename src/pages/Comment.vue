@@ -80,7 +80,6 @@
 </template>
 
 <script>
-  import { XHeader } from 'vux';
   import { mapState } from 'vuex';
   import { musicComment, commentLiked } from '../util/severAPI';
   export default {
@@ -99,9 +98,6 @@
         },
         loading: true
       }
-    },
-    components: {
-      XHeader
     },
     beforeRouteEnter(to, from, next) {
       next(vm => {

@@ -52,7 +52,7 @@
 </template>
 
 <script>
-  import { Popup, TransferDom, PopupHeader, Checker, CheckerItem } from 'vux'
+  import { Checker, CheckerItem } from 'vux'
   import playlist from '../components/playlist.vue';
   import { mapMutations, mapState, mapGetters } from 'vuex';
 
@@ -75,14 +75,9 @@
       }
     },
     components: {
-      Popup,
       playlist,
-      PopupHeader,
       Checker,
       CheckerItem
-    },
-    directives: {
-      TransferDom
     },
     beforeUpdate() {
       if (this.song_catalogues.length == 0) this.song_catalogues = [...this.songData]

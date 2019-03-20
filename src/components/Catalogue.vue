@@ -37,7 +37,7 @@
 </template>
 
 <script>
-  import { Popup, TransferDom, Actionsheet } from 'vux'
+  import { Actionsheet } from 'vux'
   import { mapActions, mapState, mapMutations, mapGetters } from 'vuex';
   export default {
     name: "catalogue",
@@ -53,11 +53,7 @@
       };
     },
     components: {
-      Popup,
       Actionsheet,
-    },
-    directives: {
-      TransferDom
     },
     computed: {
       ...mapState([

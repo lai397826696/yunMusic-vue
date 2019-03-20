@@ -71,7 +71,6 @@
 </template>
 
 <script>
-  import { XHeader, Popup, PopupHeader, TransferDom } from 'vux';
   import { mapState, mapActions } from 'vuex';
   import { highquality, playlist, catlist } from '../util/severAPI.js';
 
@@ -87,14 +86,6 @@
         type: {},
         keyname: '全部歌单',
       }
-    },
-    components: {
-      XHeader,
-      Popup,
-      PopupHeader,
-    },
-    directives: {
-      TransferDom
     },
     created() {
       this.highquality()

@@ -50,11 +50,11 @@
 </template>
 
 <script>
-  import { XCircle, Popup, TransferDom, Actionsheet } from "vux";
+  import { XCircle, Actionsheet } from "vux";
   import { mapActions, mapState, mapMutations, mapGetters } from "vuex";
   import catalogue from "./Catalogue";
   import Audio from './Audio';
-import { clearTimeout } from 'timers';
+  import { clearTimeout } from 'timers';
 
   // import video from 'video.js';
 
@@ -82,14 +82,11 @@ import { clearTimeout } from 'timers';
     },
     components: {
       XCircle,
-      Popup,
       Actionsheet,
       catalogue,
       Audio
     },
-    directives: {
-      TransferDom
-    },
+
     mounted() {
       let ading = this.$refs.ading;
       this.init(ading)

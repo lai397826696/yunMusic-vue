@@ -12,6 +12,7 @@ if (process.env.NODE_ENV == 'development') {
     axios.defaults.baseURL = 'http://api.123dailu.com/';
 }
 
+console.log(axios.defaults.baseURL);
 
 
 // 添加请求拦截器
@@ -32,7 +33,6 @@ axios.interceptors.request.use(function (config) {
 // axios.interceptors.response.use(function (response) {
 //   if(response.hasOwnProperty("data") && typeof response.data == "object"){
 //       if(response.data.code === 998){// 登录超时 跳转至登录页面
-//           iView.Message.error(response.data.msg)
 //           router.push('/login')
 //           return Promise.reject(response)
 //       }else if (response.data.code === 1000) {// 成功
@@ -46,10 +46,10 @@ axios.interceptors.request.use(function (config) {
 //   if(error.message != '0000'){
 //     iView.Message.error('请求失败')
 //   }
-
 //   // 请求错误时做些事
 //   return Promise.reject(error)
 // })
+
 
 const get = (url, param, bool = false) => {
   let config = {
@@ -58,34 +58,24 @@ const get = (url, param, bool = false) => {
     params: param
   }
   if (!!bool) config['withCredentials'] = true
-  return new Promise((resolve, reject) => {
-    axios(config).then(Response => {
-      resolve(Response)
-    }).catch(error => {
-      reject(error)
-    })
-  })
+  return axios(config);
 }
 
-const post = (url, data, bool = false) => {
+const post = (url, param, bool = false) => {
   let config = {
-    method: "post",
+    method: "get",
     url: url,
-    params: data
+    data: param
   }
   if (!!bool) config['withCredentials'] = true
-  return new Promise((resolve, reject) => {
-    axios(config).then(Response => {
-      resolve(Response)
-    }).catch(error => {
-      reject(error)
-    })
-  })
+  return axios(config);
 }
 
+//默认导出axios
+export default axios;
 //登录
 export const login = param => {
-  return get('/login/cellphone', param, true)
+  return post('/login/cellphone', param, true)
 }
 //轮播图
 export const banner = param => {
@@ -180,8 +170,7 @@ export const toplist = param => {
   return get('/top/list', param)
 }
 
-// 歌手榜
-// 说明 : 调用此接口 , 可获取 PC 版排行榜中的歌手榜
+// 获取排行榜中的歌手榜
 export const artist = param => {
   return get('/toplist/artist', param)
 }

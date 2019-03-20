@@ -66,7 +66,6 @@
 </template>
 
 <script>
-  import { XHeader, Flexbox, FlexboxItem } from 'vux'
   import { mapState, mapMutations } from 'vuex';
   import Drag from '../components/Drag';
   import popupDetail from '../components/popupDetail';
@@ -100,9 +99,6 @@
       }
     },
     components: {
-      Flexbox,
-      FlexboxItem,
-      XHeader,
       Drag,
       popupDetail,
       catalogue,

@@ -21,7 +21,6 @@
 </template>
 
 <script>
-  import { XHeader, Flexbox, FlexboxItem } from 'vux'
   import { mapState, mapMutations } from 'vuex';
   import popupDetail from '../components/popupDetail';
   import catalogue from '../components/Catalogue';
@@ -39,9 +38,6 @@
       }
     },
     components: {
-      Flexbox,
-      FlexboxItem,
-      XHeader,
       popupDetail,
       catalogue
     },

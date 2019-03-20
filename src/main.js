@@ -5,7 +5,7 @@ import router from './router'
 import store from './store';
 import FastClick from 'fastclick'
 import App from './App'
-import {AjaxPlugin, ConfirmPlugin, AlertPlugin, ToastPlugin} from 'vux'
+import {AjaxPlugin, ConfirmPlugin, AlertPlugin, ToastPlugin, Flexbox, FlexboxItem, Popup, XHeader, PopupHeader, TransferDom } from 'vux'
 import './assets/js/dpr'
 import * as util from './util/util'
 
@@ -15,16 +15,18 @@ FastClick.attach(document.body)
 Vue.use(AjaxPlugin)
 Vue.use(ConfirmPlugin)
 Vue.use(AlertPlugin)
-Vue.use(ToastPlugin, {time: 1000})
-Vue.http.defaults.baseURL = 'http://localhost:3000';
+Vue.use(ToastPlugin, { time: 1000 })
+Vue.component('flexbox', Flexbox)
+Vue.component('flexbox-item', FlexboxItem)
+Vue.component('popup', Popup)
+Vue.component('x-header', XHeader)
+Vue.component('popup-header', PopupHeader)
+Vue.directive('transfer-dom', TransferDom)
 
 let filterArr = ["num_format"]
-Object
-  .keys(util)
-  .forEach(key => {
-    if (filterArr.indexOf(key) >= 0) 
-      Vue.filter(key, util[key])
-  })
+Object.keys(util).forEach(key => {
+  if (filterArr.indexOf(key) >= 0) Vue.filter(key, util[key])
+})
 
 const arr = ["detail", "fm", "comment"]
 router.beforeEach((to, form, next) => {

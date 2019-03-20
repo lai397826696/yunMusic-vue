@@ -1,10 +1,9 @@
 <template>
   <div class="clear-header home" :class="{'clear-audio': !!audioPlaying.id}">
-    <!-- <tab :line-width="2" class="tab" bar-active-color="">
-      <tab-item selected>发现</tab-item>
-      <tab-item>我的</tab-item>
-      <tab-item>电台</tab-item>
-    </tab> -->
+    <tab :line-width="2" class="tab" bar-active-color="white" active-color="white">
+      <tab-item>用户</tab-item>
+      <tab-item selected>音乐</tab-item>
+    </tab>
     <swiper auto loop :interval="2000" :aspect-ratio="420/1080" class="text-scroll" :show-desc-mask="false" dots-position="center">
       <swiper-item v-for="item in banners" :key="item.targetId+Math.random()">
         <img :src="item.imageUrl" :alt="item.typeTitle" class="autoImage">
@@ -87,7 +86,7 @@
 </template>
 
 <script>
-  import { Tab, TabItem, Swiper, SwiperItem, Flexbox, FlexboxItem, Grid, GridItem, GroupTitle } from 'vux'
+  import { Tab, TabItem, Swiper, SwiperItem, Grid, GridItem, GroupTitle } from 'vux'
   import { mapState, mapActions } from 'vuex';
 
   export default {
@@ -97,8 +96,6 @@
       TabItem,
       Swiper,
       SwiperItem,
-      Flexbox,
-      FlexboxItem,
       Grid,
       GridItem,
       GroupTitle,
@@ -141,6 +138,14 @@
   }
 </script>
 
+<style>
+  .tab .vux-tab {
+      background-color: #f93434;
+    }
+  .tab .vux-tab-item {
+    background-color: transparent;
+  }
+</style>
 
 <style lang="less" scoped>
   @import url("../assets/css/mixin.less");
@@ -149,7 +154,6 @@
   }
   .tab {
     margin: 0 auto;
-    background: #fff;
     border: none;
     .vux-tab-container {
       border: none;

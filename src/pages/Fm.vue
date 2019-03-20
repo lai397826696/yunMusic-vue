@@ -61,7 +61,6 @@
 </template>
 
 <script>
-  import { XHeader, Flexbox, FlexboxItem } from 'vux'
   import { mapState, mapMutations } from 'vuex';
   import Drag from '../components/Drag';
 
@@ -82,9 +81,6 @@
       }
     },
     components: {
-      Flexbox,
-      FlexboxItem,
-      XHeader,
       Drag,
     },
     created() {

@@ -1,9 +1,55 @@
 import axios from 'axios';
-axios.defaults.baseURL = 'localhost:3000';
-// 设置默认请求头
-// axios.defaults.headers = {
-//   'X-Requested-With': 'XMLHttpRequest'
-// };
+import store from '../store';
+import router from '../router/index';
+import { AjaxPlugin } from 'vux'
+
+// 环境的切换
+if (process.env.NODE_ENV == 'development') {    
+    axios.defaults.baseURL = 'http://localhost:3000';
+} else if (process.env.NODE_ENV == 'debug') {    
+    axios.defaults.baseURL = '';
+} else if (process.env.NODE_ENV == 'production') {    
+    axios.defaults.baseURL = 'http://api.123dailu.com/';
+}
+
+
+
+// 添加请求拦截器
+axios.interceptors.request.use(function (config) {
+    // const token = store.state.token;        
+    // token && (config.headers.Authorization = token);        
+    // return config;
+  if (!document.cookie) {
+    router.push("/login");
+    return false;
+  }
+  return config;
+}, function (error) {
+  return Promise.reject(error)
+})
+
+// // 返回结果拦截
+// axios.interceptors.response.use(function (response) {
+//   if(response.hasOwnProperty("data") && typeof response.data == "object"){
+//       if(response.data.code === 998){// 登录超时 跳转至登录页面
+//           iView.Message.error(response.data.msg)
+//           router.push('/login')
+//           return Promise.reject(response)
+//       }else if (response.data.code === 1000) {// 成功
+//         return Promise.resolve(response)
+//       }
+//   } else {
+//     return Promise.resolve(response)
+//   }
+// }, function (error) {
+//   // 请求取消 不弹出
+//   if(error.message != '0000'){
+//     iView.Message.error('请求失败')
+//   }
+
+//   // 请求错误时做些事
+//   return Promise.reject(error)
+// })
 
 const get = (url, param, bool = false) => {
   let config = {

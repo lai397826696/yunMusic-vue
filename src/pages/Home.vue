@@ -79,7 +79,7 @@
         </div>
         <div class="gridtext">
           <p class="ellipsis">{{list.name}}</p>
-          <p>{{list.song.artists[0].name}}</p>
+          <p class="ellipsis">{{list.song.artists[0].name}}</p>
         </div>
       </div>
     </div>

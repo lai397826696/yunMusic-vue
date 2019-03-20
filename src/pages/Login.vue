@@ -1,12 +1,17 @@
 <template>
   <div>
-    <input type="text" class="username" v-model="phone">
-    <input type="password" class="password" v-model="password">
-    <button @click="loginIn">登录</button>
+    <group>
+      <x-input class="clear" title="账号" is-type="china-mobile" :required="true" v-model="phone"></x-input>
+      <x-input class="clear" title="密码" type="password" v-model="password"></x-input>
+    </group>
+    <group>
+      <x-button type="primary" @click.native="loginIn">登录</x-button>
+    </group>
   </div>
 </template>
 
 <script>
+  import { XInput, Group, XButton } from 'vux';
   export default {
     name: "home",
     data() {
@@ -15,12 +20,20 @@
         password: '',
       }
     },
+    components: {
+      XInput,
+      Group,
+      XButton
+    },
     methods: {
       loginIn() {
         let _this = this;
-        // this.$http.get('/login/refresh').then(res => {
-        //   console.log(res.data);
-        // })
+        if (!this.phone || !this.password) {
+          this.$vux.alert.show({
+            title: '请输入正确的账号或密码',
+          })
+          return false;
+        }
         this.$http.get('/login/cellphone', {
           params: {
             phone: _this.phone,
@@ -37,10 +50,10 @@
             this.$vux.alert.show({
               title: '登录失败！',
               content: ress.msg,
-              onShow () {
+              onShow() {
 
               },
-              onHide () {
+              onHide() {
 
               }
             })
@@ -52,5 +65,15 @@
 </script>
 
 <style lang="less" scoped>
+  .clear {
+    input:-internal-autofill-selected {
+      border: 0; // 去除未选中状态边框
+      outline: none; // 去除选中状态边框
+      background-color: rgba(0, 0, 0, 0) !important; // 透明背景
+    }
+  }
+  input {
+    -webkit-tap-highlight-color:rgba(255,0,0,0) !important;
+  }
 </style>
 

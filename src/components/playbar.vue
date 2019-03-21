@@ -128,9 +128,11 @@
         // canplaythrough
         ading.addEventListener("loadstart", function () {
           console.log('1-当浏览器开始查找音频/视频时');
+          vm.$emit("loadstart", this)
         })
         ading.addEventListener("durationchange", function () {
           console.log('2-当音频/视频的时长已更改时');
+          vm.$emit("durationchange", this)
         })
         ading.addEventListener("loadedmetadata", function () {
           console.log('3-当浏览器已加载音频/视频的元数据时');
@@ -140,31 +142,31 @@
           // this.currentTime = time
           //测试，快速听歌 end
           vm.duration = this.duration
+          vm.$emit("loadedmetadata", this)
         })
         ading.addEventListener("loadeddata", function () {
           console.log('4-当浏览器已加载音频/视频的当前帧时');
+          vm.$emit("loadeddata", this)
         })
         ading.addEventListener("progress", function (event) {
           // console.log('5-告知媒体相关部分的下载进度时周期性地触发');
           //加载缓冲的地方
           // console.log(this.buffered, this.seekable);
+          vm.$emit("progress", this)
         }, false)
         ading.addEventListener("canplay", function () {
           console.log('6-当浏览器可以播放音频/视频时');
+          vm.$emit("canplay", this)
         })
         ading.addEventListener("canplaythrough", function () {
           console.log('7-当浏览器可在不因缓冲而停顿的情况下进行播放时');
+          vm.$emit("canplaythrough", this)
         })
 
         ading.addEventListener("stalled", function () {
-          console.log('7-在尝试获取媒体数据，但数据不可用时触发');
+          console.log('8-在尝试获取媒体数据，但数据不可用时触发');
+          vm.$emit("stalled", this)
         })
-
-        ading.addEventListener("waiting",function(){
-          console.log("-----------")
-          console.log(this)
-        },false);
-
 
         ading.addEventListener("timeupdate", function (event) {
           // console.log(this.currentTime)
@@ -179,20 +181,24 @@
 
           const timeRanges = ading.buffered
           // 获取已缓存的时间
+          if(timeRanges.length<=0) return false;
           timeRanges.end(timeRanges.length - 1)
           console.log(timeRanges, timeRanges.end(timeRanges.length - 1));
           console.log(timeRanges.end(timeRanges.length - 1)/ading.duration*100)
           // parseInt(timeRanges.end(timeRanges.length - 1) * 100 / audio.duration * 100) / 100
+          vm.$emit("timeupdate", this)
         });
 
         ading.addEventListener("pause", function () {
           console.log('暂停');
           vm.set_audioStatus({ playing: false });
+          vm.$emit("pause", this)
         })
 
         ading.addEventListener("play", function () {
           console.log('播放');
           vm.set_audioStatus({ playing: true });
+          vm.$emit("play", this)
         })
 
         ading.addEventListener("ended", function () {
@@ -204,6 +210,7 @@
           } else {
             vm.prevPlaynext({ type: 'next' })
           }
+          vm.$emit("ended", this)
         })
 
         ading.addEventListener("error", function () {
@@ -214,6 +221,7 @@
           let err = [0, '取回过程被用户中止', '当下载时发生错误', '当解码时发生错误', '不支持音频/视频']
           console.log('error：' + err[this.error.code]);
           vm.set_audioStatus({ playing: false });
+          vm.$emit("error", this)
         })
 
       },

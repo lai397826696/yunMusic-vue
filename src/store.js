@@ -69,7 +69,6 @@ const mutations = {
       // if (state.song_catalogue.length != state.songs.length)
         state.song_catalogue = objCopy(state.songs);
     }
-    console.log(data);
     state.audioPlaying = data
     Vue.set(state.audioPlaying, "playing", true)
     state.playIndex = index
